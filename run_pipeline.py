@@ -18,7 +18,7 @@ import scanpy as sc
 import preprocess
 from markers import MARKERS, OL_LINEAGE
 import train_ol_classifier
-import corroboration_analysis
+import tap_analysis
 
 
 ROOT = Path(__file__).parent
@@ -80,7 +80,7 @@ def main() -> None:
     print("running classifier")
     train_ol_classifier.run_classifier()
     print("running corroboration analysis")
-    corroboration_analysis.run_analysis()
+    tap_analysis.run_analysis()
     print(f"\n=== ALL DONE in {time.time() - overall:.0f}s ===")
 
 

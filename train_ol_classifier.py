@@ -142,7 +142,7 @@ def run_classifier() -> None:
     out_of_sample_comparison = y_test_frame.join(
         p_test_frame,
     )
-    out_of_sample_comparison["ol_nb"] = out_of_sample_comparison["p_ol_nb"].apply(
+    out_of_sample_comparison["prediction_is_ol"] = out_of_sample_comparison["p_ol_nb"].apply(
         lambda p: 1 if p > 0.5 else 0
     )
     out_of_sample_comparison.to_csv(f"{OUT}/out_of_sample_comparison.csv")

@@ -4,14 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="clean-up">
-      <change afterPath="$PROJECT_DIR$/corroboration_analysis.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/outputs/tap_candidate_trigger_genes.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/outputs/tap_committed_by_condition.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/outputs/tap_committed_fisher.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/outputs/tap_high_vs_low_commit_DE.csv" afterDir="false" />
+    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="made test 1 for 99.85% accuracy">
+      <change afterPath="$PROJECT_DIR$/outputs/out_of_sample_tap_comparison_test2.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/out_of_sample_tap_comparison_test2.xlsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tap_analysis.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/csv-editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/csv-editor.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/barcode_to_cell_type_mapping_table.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/barcode_to_cell_type_mapping_table.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/out_of_sample_comparison.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/out_of_sample_comparison.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/tap_candidate_trigger_genes.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/tap_committed_fisher.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/tap_high_vs_low_commit_DE.csv" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/run_pipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/run_pipeline.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/train_ol_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_ol_classifier.py" afterDir="false" />
     </list>
@@ -46,7 +49,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Python.run_pipeline.executor": "Debug",
-    "Python.run_pipeline_no_rebuild.executor": "Debug",
+    "Python.run_pipeline_no_rebuild.executor": "Run",
     "Python.run_pipeline_rebuild.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "main",
@@ -199,7 +202,15 @@
       <option name="project" value="LOCAL" />
       <updated>1779726146176</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="made test 1 for 99.85% accuracy">
+      <option name="closed" value="true" />
+      <created>1779731246049</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1779731246049</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -213,22 +224,14 @@
     <MESSAGE value="made a table which counts each cell type by the marker genes" />
     <MESSAGE value="top 50 genes created, ol_commitment.csv created, bias score + P(OL) created" />
     <MESSAGE value="clean-up" />
-    <option name="LAST_COMMIT_MESSAGE" value="clean-up" />
+    <MESSAGE value="made test 1 for 99.85% accuracy" />
+    <option name="LAST_COMMIT_MESSAGE" value="made test 1 for 99.85% accuracy" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/train_ol_classifier.py</url>
-          <line>148</line>
-          <option name="timeStamp" value="8" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/train_ol_classifier.py</url>
-          <line>144</line>
-          <option name="timeStamp" value="9" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="PythonConfigurationType">
+        <watch expression="tap.obs[[&quot;sample_id&quot;,&quot;pred_p_OL&quot;, &quot;bias&quot;]]" language="Python" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>
