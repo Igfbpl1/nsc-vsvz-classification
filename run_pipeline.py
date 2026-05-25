@@ -11,14 +11,14 @@ Run from the project root:
 from __future__ import annotations
 
 import argparse
-import subprocess
-import sys
 import time
 import data_io
 from pathlib import Path
 import scanpy as sc
 import preprocess
 from markers import MARKERS, OL_LINEAGE
+import train_ol_classifier
+
 
 ROOT = Path(__file__).parent
 OUT = ROOT / "outputs"
@@ -68,6 +68,8 @@ def build_processed() -> None:
     adata.obs.to_csv(f"{OUT}/barcode_to_cell_type_mapping.csv")
 
 
+
+
 def main() -> None:
     p = argparse.ArgumentParser()
     p.add_argument("--rebuild", action="store_true",
@@ -84,7 +86,8 @@ def main() -> None:
         t0 = time.time()
         build_processed()
         print(f"  done in {time.time() - t0:.0f}s")
-
+    print("running classifier")
+    train_ol_classifier.run_classifier()
     print(f"\n=== ALL DONE in {time.time() - overall:.0f}s ===")
 
 
