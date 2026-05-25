@@ -18,6 +18,7 @@ import data_io
 from pathlib import Path
 import scanpy as sc
 import preprocess
+from markers import MARKERS, OL_LINEAGE
 
 ROOT = Path(__file__).parent
 OUT = ROOT / "outputs"
@@ -42,6 +43,29 @@ def build_processed() -> None:
     print("completed normalizing and embeding")
     adata.to_df().head(100).to_csv(f"{OUT}/normalized_barcodes_genes_top100.csv")
 
+    for name, genes in MARKERS.items():
+        present = [g for g in genes if g in adata.var_names]
+        if not present:
+            continue
+        sc.tl.score_genes(
+            adata, gene_list=present, score_name=f"score_{name}",
+            ctrl_size=min(50, max(10, len(present) * 5)), random_state=0,
+        )
+
+    score_cols = [f"score_{n}" for n in MARKERS if f"score_{n}" in adata.obs.columns]
+    means = adata.obs.groupby("leiden", observed=True)[score_cols].mean()
+    cluster_to_type = {c: row.idxmax().replace("score_", "") for c, row in means.iterrows()}
+    adata.obs["cell_type"] = adata.obs["leiden"].map(cluster_to_type).astype("category")
+    adata.uns["cluster_to_type"] = cluster_to_type
+    adata.obs["fate_OL_lineage"] = adata.obs["cell_type"].isin(OL_LINEAGE).astype(int)
+
+    OUT.mkdir(exist_ok=True)
+    h5 = OUT / "processed.h5ad"
+    adata.write_h5ad(h5)
+    print(f"  wrote {h5}: {adata.n_obs} cells × {adata.n_vars} genes")
+    print(adata.obs["cell_type"].value_counts().to_string())
+
+    adata.obs.to_csv(f"{OUT}/barcode_to_cell_type_mapping.csv")
 
 
 def main() -> None:

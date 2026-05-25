@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="ingested data and created csv for viewing">
-      <change afterPath="$PROJECT_DIR$/outputs/normalized_barcodes_genes_top100.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/preprocess.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/raw_barocdes_genes_top100.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/raw_barocdes_genes_top100.csv" afterDir="false" />
+    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="quality control, normalizing, and embedding has happened">
+      <change afterPath="$PROJECT_DIR$/markers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/run_pipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/run_pipeline.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -153,7 +152,15 @@
       <option name="project" value="LOCAL" />
       <updated>1779723780814</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="quality control, normalizing, and embedding has happened">
+      <option name="closed" value="true" />
+      <created>1779724242503</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1779724242503</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -162,6 +169,7 @@
     <MESSAGE value="set up packages" />
     <MESSAGE value="run_pipeline and rebuilt set up" />
     <MESSAGE value="ingested data and created csv for viewing" />
-    <option name="LAST_COMMIT_MESSAGE" value="ingested data and created csv for viewing" />
+    <MESSAGE value="quality control, normalizing, and embedding has happened" />
+    <option name="LAST_COMMIT_MESSAGE" value="quality control, normalizing, and embedding has happened" />
   </component>
 </project>
