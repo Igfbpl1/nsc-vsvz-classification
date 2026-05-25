@@ -137,7 +137,15 @@ def run_classifier() -> None:
     auc = roc_auc_score(y_test, p_test)
     ap = average_precision_score(y_test, p_test)
     print(f"  held-out ({HOLDOUT_SAMPLE}) AUC: {auc:.4f}, AP: {ap:.4f}")
-
+    y_test_frame = pd.DataFrame(y_test, columns=["fate_OL_lineage"])
+    p_test_frame = pd.DataFrame(p_test, columns=["p_ol_nb"])
+    out_of_sample_comparison = y_test_frame.join(
+        p_test_frame,
+    )
+    out_of_sample_comparison["ol_nb"] = out_of_sample_comparison["p_ol_nb"].apply(
+        lambda p: 1 if p > 0.5 else 0
+    )
+    out_of_sample_comparison.to_csv(f"{OUT}/out_of_sample_comparison.csv")
     model_path = MODELS / "ol_classifier.json"
     clf.save_model(model_path)
     print(f"  model -> {model_path}")

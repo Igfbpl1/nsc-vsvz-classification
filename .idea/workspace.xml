@@ -4,9 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="made a table which counts each cell type by the marker genes">
-      <change afterPath="$PROJECT_DIR$/train_ol_classifier.py" afterDir="false" />
+    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="clean-up">
+      <change afterPath="$PROJECT_DIR$/corroboration_analysis.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/tap_candidate_trigger_genes.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/tap_committed_by_condition.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/tap_committed_fisher.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/tap_high_vs_low_commit_DE.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/csv-editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/csv-editor.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/run_pipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/run_pipeline.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train_ol_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_ol_classifier.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,7 +46,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Python.run_pipeline.executor": "Debug",
-    "Python.run_pipeline_no_rebuild.executor": "Run",
+    "Python.run_pipeline_no_rebuild.executor": "Debug",
     "Python.run_pipeline_rebuild.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "main",
@@ -176,7 +183,23 @@
       <option name="project" value="LOCAL" />
       <updated>1779725552668</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="top 50 genes created, ol_commitment.csv created, bias score + P(OL) created">
+      <option name="closed" value="true" />
+      <created>1779725976103</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1779725976103</updated>
+    </task>
+    <task id="LOCAL-00009" summary="clean-up">
+      <option name="closed" value="true" />
+      <created>1779726146176</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1779726146176</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -188,15 +211,22 @@
     <MESSAGE value="quality control, normalizing, and embedding has happened" />
     <MESSAGE value="created csv with all annotations" />
     <MESSAGE value="made a table which counts each cell type by the marker genes" />
-    <option name="LAST_COMMIT_MESSAGE" value="made a table which counts each cell type by the marker genes" />
+    <MESSAGE value="top 50 genes created, ol_commitment.csv created, bias score + P(OL) created" />
+    <MESSAGE value="clean-up" />
+    <option name="LAST_COMMIT_MESSAGE" value="clean-up" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/run_pipeline.py</url>
-          <line>10</line>
-          <option name="timeStamp" value="6" />
+          <url>file://$PROJECT_DIR$/train_ol_classifier.py</url>
+          <line>148</line>
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/train_ol_classifier.py</url>
+          <line>144</line>
+          <option name="timeStamp" value="9" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

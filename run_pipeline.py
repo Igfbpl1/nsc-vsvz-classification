@@ -18,21 +18,12 @@ import scanpy as sc
 import preprocess
 from markers import MARKERS, OL_LINEAGE
 import train_ol_classifier
+import corroboration_analysis
 
 
 ROOT = Path(__file__).parent
 OUT = ROOT / "outputs"
 RAW = ROOT / "data" / "raw"
-
-PHASES: list[tuple[str, str]] = [
-    ("train_ol_classifier.py",           "train OL-commitment classifier (markers-excluded)"),
-    ("interpret_classifier.py",          "condition fractions + within-TAP DE"),
-    ("_plot_taps.py",                    "TAP-only commitment plots"),
-    # Cross-dataset validation, ordered by contribution to the final conclusions:
-    ("validate_ntrk2_in_gse109447.py",   "GSE109447 (Mizrak / Doetsch / Sims, Columbia) — arms-length cross-lab validation"),
-    ("validate_triggers_in_gse75330.py", "GSE75330  (Castelo-Branco/Karolinska) — mature-OL false-positive removal"),
-]
-
 
 def build_processed() -> None:
     adata = data_io.load_all(RAW)
@@ -88,6 +79,8 @@ def main() -> None:
         print(f"  done in {time.time() - t0:.0f}s")
     print("running classifier")
     train_ol_classifier.run_classifier()
+    print("running corroboration analysis")
+    corroboration_analysis.run_analysis()
     print(f"\n=== ALL DONE in {time.time() - overall:.0f}s ===")
 
 
