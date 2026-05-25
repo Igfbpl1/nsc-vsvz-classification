@@ -196,7 +196,3 @@ def run_classifier() -> None:
     print("\nclassifier summary:")
     print(summary.to_string(index=False))
     print("\ndone")
-
-
-if __name__ == "__main__":
-    main()
