@@ -14,6 +14,7 @@ import argparse
 import subprocess
 import sys
 import time
+import data_io
 from pathlib import Path
 
 ROOT = Path(__file__).parent
@@ -31,7 +32,11 @@ PHASES: list[tuple[str, str]] = [
 
 
 def build_processed() -> None:
-    pass
+    adata = data_io.load_all(RAW)
+    print("completed loading")
+    adata.to_df().head(100).to_csv(f"{OUT}/raw_barocdes_genes_top100.csv")
+
+
 
 def main() -> None:
     p = argparse.ArgumentParser()
