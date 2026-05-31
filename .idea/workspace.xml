@@ -4,19 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="made test 1 for 99.85% accuracy">
-      <change afterPath="$PROJECT_DIR$/outputs/out_of_sample_tap_comparison_test2.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/outputs/out_of_sample_tap_comparison_test2.xlsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tap_analysis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/csv-editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/csv-editor.xml" afterDir="false" />
+    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="fixed the mapping issue">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/barcode_to_cell_type_mapping_table.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/barcode_to_cell_type_mapping_table.xlsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/out_of_sample_comparison.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/out_of_sample_comparison.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/tap_candidate_trigger_genes.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/tap_committed_fisher.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/tap_high_vs_low_commit_DE.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/run_pipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/run_pipeline.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train_ol_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_ol_classifier.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/raw_barocdes_genes_top100.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/raw_barcodes_genes_top100.csv" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -210,7 +200,31 @@
       <option name="project" value="LOCAL" />
       <updated>1779731246049</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="made test 2">
+      <option name="closed" value="true" />
+      <created>1779733562655</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1779733562655</updated>
+    </task>
+    <task id="LOCAL-00012" summary="fixed the mapping issue (like a true programmer)">
+      <option name="closed" value="true" />
+      <created>1779733665219</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1779733665219</updated>
+    </task>
+    <task id="LOCAL-00013" summary="fixed the mapping issue">
+      <option name="closed" value="true" />
+      <created>1779733805865</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1779733805865</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -225,7 +239,10 @@
     <MESSAGE value="top 50 genes created, ol_commitment.csv created, bias score + P(OL) created" />
     <MESSAGE value="clean-up" />
     <MESSAGE value="made test 1 for 99.85% accuracy" />
-    <option name="LAST_COMMIT_MESSAGE" value="made test 1 for 99.85% accuracy" />
+    <MESSAGE value="made test 2" />
+    <MESSAGE value="fixed the mapping issue (like a true programmer)" />
+    <MESSAGE value="fixed the mapping issue" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed the mapping issue" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>
