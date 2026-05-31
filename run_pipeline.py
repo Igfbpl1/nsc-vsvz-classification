@@ -8,6 +8,7 @@ Run from the project root:
     uv run python run_pipeline.py            # uses existing processed.h5ad if present
     uv run python run_pipeline.py --rebuild  # forces re-build of processed.h5ad
 """
+
 from __future__ import annotations
 
 import argparse
@@ -25,6 +26,7 @@ ROOT = Path(__file__).parent
 OUT = ROOT / "outputs"
 RAW = ROOT / "data" / "raw"
 
+
 def build_processed() -> None:
     adata = data_io.load_all(RAW)
     adata = preprocess.qc_filter(adata)
@@ -39,13 +41,18 @@ def build_processed() -> None:
         if not present:
             continue
         sc.tl.score_genes(
-            adata, gene_list=present, score_name=f"score_{name}",
-            ctrl_size=min(50, max(10, len(present) * 5)), random_state=0,
+            adata,
+            gene_list=present,
+            score_name=f"score_{name}",
+            ctrl_size=min(50, max(10, len(present) * 5)),
+            random_state=0,
         )
 
     score_cols = [f"score_{n}" for n in MARKERS if f"score_{n}" in adata.obs.columns]
     means = adata.obs.groupby("leiden", observed=True)[score_cols].mean()
-    cluster_to_type = {c: row.idxmax().replace("score_", "") for c, row in means.iterrows()}
+    cluster_to_type = {
+        c: row.idxmax().replace("score_", "") for c, row in means.iterrows()
+    }
     adata.obs["cell_type"] = adata.obs["leiden"].map(cluster_to_type).astype("category")
     adata.uns["cluster_to_type"] = cluster_to_type
     adata.obs["fate_OL_lineage"] = adata.obs["cell_type"].isin(OL_LINEAGE).astype(int)
@@ -59,12 +66,13 @@ def build_processed() -> None:
     adata.obs.to_csv(f"{OUT}/barcode_to_cell_type_mapping.csv")
 
 
-
-
 def main() -> None:
     p = argparse.ArgumentParser()
-    p.add_argument("--rebuild", action="store_true",
-                   help="rebuild outputs/processed.h5ad even if it exists")
+    p.add_argument(
+        "--rebuild",
+        action="store_true",
+        help="rebuild outputs/processed.h5ad even if it exists",
+    )
     args = p.parse_args()
 
     overall = time.time()

@@ -12,6 +12,7 @@ Train on cells with confident terminal labels:
   negative class: Neuroblast
 Predicted on: all TAPs (the cells whose fate we actually care about because they are undecided).
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -36,7 +37,7 @@ for d in (OUT, MODELS):
 
 HOLDOUT_SAMPLE = "GSM8253799"  # NesCre CR Rep2
 
-POS_TYPES = list(OL_LINEAGE)         # OPC, COP, OL
+POS_TYPES = list(OL_LINEAGE)  # OPC, COP, OL
 NEG_TYPES = ["Neuroblast"]
 TAP_TYPE = "TAP"
 
@@ -66,7 +67,9 @@ def run_classifier() -> None:
         print(f"    {k}: {v}")
 
     if HOLDOUT_SAMPLE not in adata.obs["sample_id"].unique().tolist():
-        raise SystemExit(f"held-out sample {HOLDOUT_SAMPLE} not found in obs['sample_id']")
+        raise SystemExit(
+            f"held-out sample {HOLDOUT_SAMPLE} not found in obs['sample_id']"
+        )
 
     bias = (
         adata.obs["score_OPC"] + adata.obs["score_COP"] + adata.obs["score_OL"]
@@ -80,7 +83,9 @@ def run_classifier() -> None:
     feat = adata.var_names[hvg_mask].tolist()
     before = len(feat)
     feat = [g for g in feat if g not in EXCLUDED_MARKERS]
-    print(f"\n=== features: {before} HVGs - {before - len(feat)} markers = {len(feat)} ===")
+    print(
+        f"\n=== features: {before} HVGs - {before - len(feat)} markers = {len(feat)} ==="
+    )
 
     # ------------------------------------------------------------------
     # Model Training / held-out split
@@ -91,10 +96,14 @@ def run_classifier() -> None:
     train_mask = is_eligible.values & ~held_out_mask
     test_mask = is_eligible.values & held_out_mask
 
-    print(f"  train cells: {train_mask.sum()} (POS={int(y_all[train_mask].sum())}, "
-          f"NEG={int((y_all[train_mask] == 0).sum())})")
-    print(f"  held-out cells: {test_mask.sum()} (POS={int(y_all[test_mask].sum())}, "
-          f"NEG={int((y_all[test_mask] == 0).sum())})")
+    print(
+        f"  train cells: {train_mask.sum()} (POS={int(y_all[train_mask].sum())}, "
+        f"NEG={int((y_all[train_mask] == 0).sum())})"
+    )
+    print(
+        f"  held-out cells: {test_mask.sum()} (POS={int(y_all[test_mask].sum())}, "
+        f"NEG={int((y_all[test_mask] == 0).sum())})"
+    )
 
     X_full = adata[:, feat].X
     X_train = _to_dense(X_full[train_mask])
@@ -141,11 +150,10 @@ def run_classifier() -> None:
     out_of_sample_comparison = y_test_frame.join(
         p_test_frame,
     )
-    out_of_sample_comparison["prediction_is_ol"] = out_of_sample_comparison["p_ol_nb"].apply(
-        lambda p: 1 if p > 0.5 else 0
-    )
+    out_of_sample_comparison["prediction_is_ol"] = out_of_sample_comparison[
+        "p_ol_nb"
+    ].apply(lambda p: 1 if p > 0.5 else 0)
     out_of_sample_comparison.to_csv(f"{OUT}/out_of_sample_comparison.csv")
-
 
     # ------------------------------------------------------------------
     # SHAP feature importance
@@ -157,12 +165,22 @@ def run_classifier() -> None:
     explainer = shap.TreeExplainer(clf)
     sv = explainer.shap_values(X_train[idx])
     shap_abs_mean = np.abs(sv).mean(axis=0)
-    importance = pd.DataFrame({
-        "gene": feat,
-        "shap_mean_abs": shap_abs_mean,
-        "gain": [clf.get_booster().get_score(importance_type="gain").get(f"f{i}", 0.0)
-                 for i in range(len(feat))],
-    }).sort_values("shap_mean_abs", ascending=False).reset_index(drop=True)
+    importance = (
+        pd.DataFrame(
+            {
+                "gene": feat,
+                "shap_mean_abs": shap_abs_mean,
+                "gain": [
+                    clf.get_booster()
+                    .get_score(importance_type="gain")
+                    .get(f"f{i}", 0.0)
+                    for i in range(len(feat))
+                ],
+            }
+        )
+        .sort_values("shap_mean_abs", ascending=False)
+        .reset_index(drop=True)
+    )
 
     importance.head(50).to_csv(OUT / "trigger_genes.csv", index=False)
     print(f"  top-50 features -> trigger_genes.csv")
@@ -175,13 +193,15 @@ def run_classifier() -> None:
     X_dense_all = _to_dense(X_full)
     p_all = clf.predict_proba(X_dense_all)[:, 1]
 
-    df = pd.DataFrame({
-        "cell_id": adata.obs_names,
-        "sample_id": adata.obs["sample_id"].values,
-        "cell_type": adata.obs["cell_type"].values,
-        "bias": adata.obs["bias"].values,
-        "prob_OL": p_all,
-    })
+    df = pd.DataFrame(
+        {
+            "cell_id": adata.obs_names,
+            "sample_id": adata.obs["sample_id"].values,
+            "cell_type": adata.obs["cell_type"].values,
+            "bias": adata.obs["bias"].values,
+            "prob_OL": p_all,
+        }
+    )
     df.to_csv(OUT / "ol_commitment.csv", index=False)
     print(f"  per-cell predictions -> ol_commitment.csv")
 
@@ -192,11 +212,19 @@ def run_classifier() -> None:
     # ------------------------------------------------------------------
     # Summary
     # ------------------------------------------------------------------
-    summary = pd.DataFrame([{
-        "auc": auc, "ap": ap, "spw": spw,
-        "best_iter": int(clf.best_iteration), "val_auc": float(clf.best_score),
-        "n_features": len(feat), "n_top_features": len(importance),
-    }])
+    summary = pd.DataFrame(
+        [
+            {
+                "auc": auc,
+                "ap": ap,
+                "spw": spw,
+                "best_iter": int(clf.best_iteration),
+                "val_auc": float(clf.best_score),
+                "n_features": len(feat),
+                "n_top_features": len(importance),
+            }
+        ]
+    )
     print("\nclassifier summary:")
     print(summary.to_string(index=False))
     print("\ndone")

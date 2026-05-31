@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="got rid of unnecessary comments" />
+    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="added project narrative">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PROJECT_NARRATIVE.md" beforeDir="false" afterPath="$PROJECT_DIR$/PROJECT_NARRATIVE.md" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -36,8 +39,8 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Python.run_pipeline.executor": "Debug",
-    "Python.run_pipeline_no_rebuild.executor": "Run",
-    "Python.run_pipeline_rebuild.executor": "Run",
+    "Python.run_pipeline_no_rebuild.executor": "Debug",
+    "Python.run_pipeline_rebuild.executor": "Debug",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "main",
     "last_opened_file_path": "/Users/viv/development/nsc-vsvz-classification",
@@ -46,6 +49,9 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
@@ -237,7 +243,15 @@
       <option name="project" value="LOCAL" />
       <updated>1780241227428</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="added project narrative">
+      <option name="closed" value="true" />
+      <created>1780241349470</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1780241349470</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -268,11 +282,22 @@
     <MESSAGE value="fixed the mapping issue" />
     <MESSAGE value="renamed file" />
     <MESSAGE value="got rid of unnecessary comments" />
-    <option name="LAST_COMMIT_MESSAGE" value="got rid of unnecessary comments" />
+    <MESSAGE value="added project narrative" />
+    <option name="LAST_COMMIT_MESSAGE" value="added project narrative" />
   </component>
   <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/preprocess.py</url>
+          <line>13</line>
+          <option name="timeStamp" value="12" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">
+        <watch expression="adata.var_names.str" language="Python" />
         <watch expression="tap.obs[[&quot;sample_id&quot;,&quot;pred_p_OL&quot;, &quot;bias&quot;]]" language="Python" />
       </configuration>
     </watches-manager>
