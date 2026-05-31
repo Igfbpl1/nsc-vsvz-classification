@@ -87,6 +87,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/panglao_panel.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/tap_comparison.csv">
           <value>
             <Attribute>

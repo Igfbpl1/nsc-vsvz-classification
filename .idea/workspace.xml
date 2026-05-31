@@ -4,9 +4,21 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="mapped code to part 2: preprocessing">
+    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="added broad steps at beginning">
+      <change afterPath="$PROJECT_DIR$/panglao_panel.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/panglao_panel.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/csv-editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/csv-editor.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PROJECT_NARRATIVE.md" beforeDir="false" afterPath="$PROJECT_DIR$/PROJECT_NARRATIVE.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/markers.py" beforeDir="false" afterPath="$PROJECT_DIR$/markers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/barcode_to_cell_type_mapping.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/barcode_to_cell_type_mapping.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/ol_commitment.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/ol_commitment.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/out_of_sample_comparison.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/out_of_sample_comparison.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/out_of_sample_tap_comparison_test2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/out_of_sample_tap_comparison_test2.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/out_of_sample_tap_comparison_test2.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/out_of_sample_tap_comparison_test2.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/trigger_genes.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/trigger_genes.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/~$barcode_to_cell_type_mapping_table.xlsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/train_ol_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_ol_classifier.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,7 +52,7 @@
   "keyToString": {
     "Python.run_pipeline.executor": "Debug",
     "Python.run_pipeline_no_rebuild.executor": "Debug",
-    "Python.run_pipeline_rebuild.executor": "Debug",
+    "Python.run_pipeline_rebuild.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "main",
     "last_opened_file_path": "/Users/viv/development/nsc-vsvz-classification",
@@ -267,7 +279,15 @@
       <option name="project" value="LOCAL" />
       <updated>1780244733930</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="added broad steps at beginning">
+      <option name="closed" value="true" />
+      <created>1780248711218</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1780248711218</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -301,7 +321,8 @@
     <MESSAGE value="added project narrative" />
     <MESSAGE value="update" />
     <MESSAGE value="mapped code to part 2: preprocessing" />
-    <option name="LAST_COMMIT_MESSAGE" value="mapped code to part 2: preprocessing" />
+    <MESSAGE value="added broad steps at beginning" />
+    <option name="LAST_COMMIT_MESSAGE" value="added broad steps at beginning" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
