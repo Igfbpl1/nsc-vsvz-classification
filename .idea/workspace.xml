@@ -4,9 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="fixed the mapping issue">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/raw_barocdes_genes_top100.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/raw_barcodes_genes_top100.csv" afterDir="false" />
+    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="renamed file">
+      <change beforePath="$PROJECT_DIR$/.idea/nsc-vsvz-classification.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/nsc-vsvz-classification.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/markers.py" beforeDir="false" afterPath="$PROJECT_DIR$/markers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/preprocess.py" beforeDir="false" afterPath="$PROJECT_DIR$/preprocess.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tap_analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/tap_analysis.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train_ol_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_ol_classifier.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -224,8 +227,27 @@
       <option name="project" value="LOCAL" />
       <updated>1779733805865</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="renamed file">
+      <option name="closed" value="true" />
+      <created>1780240321053</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1780240321053</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="added raw data" />
@@ -242,7 +264,8 @@
     <MESSAGE value="made test 2" />
     <MESSAGE value="fixed the mapping issue (like a true programmer)" />
     <MESSAGE value="fixed the mapping issue" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed the mapping issue" />
+    <MESSAGE value="renamed file" />
+    <option name="LAST_COMMIT_MESSAGE" value="renamed file" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>

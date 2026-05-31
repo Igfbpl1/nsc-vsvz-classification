@@ -1,4 +1,4 @@
-"""QC, normalization, dim reduction, clustering."""
+"""QC, normalization, dimension reduction, clustering."""
 from __future__ import annotations
 
 import anndata as ad

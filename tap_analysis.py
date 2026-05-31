@@ -1,8 +1,3 @@
-"""Translate the per-TAP commitment probability (markers-excluded classifier) into biology:
-  1. Committed-TAP fraction by experimental condition — does injury push more TAPs toward OL?
-  2. Within-TAP differential expression (high-commit vs low-commit), filtered to non-marker genes
-     — candidate trigger genes that distinguish committed from uncommitted TAPs.
-"""
 from __future__ import annotations
 
 from pathlib import Path

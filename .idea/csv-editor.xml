@@ -17,6 +17,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/outputs/normalized_barcodes_genes_top100.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/outputs/ol_commitment.csv">
           <value>
             <Attribute>

@@ -1,7 +1,7 @@
 """Train OL-lineage vs Neuroblast similarity classifier; predict OL commitment on TAPs.
 
-Goal (per CLAUDE.md): given a cell's expression, score how committed it looks toward
-the oligodendrocyte repair lineage. Feature importances = candidate trigger genes.
+Goal: given a cell's expression, score how committed it looks toward
+the oligodendrocyte repair lineage. The features of the model are the candidate trigger genes.
 
 The model is trained on HVGs **minus the 29 known lineage markers** (Pdgfra, Cspg4,
 Olig1, Olig2, Sox10, Cnp, Lhfpl3, Mbp, Mog, Plp1, Mobp, …). Forcing the model to find
@@ -10,8 +10,7 @@ non-marker signal makes the SHAP importance list a useful trigger-gene candidate
 Train on cells with confident terminal labels:
   positive class: OPC + COP + OL
   negative class: Neuroblast
-Held out for honest generalization AUC: one entire sample (GSM8253799).
-Predicted on: all TAPs (the cells whose fate we actually care about).
+Predicted on: all TAPs (the cells whose fate we actually care about because they are undecided).
 """
 from __future__ import annotations
 
@@ -49,7 +48,7 @@ def _to_dense(X) -> np.ndarray:
 
 
 def labels_for(adata: ad.AnnData) -> pd.Series:
-    """1 = OL-lineage, 0 = Neuroblast, NaN = neither (excluded from train/eval)."""
+    """1 = OL-lineage, 0 = Neuroblast, NaN = neither (excluded from train/evaluation)."""
     y = pd.Series(np.nan, index=adata.obs_names, dtype=float)
     y[adata.obs["cell_type"].isin(POS_TYPES)] = 1.0
     y[adata.obs["cell_type"].isin(NEG_TYPES)] = 0.0
@@ -84,7 +83,7 @@ def run_classifier() -> None:
     print(f"\n=== features: {before} HVGs - {before - len(feat)} markers = {len(feat)} ===")
 
     # ------------------------------------------------------------------
-    # Train / held-out split
+    # Model Training / held-out split
     # ------------------------------------------------------------------
     y_all = labels_for(adata)
     is_eligible = y_all.notna()
@@ -113,7 +112,7 @@ def run_classifier() -> None:
     print(f"  scale_pos_weight = {spw:.3f}")
 
     # ------------------------------------------------------------------
-    # Fit
+    # Model Fitting
     # ------------------------------------------------------------------
     clf = xgb.XGBClassifier(
         n_estimators=500,
@@ -146,9 +145,7 @@ def run_classifier() -> None:
         lambda p: 1 if p > 0.5 else 0
     )
     out_of_sample_comparison.to_csv(f"{OUT}/out_of_sample_comparison.csv")
-    model_path = MODELS / "ol_classifier.json"
-    clf.save_model(model_path)
-    print(f"  model -> {model_path}")
+
 
     # ------------------------------------------------------------------
     # SHAP feature importance
@@ -200,7 +197,6 @@ def run_classifier() -> None:
         "best_iter": int(clf.best_iteration), "val_auc": float(clf.best_score),
         "n_features": len(feat), "n_top_features": len(importance),
     }])
-    summary.to_csv(OUT / "classifier_summary.csv", index=False)
     print("\nclassifier summary:")
     print(summary.to_string(index=False))
     print("\ndone")

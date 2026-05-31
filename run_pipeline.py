@@ -29,7 +29,7 @@ def build_processed() -> None:
     adata = data_io.load_all(RAW)
     adata = preprocess.qc_filter(adata)
     print("completed quality control")
-    adata.to_df().head(100).to_csv(f"{OUT}/raw_barocdes_genes_top100.csv")
+    adata.to_df().head(100).to_csv(f"{OUT}/raw_barcodes_genes_top100.csv")
     adata = preprocess.normalize_and_embed(adata)
     print("completed normalizing and embeding")
     adata.to_df().head(100).to_csv(f"{OUT}/normalized_barcodes_genes_top100.csv")

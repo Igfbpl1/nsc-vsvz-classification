@@ -1,4 +1,4 @@
-"""V-SVZ + OL-lineage marker gene panels (mouse, capitalized symbols)."""
+"""V-SVZ + OL-lineage marker gene panels from the literature."""
 
 MARKERS = {
     "qNSC":        ["Gfap", "Slc1a3", "Aldh1l1", "Vim", "Sox2", "Sox9", "Hes5", "Aldoc", "Apoe", "Id3"],
