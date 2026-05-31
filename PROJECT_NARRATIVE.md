@@ -33,22 +33,44 @@ SCANPY · QC (preprocess.py)
 - Quality control is then performed on this data (which is all done by Scanpy - Reference 4), removing noise and ensuring that the resulting data are usable and can be applied.   
 - This is saved to normalized_barcodes_genes_top100.csv. This can be found here: [normalized_barcodes_genes_top100.csv](https://drive.google.com/file/d/1ixTDt2PSAtAyBZBo_f_x72SF4ZLoVJZy/view?usp=sharing) 
 
-Step 4  
+Step 4 (Reference 4 - All Scanpy methods come from this reference: https://scanpy.readthedocs.io/en/stable/how-to/cell-cycle.html)
 SCANPY · normalize → embed → cluster → annotate  
 (preprocess.py + markers.py, orchestrated by run_pipeline.py)
 
-* normalize_total(target_sum=1e4) + log1p (Reference 4)  
-* highly_variable_genes (2,000, Seurat flavor, batch_key=sample_id)  
-* scale → PCA(30) → neighbors(15) → UMAP  
-* leiden(resolution=0.8)  
-* Score_genes (sc.tl.score_genes) (Reference #4) per marker panel (12 cell types) →  
+* normalize_total(target_sum=1e4) + log1p   ``sc.pp.normalize_total(adata, target_sum=1e4)``, ``sc.pp.log1p(adata)``
+* highly_variable_genes (2,000, Seurat flavor, batch_key=sample_id)  ``sc.pp.highly_variable_genes(
+        adata, n_top_genes=n_hvg, flavor="seurat", batch_key="sample_id"
+    )``
+* scale → PCA(30) → neighbors(15) → UMAP ``sc.pp.scale(adata_hvg, max_value=10)
+    sc.tl.pca(adata_hvg, n_comps=n_pcs)
+    sc.pp.neighbors(adata_hvg, n_pcs=n_pcs, n_neighbors=15)
+    sc.tl.umap(adata_hvg)``
+* leiden(resolution=0.8)  ``sc.tl.leiden(
+        adata_hvg,
+        resolution=resolution,
+        flavor="igraph",
+        n_iterations=2,
+        directed=False,
+    )
+``
+* score_genes (sc.tl.score_genes) (Reference #4) per marker panel (12 cell types) →  
   {qNSC, aNSC, TAP, Neuroblast, OPC, COP, OL,  
-  Astrocyte, Microglia, Ependymal, Endothelial, Mural}  
-* cluster majority-vote → cell_type per cell
+  Astrocyte, Microglia, Ependymal, Endothelial, Mural}  ``sc.tl.score_genes(
+            adata,
+            gene_list=present,
+            score_name=f"score_{name}",
+            ctrl_size=min(50, max(10, len(present) * 5)),
+            random_state=0,
+        )
+``
+* convert score for each panel to cell_type, then classify fate_OL_lineage
 
-~~~
+| score_qNSC | score_aNSC | score_TAP | score_Neuro | score_OPC | score_COP | score_OL | score_Astroc | score_Microg | score_Epend | score_Endotl | score_Mural | cell_type |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| -0.0245925 | 0.15729764 | 0.49285538 | 1.10410176 | -0.238148 | -0.1218039 | -0.6998098 | -0.3862443 | -0.8701482 | -0.3226306 | -0.1220567 | -0.2404025 | Neuroblast |
+| -0.012597 | -0.2261938 | -0.4950369 | -0.6583718 | 0.59983178 | 0.28798455 | 3.10097177 | -0.3243312 | -0.6981846 | -0.0509202 | -0.162698 | -0.4242628 | OL |
 
-~~~
+
 - Since any combo of genes that are part of any of the twelve panels can be found in these cells, a concept called Leiden clustering (Reference 4) needs to be performed in order to find the relative expression of every gene to the other.  
 - After this was completed, I had to look at the literature to find the canonical markers. There are 12 (technically 11, because aNSC - active NSC - folds into TAP/qNSC) types of V-SVZ cells in this niche (a few of which we don’t care about - specifically, we only care about 5). I first needed to figure out what the canonical, well-known, representative genes of each of these cells are (organized in Table 1), which was found in the actual literature. After this is determined, each cell type is classified by the canonical representative genes, and finally, a data table results (organized in Table 2):  
 - This is all saved to barcode_to_cell_type_mapping.csv. This can be found here: [barcode_to_cell_type_mapping_table.xlsx](https://docs.google.com/spreadsheets/d/1t0ZHQz5KMhODr9L-O4rOQ82MiW5zbme2/edit?usp=sharing&ouid=111504262478734653360&rtpof=true&sd=true). This is a Google Drive sheet that has everything worth mentioning.  
