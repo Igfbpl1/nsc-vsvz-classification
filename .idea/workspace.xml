@@ -4,19 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="added broad steps at beginning">
+    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="used Cell_marker 2.0">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/markers.py" beforeDir="false" afterPath="$PROJECT_DIR$/markers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/barcode_to_cell_type_mapping.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/barcode_to_cell_type_mapping.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/ol_commitment.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/ol_commitment.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/out_of_sample_comparison.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/out_of_sample_comparison.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/out_of_sample_comparison_test1.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/out_of_sample_comparison_test1.xlsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/out_of_sample_tap_comparison_test2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/out_of_sample_tap_comparison_test2.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/out_of_sample_tap_comparison_test2.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/out_of_sample_tap_comparison_test2.xlsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/trigger_genes.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/trigger_genes.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/panglao_panel.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/panglao_panel.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/train_ol_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_ol_classifier.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -285,7 +274,15 @@
       <option name="project" value="LOCAL" />
       <updated>1780248711218</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="used Cell_marker 2.0">
+      <option name="closed" value="true" />
+      <created>1780272117304</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1780272117304</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -320,7 +317,8 @@
     <MESSAGE value="update" />
     <MESSAGE value="mapped code to part 2: preprocessing" />
     <MESSAGE value="added broad steps at beginning" />
-    <option name="LAST_COMMIT_MESSAGE" value="added broad steps at beginning" />
+    <MESSAGE value="used Cell_marker 2.0" />
+    <option name="LAST_COMMIT_MESSAGE" value="used Cell_marker 2.0" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>
