@@ -5,19 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="added broad steps at beginning">
-      <change afterPath="$PROJECT_DIR$/panglao_panel.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/panglao_panel.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/csv-editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/csv-editor.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PROJECT_NARRATIVE.md" beforeDir="false" afterPath="$PROJECT_DIR$/PROJECT_NARRATIVE.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/markers.py" beforeDir="false" afterPath="$PROJECT_DIR$/markers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/outputs/barcode_to_cell_type_mapping.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/barcode_to_cell_type_mapping.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/outputs/ol_commitment.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/ol_commitment.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/outputs/out_of_sample_comparison.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/out_of_sample_comparison.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/out_of_sample_comparison_test1.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/out_of_sample_comparison_test1.xlsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/outputs/out_of_sample_tap_comparison_test2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/out_of_sample_tap_comparison_test2.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/outputs/out_of_sample_tap_comparison_test2.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/out_of_sample_tap_comparison_test2.xlsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/outputs/trigger_genes.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/trigger_genes.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/~$barcode_to_cell_type_mapping_table.xlsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/panglao_panel.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/panglao_panel.md" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/train_ol_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_ol_classifier.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -48,17 +46,17 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.run_pipeline.executor": "Debug",
-    "Python.run_pipeline_no_rebuild.executor": "Debug",
-    "Python.run_pipeline_rebuild.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "/Users/viv/development/nsc-vsvz-classification",
-    "settings.editor.selected.configurable": "preferences.lookFeel"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.run_pipeline.executor&quot;: &quot;Debug&quot;,
+    &quot;Python.run_pipeline_no_rebuild.executor&quot;: &quot;Debug&quot;,
+    &quot;Python.run_pipeline_rebuild.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/viv/development/nsc-vsvz-classification&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
@@ -325,15 +323,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="added broad steps at beginning" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/preprocess.py</url>
-          <line>16</line>
-          <option name="timeStamp" value="12" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">
         <watch expression="adata.var_names.str" language="Python" />

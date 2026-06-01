@@ -37,7 +37,7 @@ for d in (OUT, MODELS):
 
 HOLDOUT_SAMPLE = "GSM8253799"  # NesCre CR Rep2
 
-POS_TYPES = list(OL_LINEAGE)  # OPC, OL
+POS_TYPES = list(OL_LINEAGE)  # OPC, COP, OL
 NEG_TYPES = ["Neuroblast"]
 TAP_TYPE = "TAP"
 
@@ -71,9 +71,9 @@ def run_classifier() -> None:
             f"held-out sample {HOLDOUT_SAMPLE} not found in obs['sample_id']"
         )
 
-    bias = (adata.obs["score_OPC"] + adata.obs["score_OL"]) / 2 - adata.obs[
-        "score_Neuroblast"
-    ]
+    bias = (
+        adata.obs["score_OPC"] + adata.obs["score_COP"] + adata.obs["score_OL"]
+    ) / 3 - adata.obs["score_Neuroblast"]
     adata.obs["bias"] = bias.values
 
     # ------------------------------------------------------------------
