@@ -26,7 +26,6 @@ MARKERS = {
         "Dlx5",
         "Pfn2",
         "Foxc1",
-        "Dchs1",
     ],
     "OPC": [
         "Pdgfra",
@@ -55,7 +54,6 @@ MARKERS = {
         "Sox10",
         "Cldn11",
         "Ermn",
-        "Apc",
     ],
     "Astrocyte": [
         "Aqp4",
