@@ -107,7 +107,6 @@ def normalize_and_embed(
     sc.pp.scale(adata_hvg, max_value=10)
     sc.tl.pca(adata_hvg, n_comps=n_pcs)
     sc.pp.neighbors(adata_hvg, n_pcs=n_pcs, n_neighbors=15)
-    sc.tl.umap(adata_hvg)
     sc.tl.leiden(
         adata_hvg,
         resolution=resolution,
@@ -117,7 +116,6 @@ def normalize_and_embed(
     )
 
     adata.obsm["X_pca"] = adata_hvg.obsm["X_pca"]
-    adata.obsm["X_umap"] = adata_hvg.obsm["X_umap"]
     adata.obs["leiden"] = adata_hvg.obs["leiden"].values
     adata.obsp["connectivities"] = adata_hvg.obsp["connectivities"]
     adata.obsp["distances"] = adata_hvg.obsp["distances"]

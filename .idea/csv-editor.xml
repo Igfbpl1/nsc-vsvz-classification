@@ -10,7 +10,14 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="/outputs/classifier_summary.csv">
+        <entry key="/outputs/failed_max_pct_mt_cells_metadata_top10.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/outputs/failed_min_genes_cells_metadata_top10.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -45,56 +52,7 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="/outputs/raw_barocdes_genes_top100.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/outputs/tap_candidate_trigger_genes.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/outputs/tap_committed_by_condition.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/outputs/tap_committed_fisher.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/outputs/tap_high_vs_low_commit_DE.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
         <entry key="/outputs/trigger_genes.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/panglao_panel.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/tap_comparison.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
