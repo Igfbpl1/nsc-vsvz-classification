@@ -35,7 +35,7 @@ MODELS = ROOT / "models"
 for d in (OUT, MODELS):
     d.mkdir(parents=True, exist_ok=True)
 
-HOLDOUT_SAMPLE = "GSM8253799"  # NesCre CR Rep2
+HOLDOUT_SAMPLES = ["GSM8253796", "GSM8253797", "GSM8253798", "GSM8253799"]  # NesCre CR Rep2/Rep1
 
 POS_TYPES = list(OL_LINEAGE)  # OPC, COP, OL
 NEG_TYPES = ["Neuroblast"]
@@ -66,9 +66,9 @@ def run_classifier() -> None:
     for k, v in counts.items():
         print(f"    {k}: {v}")
 
-    if HOLDOUT_SAMPLE not in adata.obs["sample_id"].unique().tolist():
+    if not all(s in adata.obs["sample_id"].unique().tolist() for s in HOLDOUT_SAMPLES):
         raise SystemExit(
-            f"held-out sample {HOLDOUT_SAMPLE} not found in obs['sample_id']"
+            f"held-out samples {', '.join(HOLDOUT_SAMPLES)} not found in obs['sample_id']"
         )
 
     bias = (
@@ -92,7 +92,7 @@ def run_classifier() -> None:
     # ------------------------------------------------------------------
     y_all = labels_for(adata)
     is_eligible = y_all.notna()
-    held_out_mask = (adata.obs["sample_id"] == HOLDOUT_SAMPLE).values
+    held_out_mask = adata.obs["sample_id"].isin(HOLDOUT_SAMPLES).values
     train_mask = is_eligible.values & ~held_out_mask
     test_mask = is_eligible.values & held_out_mask
 
@@ -144,7 +144,7 @@ def run_classifier() -> None:
     p_test = clf.predict_proba(X_test)[:, 1]
     auc = roc_auc_score(y_test, p_test)
     ap = average_precision_score(y_test, p_test)
-    print(f"  held-out ({HOLDOUT_SAMPLE}) AUC: {auc:.4f}, AP: {ap:.4f}")
+    print(f"  held-out ({', '.join(HOLDOUT_SAMPLES)}) AUC: {auc:.4f}, AP: {ap:.4f}")
     y_test_frame = pd.DataFrame(y_test, columns=["fate_OL_lineage"])
     p_test_frame = pd.DataFrame(p_test, columns=["p_ol_nb"])
     out_of_sample_comparison = y_test_frame.join(
@@ -183,7 +183,7 @@ def run_classifier() -> None:
     )
 
     importance.head(50).to_csv(OUT / "trigger_genes.csv", index=False)
-    print(f"  top-50 features -> trigger_genes.csv")
+    print("  top-50 features -> trigger_genes.csv")
     print(importance.head(15).to_string(index=False))
 
     # ------------------------------------------------------------------
@@ -203,7 +203,7 @@ def run_classifier() -> None:
         }
     )
     df.to_csv(OUT / "ol_commitment.csv", index=False)
-    print(f"  per-cell predictions -> ol_commitment.csv")
+    print("  per-cell predictions -> ol_commitment.csv")
 
     tap_mask = adata.obs["cell_type"].values == TAP_TYPE
     rho, p_rho = spearmanr(p_all[tap_mask], adata.obs["bias"].values[tap_mask])

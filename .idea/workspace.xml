@@ -4,15 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="change">
-      <change afterPath="$PROJECT_DIR$/outputs/normalized_barcodes_genes_top100.xlsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/outputs/raw_barcodes_genes_top100.xlsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/outputs/trigger_genes.xlsx" afterDir="false" />
+    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="update">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/markers.py" beforeDir="false" afterPath="$PROJECT_DIR$/markers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/barcode_to_cell_type_mapping_table.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/barcode_to_cell_type_mapping_table.xlsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/out_of_sample_comparison.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/out_of_sample_comparison.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/out_of_sample_tap_comparison_test2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/out_of_sample_tap_comparison_test2.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train_ol_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_ol_classifier.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,12 +39,12 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Python.run_pipeline.executor": "Debug",
-    "Python.run_pipeline_no_rebuild.executor": "Debug",
+    "Python.run_pipeline_no_rebuild.executor": "Run",
     "Python.run_pipeline_rebuild.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "cleanup-code",
     "last_opened_file_path": "/Users/viv/development/nsc-vsvz-classification",
-    "settings.editor.selected.configurable": "preferences.lookFeel"
+    "settings.editor.selected.configurable": "preferences.pluginManager"
   }
 }]]></component>
   <component name="RecentsManager">
@@ -61,7 +55,7 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.run_pipeline_rebuild">
+  <component name="RunManager" selected="Python.run_pipeline_no_rebuild">
     <configuration name="run_pipeline_no_rebuild" type="PythonConfigurationType" factoryName="Python">
       <module name="nsc-vsvz-classification" />
       <option name="ENV_FILES" value="" />
@@ -71,7 +65,6 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="SDK_NAME" value="Python 3.12 (nsc-vsvz-classification)" />
       <option name="WORKING_DIRECTORY" value="" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -94,7 +87,6 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="SDK_NAME" value="Python 3.12 (nsc-vsvz-classification)" />
       <option name="WORKING_DIRECTORY" value="" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -337,19 +329,11 @@
     <option name="LAST_COMMIT_MESSAGE" value="change" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/train_ol_classifier.py</url>
-          <line>84</line>
-          <option name="timeStamp" value="15" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">
         <watch expression="adata.var_names.str" language="Python" />
         <watch expression="tap.obs[[&quot;sample_id&quot;,&quot;pred_p_OL&quot;, &quot;bias&quot;]]" language="Python" />
+        <watch expression="[g for g in feat if g not in EXCLUDED_MARKERS][-10:]" language="Python" />
       </configuration>
     </watches-manager>
   </component>
