@@ -29,7 +29,7 @@ RAW = ROOT / "data" / "raw"
 
 def build_processed() -> None:
     adata = data_io.load_all(RAW)
-    adata = preprocess.qc_filter(adata)
+    adata = preprocess.qc_filter(adata, output_dir=OUT)
     print("completed quality control")
     adata.to_df().head(100).to_csv(f"{OUT}/raw_barcodes_genes_top100.csv")
     adata = preprocess.normalize_and_embed(adata)
