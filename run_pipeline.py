@@ -56,6 +56,7 @@ def build_processed() -> None:
     adata.obs["cell_type"] = adata.obs["leiden"].map(cluster_to_type).astype("category")
     adata.uns["cluster_to_type"] = cluster_to_type
     adata.obs["fate_OL_lineage"] = adata.obs["cell_type"].isin(OL_LINEAGE).astype(int)
+    sc.pl.umap(adata, color="cell_type")
 
     OUT.mkdir(exist_ok=True)
     h5 = OUT / "processed.h5ad"
