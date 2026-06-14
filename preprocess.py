@@ -147,7 +147,7 @@ def normalize_and_embed(
     )
     # Export Leiden clustering results
     sc.tl.umap(adata_hvg)
-    sc.pl.umap(adata_hvg, color=["leiden"])
+    sc.pl.umap(adata_hvg, color=["leiden"], size=40, alpha=1.0)
     adata.obsm["X_pca"] = adata_hvg.obsm["X_pca"]
     adata.obsm["X_umap"] = adata_hvg.obsm["X_umap"]
     adata.obs["leiden"] = adata_hvg.obs["leiden"].values
