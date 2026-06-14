@@ -67,7 +67,9 @@ def load_all(raw_dir: Path) -> ad.AnnData:
         a.obs_names = [f"{sample.gsm}_{b}" for b in a.obs_names]
         a.var_names_make_unique()
         parts.append(a)
-        print(f"  {sample.gsm} {sample.label_in_filename}: {a.n_obs} cells × {a.n_vars} genes")
+        print(
+            f"  {sample.gsm} {sample.label_in_filename}: {a.n_obs} cells × {a.n_vars} genes"
+        )
 
     combined = ad.concat(parts, axis=0, join="inner", merge="same", index_unique=None)
     combined.var_names_make_unique()

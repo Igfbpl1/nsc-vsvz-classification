@@ -22,7 +22,7 @@ def run_analysis() -> None:
 
     tap = adata[adata.obs["cell_type"] == "TAP"].copy()
     print(f"TAPs: {tap.n_obs}")
-    tap_frame = tap.obs[["sample_id", "pred_p_OL", "bias"]]
+    tap_frame = tap.obs[["sample_id", "pred_p_OL", "bias"]].copy()
     tap_frame["bias_is_ol"] = tap_frame["bias"].apply(lambda p: 1 if p > 0 else 0)
     tap_frame["prediction_is_ol"] = tap_frame["pred_p_OL"].apply(
         lambda p: 1 if p > 0.5 else 0

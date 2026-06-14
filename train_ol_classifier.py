@@ -35,7 +35,12 @@ MODELS = ROOT / "models"
 for d in (OUT, MODELS):
     d.mkdir(parents=True, exist_ok=True)
 
-HOLDOUT_SAMPLES = ["GSM8253796", "GSM8253797", "GSM8253798", "GSM8253799"]  # NesCre CR Rep2/Rep1
+HOLDOUT_SAMPLES = [
+    "GSM8253796",
+    "GSM8253797",
+    "GSM8253798",
+    "GSM8253799",
+]  # NesCre CR Rep2/Rep1
 
 POS_TYPES = list(OL_LINEAGE)  # OPC, COP, OL
 NEG_TYPES = ["Neuroblast"]

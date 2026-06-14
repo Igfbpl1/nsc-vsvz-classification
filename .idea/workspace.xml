@@ -4,12 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="add filtered genes">
+    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="update leiden">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/barcode_to_cell_type_mapping_table.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/barcode_to_cell_type_mapping_table.xlsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/leiden.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/leiden.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/preprocess.py" beforeDir="false" afterPath="$PROJECT_DIR$/preprocess.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run_pipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/run_pipeline.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tap_analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/tap_analysis.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uv.lock" beforeDir="false" afterPath="$PROJECT_DIR$/uv.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,22 +43,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.run_pipeline.executor&quot;: &quot;Debug&quot;,
-    &quot;Python.run_pipeline_no_rebuild.executor&quot;: &quot;Run&quot;,
-    &quot;Python.run_pipeline_rebuild.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/viv/development/nsc-vsvz-classification&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.run_pipeline.executor": "Debug",
+    "Python.run_pipeline_no_rebuild.executor": "Run",
+    "Python.run_pipeline_rebuild.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/Users/chandra/development/nsc-vsvz-classification",
+    "settings.editor.selected.configurable": "preferences.pluginManager"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/outputs" />
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
@@ -329,7 +329,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781360534674</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary="update leiden">
+      <option name="closed" value="true" />
+      <created>1781436455952</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1781436455952</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -360,7 +368,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="update gitignore" />
     <MESSAGE value="set up packages" />
     <MESSAGE value="run_pipeline and rebuilt set up" />
     <MESSAGE value="ingested data and created csv for viewing" />
@@ -385,6 +392,7 @@
     <MESSAGE value="cleanup" />
     <MESSAGE value="log filtered data" />
     <MESSAGE value="add filtered genes" />
-    <option name="LAST_COMMIT_MESSAGE" value="add filtered genes" />
+    <MESSAGE value="update leiden" />
+    <option name="LAST_COMMIT_MESSAGE" value="update leiden" />
   </component>
 </project>
