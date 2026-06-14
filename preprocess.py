@@ -96,14 +96,20 @@ def normalize_and_embed(
     adata: ad.AnnData, n_hvg: int = 2000, n_pcs: int = 30, resolution: float = 0.8
 ) -> ad.AnnData:
     adata.layers["counts"] = adata.X.copy()
+    adata.to_df().head(10).to_csv("raw_cell_counts_top_10.csv")
     sc.pp.normalize_total(adata, target_sum=1e4)
+    adata.to_df().head(10).to_csv("normalized_cell_counts_top_10.csv")
     sc.pp.log1p(adata)
+    adata.to_df().head(10).to_csv("log1p_cell_counts_top_10.csv")
     sc.pp.highly_variable_genes(
         adata, n_top_genes=n_hvg, flavor="seurat", batch_key="sample_id"
     )
     print(f"  HVGs: {int(adata.var['highly_variable'].sum())}")
 
     adata_hvg = adata[:, adata.var["highly_variable"]].copy()
+    adata_nhvg = adata[:, ~adata.var["highly_variable"]].copy()
+    adata_hvg.to_df().head(10).to_csv("hvg_10.csv")
+    adata_nhvg.to_df().head(10).to_csv("nhvg_10.csv")
     sc.pp.scale(adata_hvg, max_value=10)
     sc.tl.pca(adata_hvg, n_comps=n_pcs)
     sc.pp.neighbors(adata_hvg, n_pcs=n_pcs, n_neighbors=15)
@@ -114,11 +120,9 @@ def normalize_and_embed(
         n_iterations=2,
         directed=False,
     )
-
-    adata.obsm["X_pca"] = adata_hvg.obsm["X_pca"]
+    # Export Leiden clustering results
+    sc.tl.umap(adata_hvg)
+    sc.pl.umap(adata_hvg, color=["leiden"])
     adata.obs["leiden"] = adata_hvg.obs["leiden"].values
-    adata.obsp["connectivities"] = adata_hvg.obsp["connectivities"]
-    adata.obsp["distances"] = adata_hvg.obsp["distances"]
-    adata.uns["neighbors"] = adata_hvg.uns["neighbors"]
-    print(f"  leiden clusters: {adata.obs['leiden'].nunique()}")
+    print(f"  leiden clusters: {adata_hvg.obs['leiden'].nunique()}")
     return adata
