@@ -57,7 +57,6 @@ kb count \
     -c1 cdna_t2c.txt \
     -c2 intron_t2c.txt \
     --workflow lamanno \
-    --loom \
     --kallisto /opt/homebrew/bin/kallisto \
     --bustools /opt/homebrew/bin/bustools \
     "${FASTQS[@]}"

@@ -4,17 +4,30 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="add velocity script">
-      <change afterPath="$PROJECT_DIR$/aws.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/csv-editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/csv-editor.xml" afterDir="false" />
+    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="missed techincal files">
+      <change afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_phase_NSC_TAP.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_phase_TAP_Neuroblast.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_phase_TAP_OL.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_Cntl.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_zoom_NSC_TAP.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_zoom_TAP_Neuroblast.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_zoom_TAP_OL.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/velocity/velocity_combined.h5ad" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_COP.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_NSC.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_Neuroblast.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_OL.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_OPC.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_TAP.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_heatmap_latent_time_heatmap.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_heatmap_latent_time_heatmap.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_latent_time.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_latent_time.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_Cntl_placeholder.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_Cntl_placeholder.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_Cntl_placeholder.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CupRap.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CupRap.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_all.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_all.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_driver_genes.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_driver_genes.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_driver_genes.csv" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/rna_velocity_pipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/rna_velocity_pipeline.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rna_velocity_trajectory.md" beforeDir="false" afterPath="$PROJECT_DIR$/rna_velocity_trajectory.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/run_kb_count.sh" beforeDir="false" afterPath="$PROJECT_DIR$/run_kb_count.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -410,7 +423,23 @@
       <option name="project" value="LOCAL" />
       <updated>1781529935505</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="setup ec2">
+      <option name="closed" value="true" />
+      <created>1781556375218</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1781556375224</updated>
+    </task>
+    <task id="LOCAL-00033" summary="missed techincal files">
+      <option name="closed" value="true" />
+      <created>1781562672131</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1781562672131</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -441,8 +470,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="created csv with all annotations" />
-    <MESSAGE value="made a table which counts each cell type by the marker genes" />
     <MESSAGE value="top 50 genes created, ol_commitment.csv created, bias score + P(OL) created" />
     <MESSAGE value="clean-up" />
     <MESSAGE value="made test 1 for 99.85% accuracy" />
@@ -466,6 +493,8 @@
     <MESSAGE value="fix validate barcodes" />
     <MESSAGE value="more validations" />
     <MESSAGE value="add velocity script" />
-    <option name="LAST_COMMIT_MESSAGE" value="add velocity script" />
+    <MESSAGE value="setup ec2" />
+    <MESSAGE value="missed techincal files" />
+    <option name="LAST_COMMIT_MESSAGE" value="missed techincal files" />
   </component>
 </project>
