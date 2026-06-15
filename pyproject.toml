@@ -8,6 +8,7 @@ dependencies = [
     "anndata>=0.12.13",
     "black>=26.5.1",
     "igraph>=1.0.0",
+    "ipywidgets>=8.1.8",
     "jupyterlab>=4.5.8",
     "leidenalg>=0.11.0",
     "matplotlib>=3.10.9",
@@ -19,7 +20,9 @@ dependencies = [
     "scikit-learn>=1.8.0",
     "scipy>=1.17.1",
     "scrublet>=0.2.3",
+    "scvelo>=0.3.4",
     "shap>=0.51.0",
+    "tqdm>=4.67.3",
     "umap-learn>=0.5.12",
     "xgboost>=3.2.0",
 ]

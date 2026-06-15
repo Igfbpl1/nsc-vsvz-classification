@@ -4,7 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="fix validate barcodes" />
+    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="more validations">
+      <change afterPath="$PROJECT_DIR$/download_GSM8253796.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/rna_velocity_pipeline.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/run_kb_count.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/csv-editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/csv-editor.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uv.lock" beforeDir="false" afterPath="$PROJECT_DIR$/uv.lock" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -374,7 +382,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781525164661</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="more validations">
+      <option name="closed" value="true" />
+      <created>1781525529277</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1781525529277</updated>
+    </task>
+    <option name="localTasksCounter" value="30" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -405,7 +421,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="ingested data and created csv for viewing" />
     <MESSAGE value="quality control, normalizing, and embedding has happened" />
     <MESSAGE value="created csv with all annotations" />
     <MESSAGE value="made a table which counts each cell type by the marker genes" />
@@ -430,6 +445,7 @@
     <MESSAGE value="update leiden" />
     <MESSAGE value="add RNA Velocity &amp; Trajectory Analysis Plan readme" />
     <MESSAGE value="fix validate barcodes" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix validate barcodes" />
+    <MESSAGE value="more validations" />
+    <option name="LAST_COMMIT_MESSAGE" value="more validations" />
   </component>
 </project>
