@@ -124,8 +124,8 @@ def build_sample_adata(
     result.layers["unspliced"] = un_sub.X.copy()
     result.obs["velocity_label"] = label
 
-    # Transfer UMAP from ref (for visualization)
-    result.obsm["X_umap"] = matched_ref.obsm["X_umap"].copy()
+    # Keep ref UMAP for reference; fresh UMAP computed after PCA on velocity cells
+    result.obsm["X_umap_ref"] = matched_ref.obsm["X_umap"].copy()
 
     return result
 
@@ -154,27 +154,52 @@ def main():
     print(f"  combined: {combined.shape[0]:,} cells × {combined.shape[1]:,} genes")
     print(f"  velocity_label counts:\n{combined.obs['velocity_label'].value_counts()}")
 
-    # ── Preprocessing ──────────────────────────────────────────────────────────
+    # ── Preprocessing (mirrors preprocess.normalize_and_embed) ────────────────
     scv.settings.verbosity = 3
     scv.settings.set_figure_params("scvelo", figsize=(8, 6))
 
-    print("\n[scVelo] Filtering genes ...")
+    print("\n[scVelo] Filtering genes with low shared counts ...")
     scv.pp.filter_genes(combined, min_shared_counts=MIN_SHARED_COUNTS)
 
+    # Normalize and log-transform X (layers stay as raw counts for scVelo)
     print("[scVelo] Normalizing ...")
+    combined.layers["counts"] = combined.X.copy()
     sc.pp.normalize_total(combined, target_sum=1e4)
     sc.pp.log1p(combined)
 
-    print(f"[scVelo] Selecting top {N_TOP_GENES} highly variable genes ...")
-    sc.pp.highly_variable_genes(combined, n_top_genes=N_TOP_GENES, subset=True)
-    print(f"  genes after HVG subset: {combined.n_vars:,}")
+    # Batch-aware HVG selection (same as run_pipeline: seurat flavor, per sample_id)
+    print(f"[scVelo] Selecting top {N_TOP_GENES} HVGs (batch-aware) ...")
+    sc.pp.highly_variable_genes(
+        combined, n_top_genes=N_TOP_GENES, flavor="seurat", batch_key="sample_id"
+    )
+    print(f"  HVGs: {int(combined.var['highly_variable'].sum())}")
 
-    print("[scVelo] Computing PCA and neighbors ...")
-    sc.pp.pca(combined, n_comps=N_PCS)
-    sc.pp.neighbors(combined, n_pcs=N_PCS, n_neighbors=N_NEIGHBORS)
+    # Scale a copy for PCA/UMAP/neighbors — keeps combined.X unscaled for velocity
+    # (same pattern as normalize_and_embed: adata_hvg is the scaled working copy)
+    adata_hvg = combined[:, combined.var["highly_variable"]].copy()
+    sc.pp.scale(adata_hvg, max_value=10)
+    sc.tl.pca(adata_hvg, n_comps=N_PCS)
+    sc.pp.neighbors(adata_hvg, n_pcs=N_PCS, n_neighbors=N_NEIGHBORS)
+    sc.tl.umap(adata_hvg)
+
+    # Copy PCA, neighbors, and graph back into combined (used for velocity computation)
+    combined.obsm["X_pca"]          = adata_hvg.obsm["X_pca"]
+    combined.obsp["connectivities"] = adata_hvg.obsp["connectivities"]
+    combined.obsp["distances"]      = adata_hvg.obsp["distances"]
+    combined.uns["neighbors"]       = adata_hvg.uns["neighbors"]
+    del adata_hvg
+
+    # Use ref UMAP for plotting — it has well-separated clusters from all 10 samples.
+    # Velocity is computed on the local neighborhood graph above; visualization
+    # on the established embedding keeps cell type boundaries interpretable.
+    combined.obsm["X_umap"] = combined.obsm["X_umap_ref"]
+    print(f"  neighbors computed on {combined.n_obs:,} velocity cells; using ref UMAP for plots")
+
+    # Subset combined to HVGs so scVelo moments use the same gene space
+    combined = combined[:, combined.var["highly_variable"]].copy()
 
     print("[scVelo] Computing moments ...")
-    scv.pp.moments(combined, n_pcs=None, n_neighbors=None)
+    scv.pp.moments(combined, n_pcs=None, n_neighbors=None)  # uses pre-computed neighbors
 
     # ── Velocity ───────────────────────────────────────────────────────────────
     print("[scVelo] Recovering dynamics (dynamical model — ~30 min) ...")
@@ -237,6 +262,81 @@ def main():
         save="latent_time_heatmap.png",
         show=False,
     )
+
+    # ── Zoomed stream plots ────────────────────────────────────────────────────
+    def umap_bounds(adata, cell_types, pad=1.5):
+        """Return (xlim, ylim) covering the UMAP region for the given cell types."""
+        mask = adata.obs["cell_type"].isin(cell_types)
+        coords = adata.obsm["X_umap"][mask]
+        return (
+            (coords[:, 0].min() - pad, coords[:, 0].max() + pad),
+            (coords[:, 1].min() - pad, coords[:, 1].max() + pad),
+        )
+
+    print("\nSaving zoomed stream plots ...")
+
+    xl, yl = umap_bounds(combined, ["NSC", "TAP"])
+    scv.pl.velocity_embedding_stream(
+        combined, basis="umap", color=color_key,
+        xlim=xl, ylim=yl,
+        title="Velocity — NSC → TAP",
+        save="zoom_NSC_TAP.png", show=False,
+    )
+
+    # Two separate zooms: one per arm of the bifurcation
+    xl, yl = umap_bounds(combined, ["TAP", "Neuroblast"], pad=0.5)
+    scv.pl.velocity_embedding_stream(
+        combined, basis="umap", color=color_key,
+        xlim=xl, ylim=yl,
+        title="Velocity — TAP → Neuroblast arm",
+        save="zoom_TAP_Neuroblast.png", show=False,
+    )
+
+    xl, yl = umap_bounds(combined, ["TAP", "OPC", "COP", "OL"], pad=0.5)
+    scv.pl.velocity_embedding_stream(
+        combined, basis="umap", color=color_key,
+        xlim=xl, ylim=yl,
+        title="Velocity — TAP → OL arm",
+        save="zoom_TAP_OL.png", show=False,
+    )
+
+    # ── Phase portraits for transition marker genes ────────────────────────────
+    # gene_name is dropped during HVG subsetting; re-attach from the mapping
+    combined.var["gene_name"] = [ensembl_to_name.get(g, g) for g in combined.var_names]
+
+    def ensembl_ids_for(adata, gene_names):
+        """Return Ensembl IDs in adata.var_names whose gene_name matches."""
+        name_to_id = adata.var["gene_name"].reset_index()
+        name_to_id.columns = ["ensembl_id", "gene_name"]
+        matched = name_to_id[name_to_id["gene_name"].isin(gene_names)]["ensembl_id"].tolist()
+        return [g for g in matched if g in adata.var_names]
+
+    # NSC → TAP transition markers
+    nsc_tap_genes = ensembl_ids_for(combined, ["Sox2", "Egfr", "Mki67", "Ascl1", "Ccnd2"])
+    if nsc_tap_genes:
+        scv.pl.velocity(
+            combined, var_names=nsc_tap_genes, basis="umap",
+            color=color_key,
+            save="phase_NSC_TAP.png", show=False,
+        )
+
+    # TAP → Neuroblast markers
+    tap_nb_genes = ensembl_ids_for(combined, ["Dcx", "Dlx1", "Tubb3", "Dlx2"])
+    if tap_nb_genes:
+        scv.pl.velocity(
+            combined, var_names=tap_nb_genes, basis="umap",
+            color=color_key,
+            save="phase_TAP_Neuroblast.png", show=False,
+        )
+
+    # TAP → OL lineage markers
+    tap_ol_genes = ensembl_ids_for(combined, ["Olig2", "Pdgfra", "Mbp", "Mog", "Gpr17"])
+    if tap_ol_genes:
+        scv.pl.velocity(
+            combined, var_names=tap_ol_genes, basis="umap",
+            color=color_key,
+            save="phase_TAP_OL.png", show=False,
+        )
 
     print(f"\nDone. Outputs in {OUTPUT_DIR}/")
 

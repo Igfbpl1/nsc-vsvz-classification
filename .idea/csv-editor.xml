@@ -80,13 +80,6 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="/outputs/velocity/velocity_driver_genes_test.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
       </map>
     </option>
   </component>

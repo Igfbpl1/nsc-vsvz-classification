@@ -33,6 +33,14 @@ case "$GSM" in
             SRR28912874_3.fastq SRR28912874_4.fastq
         )
         ;;
+    GSM8253799)
+        # NesCre CupRap Rep2 — 3 runs (SRR28912869: 32GB, SRR28912870: 32GB, SRR28912871: 13GB)
+        FASTQS=(
+            SRR28912869_3.fastq SRR28912869_4.fastq
+            SRR28912870_3.fastq SRR28912870_4.fastq
+            SRR28912871_3.fastq SRR28912871_4.fastq
+        )
+        ;;
     *)
         echo "Unknown GSM: $GSM. Add it to run_kb_count.sh."
         exit 1
