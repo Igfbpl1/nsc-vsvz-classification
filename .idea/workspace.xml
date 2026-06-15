@@ -4,12 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="update leiden">
+    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="add RNA Velocity &amp; Trajectory Analysis Plan readme">
+      <change afterPath="$PROJECT_DIR$/make_loom.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/run_kb_count.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/run_kb_ref.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/leiden.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/leiden.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/leiden_cell_type.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/leiden_cell_type.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/preprocess.py" beforeDir="false" afterPath="$PROJECT_DIR$/preprocess.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run_pipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/run_pipeline.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rna_velocity_trajectory.md" beforeDir="false" afterPath="$PROJECT_DIR$/rna_velocity_trajectory.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uv.lock" beforeDir="false" afterPath="$PROJECT_DIR$/uv.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,17 +46,18 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.run_pipeline.executor&quot;: &quot;Debug&quot;,
-    &quot;Python.run_pipeline_no_rebuild.executor&quot;: &quot;Run&quot;,
-    &quot;Python.run_pipeline_rebuild.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/chandra/development/nsc-vsvz-classification&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.run_pipeline.executor": "Debug",
+    "Python.run_pipeline_no_rebuild.executor": "Run",
+    "Python.run_pipeline_rebuild.executor": "Run",
+    "Python.validate_bar_codes.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/Users/chandra/development/nsc-vsvz-classification",
+    "settings.editor.selected.configurable": "preferences.pluginManager"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
@@ -64,7 +67,7 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.run_pipeline_rebuild">
+  <component name="RunManager" selected="Python.validate_bar_codes">
     <configuration name="run_pipeline_no_rebuild" type="PythonConfigurationType" factoryName="Python">
       <module name="nsc-vsvz-classification" />
       <option name="ENV_FILES" value="" />
@@ -96,7 +99,7 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="SDK_NAME" value="Python 3.12 (nsc-vsvz-classification)" />
+      <option name="SDK_NAME" value="Python 3.13 (nsc-vsvz-classification)" />
       <option name="WORKING_DIRECTORY" value="" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -110,9 +113,33 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="validate_bar_codes" type="PythonConfigurationType" factoryName="Python">
+      <module name="nsc-vsvz-classification" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="SDK_NAME" value="Python 3.13 (nsc-vsvz-classification)" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="validate_barcodes" />
+      <option name="PARAMETERS" value="--gsm GSM8253798" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="true" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <list>
       <item itemvalue="Python.run_pipeline_no_rebuild" />
       <item itemvalue="Python.run_pipeline_rebuild" />
+      <item itemvalue="Python.validate_bar_codes" />
     </list>
   </component>
   <component name="SharedIndexes">
@@ -339,7 +366,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781436455952</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="add RNA Velocity &amp; Trajectory Analysis Plan readme">
+      <option name="closed" value="true" />
+      <created>1781524204259</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1781524204259</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -370,7 +405,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="set up packages" />
     <MESSAGE value="run_pipeline and rebuilt set up" />
     <MESSAGE value="ingested data and created csv for viewing" />
     <MESSAGE value="quality control, normalizing, and embedding has happened" />
@@ -395,6 +429,18 @@
     <MESSAGE value="log filtered data" />
     <MESSAGE value="add filtered genes" />
     <MESSAGE value="update leiden" />
-    <option name="LAST_COMMIT_MESSAGE" value="update leiden" />
+    <MESSAGE value="add RNA Velocity &amp; Trajectory Analysis Plan readme" />
+    <option name="LAST_COMMIT_MESSAGE" value="add RNA Velocity &amp; Trajectory Analysis Plan readme" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/validate_barcodes.py</url>
+          <line>44</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

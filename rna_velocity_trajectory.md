@@ -56,7 +56,7 @@ By processing the NesCre control and treated (Cuprizone/CR) samples, we can answ
           -i index.idx \
           -g t2g.txt \
           -x 10xv3 \
-          -o kb_output_GSM8253796 \
+          -o kb_output_GSM8253798 \
           -c1 cdna_t2c.txt \
           -c2 intron_t2c.txt \
           --workflow lamanno \
