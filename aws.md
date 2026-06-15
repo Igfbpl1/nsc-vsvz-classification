@@ -138,12 +138,15 @@ SRR runs for GSM8253799 (total ~77GB):
 cd ~/project/sra_runs
 
 nohup bash -c "prefetch SRR28912869 SRR28912870 SRR28912871 && \
-  fasterq-dump --split-files SRR28912869 SRR28912870 SRR28912871 --outdir ." \
+  fasterq-dump --split-files --include-technical \
+  SRR28912869 SRR28912870 SRR28912871 --outdir ." \
   > fastq.log 2>&1 &
 
 # check progress
 tail -f fastq.log
 ```
+
+**Note:** `--include-technical` is required to get barcode reads (`_3` files). Without it, fasterq-dump only writes cDNA reads (`_4` files) and kb count will fail.
 
 ---
 
