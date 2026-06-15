@@ -178,13 +178,13 @@ def main():
 
     # ── Velocity ───────────────────────────────────────────────────────────────
     print("[scVelo] Recovering dynamics (dynamical model — ~30 min) ...")
-    scv.tl.recover_dynamics(combined, n_jobs=4)
+    scv.tl.recover_dynamics(combined, n_jobs=4, show_progress_bar=False)
 
     print("[scVelo] Computing velocity ...")
     scv.tl.velocity(combined, mode="dynamical")
 
     print("[scVelo] Building velocity graph ...")
-    scv.tl.velocity_graph(combined)
+    scv.tl.velocity_graph(combined, show_progress_bar=False)
 
     print("[scVelo] Computing latent time ...")
     scv.tl.latent_time(combined)

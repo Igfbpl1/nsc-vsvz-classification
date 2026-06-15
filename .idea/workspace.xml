@@ -4,14 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="more validations">
-      <change afterPath="$PROJECT_DIR$/download_GSM8253796.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/rna_velocity_pipeline.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/run_kb_count.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/csv-editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/csv-editor.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uv.lock" beforeDir="false" afterPath="$PROJECT_DIR$/uv.lock" afterDir="false" />
+    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="add velocity script">
+      <change beforePath="$PROJECT_DIR$/rna_velocity_pipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/rna_velocity_pipeline.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -390,7 +384,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781525529277</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="add velocity script">
+      <option name="closed" value="true" />
+      <created>1781529493832</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1781529493832</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -421,7 +423,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="quality control, normalizing, and embedding has happened" />
     <MESSAGE value="created csv with all annotations" />
     <MESSAGE value="made a table which counts each cell type by the marker genes" />
     <MESSAGE value="top 50 genes created, ol_commitment.csv created, bias score + P(OL) created" />
@@ -446,6 +447,7 @@
     <MESSAGE value="add RNA Velocity &amp; Trajectory Analysis Plan readme" />
     <MESSAGE value="fix validate barcodes" />
     <MESSAGE value="more validations" />
-    <option name="LAST_COMMIT_MESSAGE" value="more validations" />
+    <MESSAGE value="add velocity script" />
+    <option name="LAST_COMMIT_MESSAGE" value="add velocity script" />
   </component>
 </project>
