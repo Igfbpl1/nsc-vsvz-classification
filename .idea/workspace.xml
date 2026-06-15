@@ -4,15 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="add RNA Velocity &amp; Trajectory Analysis Plan readme">
-      <change afterPath="$PROJECT_DIR$/make_loom.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/run_kb_count.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/run_kb_ref.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rna_velocity_trajectory.md" beforeDir="false" afterPath="$PROJECT_DIR$/rna_velocity_trajectory.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uv.lock" beforeDir="false" afterPath="$PROJECT_DIR$/uv.lock" afterDir="false" />
-    </list>
+    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="fix validate barcodes" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -374,7 +366,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781524204259</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="fix validate barcodes">
+      <option name="closed" value="true" />
+      <created>1781525164661</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1781525164661</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -405,7 +405,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="run_pipeline and rebuilt set up" />
     <MESSAGE value="ingested data and created csv for viewing" />
     <MESSAGE value="quality control, normalizing, and embedding has happened" />
     <MESSAGE value="created csv with all annotations" />
@@ -430,17 +429,7 @@
     <MESSAGE value="add filtered genes" />
     <MESSAGE value="update leiden" />
     <MESSAGE value="add RNA Velocity &amp; Trajectory Analysis Plan readme" />
-    <option name="LAST_COMMIT_MESSAGE" value="add RNA Velocity &amp; Trajectory Analysis Plan readme" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/validate_barcodes.py</url>
-          <line>44</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="fix validate barcodes" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix validate barcodes" />
   </component>
 </project>
