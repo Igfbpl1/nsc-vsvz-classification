@@ -567,3 +567,62 @@ If the remaining 7 samples are added, the specific test would be:
 - Does any TAP-stage OL signal emerge with 50K cells?
 - Are the findings reproducible across strains?
 ---
+
+## 10. What 0wks vs 3wks Tells Us About OL Biology
+
+### Sample structure has a critical timepoint asymmetry
+
+The dataset has two timepoints:
+- 0wks = sampled immediately after Cuprizone/Rapamycin treatment ends (acute injury phase)
+- 3wks = sampled 3 weeks after treatment ends (recovery/remyelination phase)
+
+**Critical asymmetry: only CD1 has 0-week samples.** NesCre samples are all 3wks. The current velocity analysis uses 3 NesCre samples — all 3wks. To capture acute injury dynamics, the analysis would need to include CD1 0wks samples.
+
+### Strain-controlled cell-type composition (CD1 CupRap only)
+
+A fair 0wks vs 3wks comparison must control for strain. Using CD1 CupRap samples only (2 samples at each timepoint):
+
+| Cell type | CupRap 0wks (n=8,062) | CupRap 3wks (n=5,943) |
+|---|---|---|
+| TAP | 303 (3.8%) | 828 (13.9%) |
+| Neuroblast | 309 (3.8%) | 1,842 (31.0%) |
+| Microglia | 4,323 (53.6%) | 1,776 (29.9%) |
+| NSC | 174 (2.2%) | 30 (0.5%) |
+| OPC | 332 (4.1%) | 100 (1.7%) |
+| COP | 591 (7.3%) | 243 (4.1%) |
+| OL | 1,014 (12.6%) | 680 (11.4%) |
+| **OL-lineage (OPC+COP+OL)** | **1,937 (24.0%)** | **1,023 (17.2%)** |
+
+### Key observations
+
+1. **OL-lineage proportion is HIGHER at 0wks (24.0%) than 3wks (17.2%)** — at acute injury, the system has expanded immature OL precursors as part of the rapid response. By 3wks the cascade has matured and the system is stabilizing toward baseline composition.
+
+2. **OPC and COP both DECREASE by 3wks** (OPC 4.1% → 1.7%; COP 7.3% → 4.1%) — consistent with precursor cells maturing into OLs during recovery. The "pool" of committing precursors empties out as cells progress through the lineage.
+
+3. **TAPs INCREASE dramatically by 3wks** (3.8% → 13.9%) — proliferation ramps up during recovery, replenishing the progenitor pool after the acute injury depleted it.
+
+4. **Neuroblasts INCREASE massively by 3wks** (3.8% → 31.0%) — normal V-SVZ neurogenesis resumes during recovery once the acute injury response subsides.
+
+5. **Microglia DECREASE by 3wks** (53.6% → 29.9%) — peak acute inflammation at 0wks normalizes during recovery. Still elevated above baseline but declining.
+
+6. **NSCs DECREASE by 3wks** (2.2% → 0.5%) — NSCs likely activate and differentiate into TAPs/OPCs during acute injury, then return to a quiescent state.
+
+### Biological interpretation
+
+The CD1 0wks vs 3wks comparison reveals a clear two-phase response:
+
+```
+0wks (acute injury):                         3wks (recovery/remyelination):
+- Massive microglial activation (53.6%)      - Microglia normalizing (29.9%)
+- Immediate OL precursor expansion (24.0%)   - OL precursors maturing into OL
+- Few TAPs (3.8%), few NBs (3.8%)           - Active neurogenesis resumed
+- NSCs activated (2.2%)                      - NSCs back to quiescence (0.5%)
+```
+
+The current velocity analysis (3wks NesCre samples only) captures the **recovery phase**. The acute commitment moment — when microglial IGF1/OSM signaling first hits NSC/TAP populations — happens at 0wks and is currently outside the velocity analysis window.
+
+### Implications
+
+The "no positive OL marker in TAP velocity" finding may be timepoint-specific. At 3wks (recovery), TAPs are proliferating and feeding the normal NB lineage. At 0wks (acute injury), TAPs might be actively engaging the OL program in response to microglial signaling — but we cannot test this without 0wks velocity data.
+
+Including the 3 CD1 0wks samples (GSM8253792 Cntl, GSM8647352 and GSM8647353 CupRap) in a future velocity run would test whether early commitment dynamics differ between acute and recovery phases.
