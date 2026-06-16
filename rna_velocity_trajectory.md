@@ -183,49 +183,99 @@ The OL commitment arm is clearly more active in CupRap vs both Cntl conditions. 
 
 This confirms that OL commitment is not encoded by a positive transcriptional switch at the TAP stage. The commitment decision is defined by failure to engage the NB program (Bcl11a, Meis2, Srrm4, Nfib), with OL identity only becoming velocity-active at the OPC/COP stage downstream.
 
-### OPC Velocity Drivers — Condition-Specific Signals
+### OPC/COP Velocity Drivers — Key Patterns
 
-Both conditions share the same core OPC program (Ntn1, Gpr37l1, Dpysl3, Cthrc1 dominant in both). Condition-specific differences:
+**Pattern 1: 4 of 7 SHAP positive OL markers converge as COP velocity drivers**
 
-| Gene | Cntl rank | CupRap rank | Function |
+| Gene | SHAP rank | OPC rank | COP rank | OL rank |
+|---|---|---|---|---|
+| Fa2h | 16 | 56 | **1** | 11 |
+| Gjc3 | 10 | 17 | 16 | 3 |
+| Dock10 | 13 | — | 26 | 30 |
+| Tspan2 | 19 | — | 35 | 4 |
+
+The XGBoost model and velocity analysis independently identify the same genes as OL-defining. The convergence occurs at the COP stage.
+
+**Pattern 2: Sequential myelin lipid biosynthesis program across OPC→COP**
+
+```
+OPC stage:
+  Slc44a1 (rank 40) — choline transporter (SLC44A1)
+  Ugt8a   (rank 41) — galactosylceramide synthase
+  Fa2h    (rank 56) — fatty acid 2-hydroxylase
+
+COP stage:
+  Fa2h    (rank  1) — top driver
+  Cldn11  (rank 43) — myelin tight junction protein
+  Mog     (rank 49) — myelin oligodendrocyte glycoprotein
+```
+
+These are sequential steps in myelin lipid synthesis. They appear as velocity drivers in the order they would be expected to activate in a lipid biosynthesis pathway.
+
+**Pattern 3: Ncam1 is a continuous driver across all three OL lineage stages with the highest kinetic fit in OPC**
+
+| Stage | Rank | Corr | Likelihood |
 |---|---|---|---|
-| **Ntrk2** (TrkB) | not in top 10 | 6 | BDNF receptor — neurotrophin signalling activated under treatment |
-| **Sgk1** | 6 | not in top 10 | Stress kinase — baseline OPC stress response |
-| Fut9 | 9 | 3 | Jumps to rank 3 in CupRap |
+| OPC | 13 | 29.7 | **0.59** (highest in OPC list) |
+| COP | 51 | 7.1 | 0.59 |
+| OL | 6 | 106.6 | 0.59 |
 
-Ntrk2 emerging in CupRap OPCs suggests active neurotrophin signalling as part of the injury-driven commitment response.
+Likelihood 0.59 means scVelo fits Ncam1's splicing kinetics better than any other gene in the OPC list. It is active across all three stages.
 
-### COP Velocity Drivers — Strongest Treatment Effect
+**Pattern 4: TGFβ ligand and receptor both appear as COP velocity drivers**
 
-**Fa2h (fatty acid 2-hydroxylase)** is the top driver in both conditions — a direct myelin sphingolipid synthesis gene, confirming the OL commitment signal is real at the COP stage.
+- Tgfb1 (COP rank 14, likelihood 0.11)
+- Tgfbr2 (COP rank 64, likelihood 0.46)
 
-Overall CupRap COP correlation scores are ~2x higher than Cntl (Fa2h: 26.7 vs 15.4), indicating dramatically more active OL commitment dynamics under treatment.
+Both ligand and receptor appear in the same cell type at the same stage.
 
-CupRap-specific COP drivers not present in Cntl top 10:
+**Pattern 5: Ntn1 (Netrin-1) is the top OPC driver (rank 1, corr 62.85)**
 
-| Gene | CupRap rank | Function |
-|---|---|---|
-| **Hspa4l** | 5 | Heat shock protein — active myelination machinery |
-| **Kif26a** | 7 | Kinesin — microtubule motor for myelin membrane extension |
-| **Ptprb** | 9 | Receptor tyrosine phosphatase (canonical marker) |
-
-### Summary: Where the CupRap Effect Lives
-
-```
-Stage    Cntl vs CupRap                         CupRap-specific signal
---------------------------------------------------------------------------
-TAP      Mostly shared NB program;              Meis2 rank 4 (NB-leaning, SHAP #5)
-         no positive OL signal in either        No OL marker in top 100
-OPC      ~90% shared core program               Ntrk2 (TrkB/BDNF), Fut9 amplified
-COP      ~2x stronger scores in CupRap          Hspa4l, Kif26a, Fa2h amplified
-OL       Same program, stronger dynamics        Consistent with prior runs
-```
-
-The CupRap effect accumulates downstream of commitment. At the TAP stage, both conditions run the same NB-default program — CupRap intensifies it (Meis2 rises) but introduces no positive OL signal. OL identity only becomes velocity-active at OPC/COP stage.
+The strongest velocity signal at OPC stage, ahead of all myelin genes. Ntn1 is a known OPC migration guidance molecule.
 
 ---
 
-## 8. SHAP Direction Analysis — Critical Methodological Finding
+## 8. TAP Fate Comparison — ML vs CellRank vs Bias Score
+
+Run on 2,506 TAPs with all three predictions available (2 dropped due to missing values).
+
+### Score Distributions
+
+| Metric | CellRank P(OL) | ML P(OL) | Bias score |
+|---|---|---|---|
+| mean | 0.407 | 0.292 | -0.939 |
+| std | 0.326 | 0.303 | 0.555 |
+| 25th pct | 0.163 | 0.061 | -1.415 |
+| median | 0.204 | 0.098 | -1.036 |
+| 75th pct | 0.746 | 0.527 | -0.484 |
+
+Bias score mean of -0.939 indicates the majority of TAPs score NB-leaning on canonical markers. Binary threshold (bias > 0) calls very few TAPs as OL.
+
+### Pairwise Method Comparison
+
+| Pair | Pearson r | Spearman r | Agreement | Cohen's kappa |
+|---|---|---|---|---|
+| ML vs CellRank | 0.832 | 0.805 | 86.3% | 0.679 (good) |
+| ML vs Bias | 0.848 | 0.856 | 78.6% | 0.251 (fair) |
+| CellRank vs Bias | 0.857 | 0.810 | 70.6% | 0.188 (slight) |
+
+ML and CellRank have good binary agreement (kappa 0.679). 90.2% of TAPs called OL by ML are also called OL by CellRank.
+
+ML and Bias score have high continuous correlation (Pearson 0.848) but low binary agreement (kappa 0.251). Only 19.2% of ML-called OL TAPs exceed the bias > 0 threshold — the bias score is very conservative given its mean of -0.939. CellRank vs Bias shows the same pattern (kappa 0.188, only 15.2% overlap on binary calls).
+
+### OL-Leaning Fraction Per Condition
+
+| Method | CD1_Cntl (n=876) | Cntl (n=743) | CupRap_Rep1 (n=370) | CupRap_Rep2 (n=517) |
+|---|---|---|---|---|
+| CellRank | 41.3% (362) | 32.8% (244) | 33.5% (124) | 26.5% (137) |
+| ML | 31.7% (278) | 24.6% (183) | 25.1% (93) | 19.0% (98) |
+| Bias score | 7.3% (64) | 4.6% (34) | 6.2% (23) | 2.7% (14) |
+
+CD1_Cntl (0wks) has the highest OL-leaning fraction under both ML and CellRank. CupRap_Rep2 has the lowest. ML and CellRank agree on the ordering across conditions.
+
+---
+
+## 9. SHAP Direction Analysis — Critical Methodological Finding
 
 ### The Problem
 
@@ -271,11 +321,11 @@ shap_rank,gene,shap_value,ol_mean,nb_mean,direction
 | 18 | Cnp | 94% | 18% | 17× | 2',3'-CNPase — myelin marker |
 | 19 | Tspan2 | 86% | 4% | 57× | Early OL surface marker |
 
-All 7 are biologically coherent myelin/membrane structural genes. **Fa2h is the key cross-validated gene**: SHAP rank 16 (positive OL marker) AND top COP velocity driver in both Cntl and CupRap conditions (~2x stronger under treatment).
+All 7 are myelin/membrane structural genes. **Fa2h** is cross-validated: SHAP rank 16 (positive OL marker) AND top COP velocity driver in both conditions (corr 26.7 CupRap vs 15.4 Cntl).
 
 ---
 
-## 9. Current Sample Status
+## 10. Current Sample Status
 
 | GSM | Strain | Treatment | Timepoint | Velocity status |
 |---|---|---|---|---|
@@ -292,7 +342,7 @@ All 7 are biologically coherent myelin/membrane structural genes. **Fa2h is the 
 
 ---
 
-## 10. What 0wks vs 3wks Tells Us About OL Biology
+## 11. What 0wks vs 3wks Tells Us About OL Biology
 
 ### Timepoint Asymmetry
 
@@ -313,6 +363,6 @@ The CD1_Cntl 0wks stream plot showing the quietest OL lineage flow is consistent
 | OL | 12.6% | 11.4% |
 | **OL-lineage total** | **24.0%** | **17.2%** |
 
-The OL-lineage proportion is higher at 0wks — the system expands precursors immediately in response to injury. By 3wks, OPCs and COPs have matured into OLs and the pool empties. TAPs and Neuroblasts increase dramatically at 3wks as normal V-SVZ neurogenesis resumes.
+The OL-lineage proportion (OPC+COP+OL) is higher at 0wks (24.0%) than 3wks (17.2%). OPC and COP fractions both decrease by 3wks while OL fraction is similar. TAP and Neuroblast fractions increase substantially at 3wks. Microglia decrease from 53.6% to 29.9%.
 
-The current velocity analysis (3wks samples dominant) captures the recovery phase. The acute commitment moment — when microglial IGF1/OSM signaling first hits NSC/TAP populations — occurs at 0wks and will be testable once the remaining CD1 0wks samples (GSM8647352, GSM8647353) are added.
+The current velocity analysis uses 3wks samples. The CD1 0wks samples (GSM8647352, GSM8647353) are not yet included.
