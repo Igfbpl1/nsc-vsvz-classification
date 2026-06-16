@@ -137,51 +137,40 @@ A gene qualifies as an early marker if it satisfies:
 
 ---
 
-## 7. Results — 4-Sample Run
+## 7. Results — 7-Sample Run
 
-Velocity computed on 4 samples:
-- **GSM8253792** — CD1, Cntl, 0wks (baseline anchor)
+Velocity computed on 7 samples:
+- **GSM8253792** — CD1, Cntl, 0wks
+- **GSM8253793** — CD1, Cntl, 3wks
+- **GSM8253794** — CD1, CupRap, 3wks
 - **GSM8253796** — NesCre, Cntl, 3wks
 - **GSM8253798** — NesCre, CupRap, 3wks, Rep1
 - **GSM8253799** — NesCre, CupRap, 3wks, Rep2
+- **GSM8647353** — CD1, CupRap, 0wks, Rep2
 
-### Stream Plot — Biologically Coherent Velocity
+### Stream Plot
 
-The global stream plot (`scvelo_stream_all.png`) shows clear, biologically sensible directional flow:
+The 7-sample stream plot shows the same trajectory topology as the 4-sample run:
+- **NSC → TAP**: clear flow
+- **TAP → Neuroblast**: strong dominant arm
+- **TAP → OPC → COP → OL**: rightward flow visible; bifurcation structurally clear
+- Non-lineage cells (Microglia, Astrocyte, Endothelial, Mural, Ependymal) self-contained
 
-- **NSC → TAP**: confirmed flow from NSC into TAP cluster
-- **TAP → Neuroblast**: strong well-directed flow (dominant arm)
-- **TAP → OPC → COP → OL**: rightward flow through the OL lineage is visible — the bifurcation the ML model is built around
-- **Non-lineage cells** (Microglia, Astrocyte, Endothelial, Mural, Ependymal): mostly self-contained, not transitioning into lineage — correct
+Adding 3 samples did not change the trajectory structure.
 
-The TAP bifurcation toward Neuroblast and OPC is structurally visible.
-
-### Per-Condition Stream Plots — CupRap Amplifies OL Commitment
-
-| Condition | OL lineage flow | Notes |
-|---|---|---|
-| CD1_Cntl (0wks) | Sparse, weak | Quietest condition — pre-recovery baseline |
-| Cntl (NesCre, 3wks) | Moderate | Some OPC/COP flow but relatively quiet |
-| CupRap Rep1 | Stronger, more directed | Arrows through OPC→COP→OL visibly denser |
-| CupRap Rep2 | Consistent with Rep1 | Replicate agreement confirms the signal |
-
-The OL commitment arm is clearly more active in CupRap vs both Cntl conditions. The two CupRap replicates are consistent with each other, ruling out a single-sample artifact. CD1_Cntl at 0wks being the quietest establishes a true pre-recovery baseline that makes the CupRap signal sharper by comparison.
-
-### TAP Velocity Drivers — No Positive OL Signal; Meis2 NB Convergence
+### TAP Velocity Drivers — Meis2 is Rank 1 in CupRap
 
 | Rank | Pooled | Cntl | CupRap |
 |---|---|---|---|
-| 1 | Bcl11a | Bcl11a | Rnf165 |
-| 2 | Rnf165 | Dpysl3 | Srrm4 |
-| 3 | Srrm4 | Nfib | Bcl11a |
-| 4 | Dpysl3 | Mn1 | **Meis2** |
-| 5 | Nfib | Rnf165 | Plxna2 |
+| 1 | Dpysl3 | Dpysl3 | **Meis2** |
+| 2 | Srrm4 | Nfib | Srrm4 |
+| 3 | Nfib | Elavl2 | Plxna2 |
+| 4 | Plxna2 | Bcl11a | Dpysl3 |
+| 5 | Fut9 | Rnd3 | Nfib |
 
-**Meis2** ranks 4th in CupRap TAPs (corr 64.85) and is absent from the Cntl top 15. It is also **SHAP rank 5** — two independent methods converge on the same gene specifically in the treatment condition. However, Meis2 is **NB-leaning** (OL mean 0.275 vs NB mean 2.934 — NEGATIVE_OL in the SHAP direction analysis). The model uses its *absence* as an OL signal. Its stronger velocity in CupRap TAPs likely reflects more TAPs actively committing to NB fate under treatment, with a separate subset defaulting to OL by failing to engage this program.
+**Meis2** is rank 1 in CupRap TAPs (corr 79.77, likelihood 0.79, Spearman 0.93) and rank 17 in Cntl. It is also **SHAP rank 5** — two independent methods converge on the same gene specifically in the treatment condition. However, Meis2 is **NB-leaning** (OL mean 0.275 vs NB mean 2.934 — NEGATIVE_OL in the SHAP direction analysis). The model uses its *absence* as an OL signal.
 
-**No positive OL-leaning signal exists at the TAP stage.** The full top 100 TAP drivers were searched for the 7 SHAP-confirmed positive OL markers (Pllp, Gjc3, Dock10, Cryab, Fa2h, Cnp, Tspan2) — none appear. The only OL-associated genes present are Olig2 (rank 73 CupRap, corr 21; rank 50 Cntl, corr 28) and Ncam1 (rank ~63-78, corr ~22) — both ~3× weaker than Meis2 and not CupRap-enriched. Olig2 is actually stronger in Cntl than CupRap.
-
-This confirms that OL commitment is not encoded by a positive transcriptional switch at the TAP stage. The commitment decision is defined by failure to engage the NB program (Bcl11a, Meis2, Srrm4, Nfib), with OL identity only becoming velocity-active at the OPC/COP stage downstream.
+**No positive OL-leaning signal exists at the TAP stage.** The 7 SHAP-confirmed positive OL markers (Pllp, Gjc3, Dock10, Cryab, Fa2h, Cnp, Tspan2) are absent from the top 100 TAP drivers in both conditions. Olig2 and Ncam1 appear but at low ranks with weak correlations.
 
 ### ML Model and Velocity Converge on the Same Non-Canonical OL Genes
 
@@ -191,106 +180,53 @@ RNA velocity, using a completely independent method based on splicing dynamics, 
 
 | Gene | SHAP rank (ML) | COP velocity rank | OL velocity rank |
 |---|---|---|---|
-| Fa2h | 16 | **1** | 11 |
-| Gjc3 | 10 | 16 | 3 |
-| Dock10 | 13 | 26 | 30 |
-| Tspan2 | 19 | 35 | 4 |
+| Fa2h | 16 | **1** | — |
+| Gjc3 | 10 | 9 | — |
+| Dock10 | 13 | 49 | — |
 
-The ML model did not use velocity. Velocity did not use the ML model's gene list. Both methods arrived at the same 4 genes through independent routes. This means when the ML model calls a TAP OL-fated, it is detecting early low-level expression of the same genes that velocity confirms are kinetically active at the OPC→COP commitment stage.
+The ML model did not use velocity. Velocity did not use the ML model's gene list. Both methods arrived at the same 3 genes through independent routes. This means when the ML model calls a TAP OL-fated, it is detecting early low-level expression of the same genes that velocity confirms are kinetically active at the OPC→COP commitment stage.
 
 ### OPC/COP Velocity Drivers — Key Patterns
 
-**Pattern 1: 4 of 7 SHAP positive OL markers converge as COP velocity drivers**
+**Pattern 1: 3 of 7 SHAP positive OL markers converge as COP velocity drivers**
 
 | Gene | SHAP rank | OPC rank | COP rank | OL rank |
 |---|---|---|---|---|
-| Fa2h | 16 | 56 | **1** | 11 |
-| Gjc3 | 10 | 17 | 16 | 3 |
-| Dock10 | 13 | — | 26 | 30 |
-| Tspan2 | 19 | — | 35 | 4 |
+| Fa2h | 16 | 38 | **1** | — |
+| Gjc3 | 10 | 18 | 9 | — |
+| Dock10 | 13 | — | 49 | — |
 
-The XGBoost model and velocity analysis independently identify the same genes as OL-defining. The convergence occurs at the COP stage.
+The XGBoost model and velocity analysis independently identify the same genes as OL-defining. The convergence occurs at the COP stage. Tspan2 dropped out of COP top 100 in the 7-sample run.
 
-**Pattern 2: Sequential myelin lipid biosynthesis program across OPC→COP**
+**Pattern 2: Myelin lipid biosynthesis program across OPC→COP**
 
 ```
 OPC stage:
-  Slc44a1 (rank 40) — choline transporter (SLC44A1)
-  Ugt8a   (rank 41) — galactosylceramide synthase
-  Fa2h    (rank 56) — fatty acid 2-hydroxylase
+  Ugt8a (rank 30) — galactosylceramide synthase
+  Fa2h  (rank 38) — fatty acid 2-hydroxylase
 
 COP stage:
-  Fa2h    (rank  1) — top driver
-  Cldn11  (rank 43) — myelin tight junction protein
-  Mog     (rank 49) — myelin oligodendrocyte glycoprotein
+  Fa2h   (rank  1) — top driver (corr 60.74, up from 30.91 in 4-sample run)
+  Cldn11 (rank 22) — myelin tight junction protein
 ```
 
-These are sequential steps in myelin lipid synthesis. They appear as velocity drivers in the order they would be expected to activate in a lipid biosynthesis pathway.
-
-**Pattern 3: Ncam1 is a continuous driver across all three OL lineage stages with the highest kinetic fit in OPC**
+**Pattern 3: Ncam1 is a continuous driver across all three OL lineage stages**
 
 | Stage | Rank | Corr | Likelihood |
 |---|---|---|---|
-| OPC | 13 | 29.7 | **0.59** (highest in OPC list) |
-| COP | 51 | 7.1 | 0.59 |
-| OL | 6 | 106.6 | 0.59 |
+| OPC | 11 | 39.0 | 0.57 |
+| COP | 41 | 12.6 | 0.57 |
+| OL | 4 | 123.6 | 0.57 |
 
-Likelihood 0.59 means scVelo fits Ncam1's splicing kinetics better than any other gene in the OPC list. It is active across all three stages.
+Active across all three stages. Likelihood 0.57 is among the highest in the OPC list.
 
-**Pattern 4: TGFβ ligand and receptor both appear as COP velocity drivers**
+**Pattern 4: Ntn1 (Netrin-1) is the top OPC driver (rank 1, corr 96.87)**
 
-- Tgfb1 (COP rank 14, likelihood 0.11)
-- Tgfbr2 (COP rank 64, likelihood 0.46)
-
-Both ligand and receptor appear in the same cell type at the same stage.
-
-**Pattern 5: Ntn1 (Netrin-1) is the top OPC driver (rank 1, corr 62.85)**
-
-The strongest velocity signal at OPC stage, ahead of all myelin genes. Ntn1 is a known OPC migration guidance molecule.
+The strongest velocity signal at OPC stage, ahead of all myelin genes. Corr increased from 62.85 (4-sample) to 96.87 (7-sample).
 
 ---
 
-## 8. TAP Fate Comparison — ML vs CellRank vs Bias Score
-
-Run on 2,506 TAPs with all three predictions available (2 dropped due to missing values).
-
-### Score Distributions
-
-| Metric | CellRank P(OL) | ML P(OL) | Bias score |
-|---|---|---|---|
-| mean | 0.407 | 0.292 | -0.939 |
-| std | 0.326 | 0.303 | 0.555 |
-| 25th pct | 0.163 | 0.061 | -1.415 |
-| median | 0.204 | 0.098 | -1.036 |
-| 75th pct | 0.746 | 0.527 | -0.484 |
-
-Bias score mean of -0.939 indicates the majority of TAPs score NB-leaning on canonical markers. Binary threshold (bias > 0) calls very few TAPs as OL.
-
-### Pairwise Method Comparison
-
-| Pair | Pearson r | Spearman r | Agreement | Cohen's kappa |
-|---|---|---|---|---|
-| ML vs CellRank | 0.832 | 0.805 | 86.3% | 0.679 (good) |
-| ML vs Bias | 0.848 | 0.856 | 78.6% | 0.251 (fair) |
-| CellRank vs Bias | 0.857 | 0.810 | 70.6% | 0.188 (slight) |
-
-ML and CellRank have good binary agreement (kappa 0.679). 90.2% of TAPs called OL by ML are also called OL by CellRank.
-
-ML and Bias score have high continuous correlation (Pearson 0.848) but low binary agreement (kappa 0.251). Only 19.2% of ML-called OL TAPs exceed the bias > 0 threshold — the bias score is very conservative given its mean of -0.939. CellRank vs Bias shows the same pattern (kappa 0.188, only 15.2% overlap on binary calls).
-
-### OL-Leaning Fraction Per Condition
-
-| Method | CD1_Cntl (n=876) | Cntl (n=743) | CupRap_Rep1 (n=370) | CupRap_Rep2 (n=517) |
-|---|---|---|---|---|
-| CellRank | 41.3% (362) | 32.8% (244) | 33.5% (124) | 26.5% (137) |
-| ML | 31.7% (278) | 24.6% (183) | 25.1% (93) | 19.0% (98) |
-| Bias score | 7.3% (64) | 4.6% (34) | 6.2% (23) | 2.7% (14) |
-
-CD1_Cntl (0wks) has the highest OL-leaning fraction under both ML and CellRank. CupRap_Rep2 has the lowest. ML and CellRank agree on the ordering across conditions.
-
----
-
-## 9. SHAP Direction Analysis — Critical Methodological Finding
+## 8. SHAP Direction Analysis — Critical Methodological Finding
 
 ### The Problem
 
@@ -340,24 +276,24 @@ All 7 are myelin/membrane structural genes. **Fa2h** is cross-validated: SHAP ra
 
 ---
 
-## 10. Current Sample Status
+## 9. Current Sample Status
 
 | GSM | Strain | Treatment | Timepoint | Velocity status |
 |---|---|---|---|---|
-| GSM8253792 | CD1 | Cntl | 0wks | ✓ included (baseline anchor) |
+| GSM8253792 | CD1 | Cntl | 0wks | ✓ included |
+| GSM8253793 | CD1 | Cntl | 3wks | ✓ included |
+| GSM8253794 | CD1 | CupRap | 3wks | ✓ included |
 | GSM8253796 | NesCre | Cntl | 3wks | ✓ included |
 | GSM8253798 | NesCre | CupRap | 3wks | ✓ included |
 | GSM8253799 | NesCre | CupRap | 3wks | ✓ included |
-| GSM8253793 | CD1 | Cntl | 3wks | downloading |
-| GSM8253794 | CD1 | CupRap | 3wks | downloading |
+| GSM8647353 | CD1 | CupRap | 0wks | ✓ included |
 | GSM8253795 | CD1 | CupRap | 3wks | pending |
 | GSM8253797 | NesCre | Cntl | 3wks | pending |
 | GSM8647352 | CD1 | CupRap | 0wks | pending |
-| GSM8647353 | CD1 | CupRap | 0wks | pending |
 
 ---
 
-## 11. What 0wks vs 3wks Tells Us About OL Biology
+## 10. What 0wks vs 3wks Tells Us About OL Biology
 
 ### Timepoint Asymmetry
 

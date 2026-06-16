@@ -32,17 +32,9 @@ The **bias score is conservative by design** — it requires actual upregulation
 
 ---
 
-## 3. Results — 2,506 TAPs from 4 Samples (CD1_Cntl 0wks + 3 NesCre)
+## 3. Results — 7-Sample Run
 
-### Distribution of scores
-
-| Method | Mean | SD | Min | Max |
-|---|---|---|---|---|
-| CellRank P(OL) | 0.407 | 0.326 | 0.000 | 0.951 |
-| ML P(OL) | 0.292 | 0.303 | 0.055 | 0.945 |
-| Bias score | −0.939 | 0.555 | −2.010 | 0.491 |
-
-### Pairwise method comparison
+### Pairwise method comparison (4-sample run; rerun needed for 7-sample)
 
 | Pair | Pearson r | Spearman r | Agreement | Cohen's kappa |
 |---|---|---|---|---|
@@ -50,13 +42,15 @@ The **bias score is conservative by design** — it requires actual upregulation
 | ML vs Bias | 0.848 | 0.856 | 78.6% | 0.251 (fair) |
 | CellRank vs Bias | 0.857 | 0.810 | 70.6% | 0.188 (slight) |
 
-### Per-condition OL-leaning fraction
+### Per-condition OL-leaning fraction (7-sample run)
 
-| Method | CD1_Cntl (n=876) | Cntl (n=743) | CupRap_Rep1 (n=370) | CupRap_Rep2 (n=517) |
-|---|---|---|---|---|
-| CellRank (P > 0.5) | 41.3% (362) | 32.8% (244) | 33.5% (124) | 26.5% (137) |
-| ML (P > 0.5) | 31.7% (278) | 24.6% (183) | 25.1% (93) | 19.0% (98) |
-| Bias score (>0) | 7.3% (64) | 4.6% (34) | 6.2% (23) | 2.7% (14) |
+| Method | CD1_Cntl (876) | CD1_Cntl_3wks (1129) | CD1_CupRap (463) | CD1_CupRap_0wks_Rep2 (172) | Cntl (742) | CupRap_Rep1 (370) | CupRap_Rep2 (516) |
+|---|---|---|---|---|---|---|---|
+| CellRank (P > 0.5) | 46.6% (408) | 42.0% (474) | 39.7% (184) | **77.3% (133)** | 38.0% (282) | 37.8% (140) | 31.0% (160) |
+| ML (P > 0.5) | 31.7% (278) | 33.0% (373) | 23.5% (109) | **66.9% (115)** | 24.7% (183) | 25.1% (93) | 18.8% (97) |
+| Bias score (>0) | 7.3% (64) | 4.3% (49) | 6.9% (32) | **32.0% (55)** | 4.6% (34) | 6.2% (23) | 2.5% (13) |
+
+`CD1_CupRap_0wks_Rep2` (n=172) is a large outlier across all three methods. Small sample size — interpret with caution.
 
 ---
 
@@ -117,15 +111,14 @@ ML's predictions are validated by CellRank's independent velocity-based analysis
 
 ## 6. OL-Leaning Fraction Across Conditions
 
-CD1_Cntl (0wks) has the highest OL-leaning fraction across both ML and CellRank (41.3% and 31.7%). CupRap_Rep2 has the lowest across all three methods.
+Excluding the small-n outlier (CD1_CupRap_0wks_Rep2, n=172), the remaining 6 conditions range from 31–47% (CellRank) and 19–33% (ML).
 
-CupRap samples do not consistently show higher OL-leaning TAP fractions than Cntl:
+CupRap samples do not show consistently higher OL-leaning fractions than Cntl across either method:
 
-- CellRank: CD1_Cntl 41.3% > Cntl 32.8% ≈ CupRap_Rep1 33.5% > CupRap_Rep2 26.5%
-- ML: CD1_Cntl 31.7% > Cntl 24.6% ≈ CupRap_Rep1 25.1% > CupRap_Rep2 19.0%
-- Bias: CD1_Cntl 7.3% > Cntl 4.6% ≈ CupRap_Rep1 6.2% > CupRap_Rep2 2.7%
+- CellRank ordering: CD1_Cntl (46.6%) > CD1_Cntl_3wks (42.0%) > CD1_CupRap (39.7%) ≈ Cntl (38.0%) ≈ CupRap_Rep1 (37.8%) > CupRap_Rep2 (31.0%)
+- ML ordering: CD1_Cntl_3wks (33.0%) ≈ CD1_Cntl (31.7%) > Cntl (24.7%) ≈ CupRap_Rep1 (25.1%) > CD1_CupRap (23.5%) > CupRap_Rep2 (18.8%)
 
-ML and CellRank agree on the ordering across all four conditions.
+ML and CellRank agree on ordering for most conditions. CupRap_Rep2 (NesCre, 3wks) is consistently lowest.
 
 ---
 
