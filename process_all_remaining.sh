@@ -1,40 +1,40 @@
 #!/bin/bash
-# process_all_remaining.sh — process all 7 remaining samples sequentially.
+# process_all_remaining.sh — process all remaining samples sequentially.
 #
-# Usage: nohup bash process_all_remaining.sh > process_all.log 2>&1 &
-# Monitor: tail -f process_all.log
-#
-# Runs process_sample.sh for each remaining GSM, one at a time.
-# Each sample is fully processed + packaged + cleaned up before the next starts,
-# so peak disk usage is bounded by the largest single sample (~150GB FASTQs).
-#
-# Expected runtime: ~3-4 hours per sample × 7 = ~25 hours on r6i.2xlarge.
+# This script now defines samples as groups of SRR runs and processes each
+# group by calling the updated process_sample.sh script.
 
 set -euo pipefail
+cd "$(dirname "$0")"
 
-cd ~/project
+# --- Define Sample Groups ---
+# Each key is the sample name, and the value is a space-separated list of SRR IDs.
 
-SAMPLES=(
-    GSM8253792   # CD1 Cntl 0wks
-    GSM8253793   # CD1 Cntl 3wks
-    GSM8253794   # CD1 CupRap 3wks
-    GSM8253795   # CD1 CupRap 3wks
-    GSM8253797   # NesCre Cntl 3wks
-    GSM8647352   # CD1 CupRap 0wks
-    GSM8647353   # CD1 CupRap 0wks
-)
+declare -A SAMPLES
+SAMPLES["GSM8253793"]="SRR28912882 SRR28912883"
+SAMPLES["GSM8253794"]="SRR28912878 SRR28912879 SRR28912880 SRR28912881"
+SAMPLES["GSM8253797"]="SRR28912867 SRR28912868"
+SAMPLES["GSM8647352"]="SRR31443698 SRR31443699"
+SAMPLES["GSM8647353"]="SRR31443695 SRR31443696 SRR31443697 SRR31443700"
 
-for GSM in "${SAMPLES[@]}"; do
+# --- Process Samples ---
+
+for SAMPLE_NAME in "${!SAMPLES[@]}"; do
+    SRR_LIST="${SAMPLES[$SAMPLE_NAME]}"
     echo ""
     echo "==============================================================="
-    echo "  Processing $GSM at $(date)"
+    echo "  Processing $SAMPLE_NAME at $(date)"
+    echo "  SRRs: $SRR_LIST"
     echo "==============================================================="
-    bash process_sample.sh "$GSM"
-    echo "  Finished $GSM at $(date)"
+
+    # Call the updated processing script, passing sample name and SRR list
+    bash process_sample.sh "$SAMPLE_NAME" "$SRR_LIST"
+
+    echo "  Finished $SAMPLE_NAME at $(date)"
 done
 
 echo ""
 echo "==============================================================="
 echo "  All ${#SAMPLES[@]} samples done at $(date)"
 echo "==============================================================="
-ls -lh ~/project/sra_runs/GSM*_counts.tgz
+ls -lh sra_runs/*_counts.tgz

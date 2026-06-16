@@ -4,12 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="fix">
-      <change afterPath="$PROJECT_DIR$/process_all_remaining.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/process_sample.sh" afterDir="false" />
+    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="add scripts">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/aws.md" beforeDir="false" afterPath="$PROJECT_DIR$/aws.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rna_velocity_trajectory.md" beforeDir="false" afterPath="$PROJECT_DIR$/rna_velocity_trajectory.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/process_all_remaining.sh" beforeDir="false" afterPath="$PROJECT_DIR$/process_all_remaining.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/process_sample.sh" beforeDir="false" afterPath="$PROJECT_DIR$/process_sample.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -452,7 +450,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781620393048</updated>
     </task>
-    <option name="localTasksCounter" value="38" />
+    <task id="LOCAL-00038" summary="add scripts">
+      <option name="closed" value="true" />
+      <created>1781622495805</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1781622495805</updated>
+    </task>
+    <option name="localTasksCounter" value="39" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -483,7 +489,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fixed the mapping issue (like a true programmer)" />
     <MESSAGE value="fixed the mapping issue" />
     <MESSAGE value="renamed file" />
     <MESSAGE value="got rid of unnecessary comments" />
@@ -508,6 +513,7 @@
     <MESSAGE value="add another sample" />
     <MESSAGE value=" checkpoint use cellcount" />
     <MESSAGE value="fix" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix" />
+    <MESSAGE value="add scripts" />
+    <option name="LAST_COMMIT_MESSAGE" value="add scripts" />
   </component>
 </project>

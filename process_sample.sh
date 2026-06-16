@@ -1,28 +1,23 @@
 #!/bin/bash
-# process_sample.sh — download & process one GSM sample for velocity analysis.
+# process_sample.sh — download & process one sample for velocity analysis.
 #
-# Usage:    bash process_sample.sh <SAMPLE_NAME>
-# Example:  bash process_sample.sh CupRap_Rep2
+# Usage:    bash process_sample.sh <SAMPLE_NAME> <SRR_LIST>
+# Example:  bash process_sample.sh "CupRap_Rep2" "SRR28912885 SRR28912886"
 #
-# What it does:
-#   1. Uses a hardcoded list of SRR IDs
-#   2. prefetch + fasterq-dump with --include-technical (gets barcode reads)
-#   3. kb count with lamanno workflow (spliced + unspliced layers)
-#   4. Tarballs counts_unfiltered/ for later download
-#   5. Deletes FASTQs, SRA files, BUS files, and intermediate tmp/ to free disk
-#
-# Requirements (one-time install on EC2):
-#   sudo apt install -y sra-toolkit kallisto
-#   uv pip install kb-python bustools
-#
-# Run from: ~/project/  (the script will cd into sra_runs/)
+# Can also be set via environment variable:
+#   SRR_LIST="SRR..." bash process_sample.sh <SAMPLE_NAME>
 
 set -euo pipefail
 
+# --- Argument Parsing ---
 SAMPLE_NAME="${1:-}"
-if [[ -z "$SAMPLE_NAME" ]]; then
-    echo "Usage: bash process_sample.sh <SAMPLE_NAME>"
-    echo "Example: bash process_sample.sh CupRap_Rep2"
+# If SRR_LIST is passed as the second argument, use it. Otherwise, check env var.
+SRR_LIST_ARG="${2:-}"
+SRR_LIST="${SRR_LIST_ARG:-$SRR_LIST}" # Use arg, fallback to env var
+
+if [[ -z "$SAMPLE_NAME" ]] || [[ -z "$SRR_LIST" ]]; then
+    echo "Usage: bash process_sample.sh <SAMPLE_NAME> \"<SRR_LIST>\""
+    echo "Example: bash process_sample.sh \"CupRap_Rep2\" \"SRR28912885 SRR28912886\""
     exit 1
 fi
 
@@ -43,8 +38,7 @@ if [[ -d "kb_output_${SAMPLE_NAME}/counts_unfiltered" ]] && \
 fi
 
 # ── Set SRR IDs ───────────────────────────────────────────────────────────
-echo "[1/5] Using hardcoded SRR IDs for ${SAMPLE_NAME} ..."
-SRR_LIST="SRR28912885 SRR28912886"
+echo "[1/5] Using provided SRR IDs for ${SAMPLE_NAME} ..."
 echo "  SRRs: $SRR_LIST"
 
 # ── Download FASTQs (sequentially to avoid disk spikes) ──────────────────
