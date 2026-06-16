@@ -52,6 +52,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/outputs/ol_commitment_positive.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/outputs/out_of_sample_comparison.csv">
           <value>
             <Attribute>

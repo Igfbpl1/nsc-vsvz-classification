@@ -31,8 +31,13 @@ SAMPLE_CONFIGS = [
     },
     {
         "h5ad_sample_id": "GSM8253798",
-        "velocity_label": "CupRap",
+        "velocity_label": "CupRap_Rep1",
         "kb_dir": "sra_runs/kb_output_GSM8253798/counts_unfiltered",
+    },
+    {
+        "h5ad_sample_id": "GSM8253799",
+        "velocity_label": "CupRap_Rep2",
+        "kb_dir": "sra_runs/kb_output_GSM8253799/counts_unfiltered",
     },
 ]
 

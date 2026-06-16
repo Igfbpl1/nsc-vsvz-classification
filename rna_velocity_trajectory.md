@@ -77,6 +77,8 @@ nohup kb ref \
 ```
 
 ### Step 3 — Download FASTQs and Run kb count
+
+**Local Mac (small samples):**
 ```bash
 # download with --include-technical to get barcode reads (_3 files)
 fasterq-dump --split-files --include-technical SRR_ID1 SRR_ID2 --outdir .
@@ -86,7 +88,48 @@ bash run_kb_count.sh GSM8253796
 bash run_kb_count.sh GSM8253798
 ```
 
-Note: FASTQ files have 4 reads per spot. Use `_3` (R1, 28bp barcode+UMI) and `_4` (R2, 90bp cDNA) only. `--include-technical` is required — without it fasterq-dump omits the barcode reads.
+**EC2 (large samples — download in parallel):**
+```bash
+# parallel prefetch + fasterq-dump per SRR to maximize throughput
+nohup fasterq-dump --split-files --include-technical SRR_ID1 --outdir . > fastq_1.log 2>&1 &
+nohup fasterq-dump --split-files --include-technical SRR_ID2 --outdir . > fastq_2.log 2>&1 &
+nohup fasterq-dump --split-files --include-technical SRR_ID3 --outdir . > fastq_3.log 2>&1 &
+
+# run kb count directly (without run_kb_count.sh) so binary paths use system defaults
+nohup kb count \
+  -i index.idx \
+  -g t2g.txt \
+  -x 10xv3 \
+  -o kb_output_GSM8253799 \
+  -c1 cdna_t2c.txt \
+  -c2 intron_t2c.txt \
+  --workflow lamanno \
+  SRR28912869_3.fastq SRR28912869_4.fastq \
+  SRR28912870_3.fastq SRR28912870_4.fastq \
+  SRR28912871_3.fastq SRR28912871_4.fastq \
+  > kb_count.log 2>&1 &
+
+tail -f kb_count.log
+```
+
+**Transfer counts_unfiltered back to local:**
+```bash
+# on EC2
+tar czf gsm799_counts.tgz -C kb_output_GSM8253799 counts_unfiltered
+
+# on Mac
+scp -i ~/.ssh/vsvz-key.pem \
+  ubuntu@<ec2-dns>:~/project/sra_runs/gsm799_counts.tgz \
+  sra_runs/
+
+mkdir -p sra_runs/kb_output_GSM8253799
+tar xzf sra_runs/gsm799_counts.tgz -C sra_runs/kb_output_GSM8253799
+```
+
+**Notes:**
+- FASTQ files have 4 reads per spot. Use `_3` (R1, 28bp barcode+UMI) and `_4` (R2, 90bp cDNA) only.
+- `--include-technical` is required — without it fasterq-dump omits the barcode reads (`_3` files).
+- After kb count completes, delete FASTQs + BUS files to free space; keep only `counts_unfiltered/`.
 
 ### Step 4 — Run Velocity Pipeline
 ```bash
@@ -242,6 +285,192 @@ Stmn2,NB,1,0.711,none,none,constitutive,stable NB state marker — not an early 
 Igfbpl1,OL,2,0.440,69,TAP,none,SHAP high but velocity weak — not a cell-intrinsic OL driver
 ```
 
+### OL-Fate Velocity Drivers Across the Lineage
+
+Checking Ptprz1 and OL lineage genes across TAP, OPC, COP, OL columns:
+
+**Ptprz1 appears only in TAP (rank 10) and nowhere downstream.** Its splicing dynamics are active during the TAP→OPC transition and have already stabilized by the time the cell becomes an OPC. This is the definition of an early commitment marker — being switched on in TAPs heading toward OL fate before any canonical OPC marker is visible.
+
+OPC top drivers are dominated by axon guidance and adhesion genes (Ntn1, Spry4, Ntm, F3) rather than canonical OPC markers like Pdgfra or Olig1. The OPC velocity field captures structural remodeling dynamics.
+
+COP is where OL commitment first becomes clearly visible in velocity: Fa2h rank 1 (SHAP 16), Olig2 rank 4, Cldn11 rank 19.
+
+OL has the strongest and cleanest signal of any cell type: Olig2 corr=98.45, Mag rank 5, Fa2h rank 8, Tspan2 rank 3 (SHAP 19).
+
+OL-associated velocity drivers per cell type (independent ranked lists — ranks are NOT comparable across columns):
+
+| Cell type | Gene | Rank within cell type | Note |
+|---|---|---|---|
+| TAP | Ptprz1 | 10 | Only OL-associated gene with strong TAP velocity signal |
+| TAP | Smpd3 | 16 | Myelin sphingolipid metabolism |
+| OPC | Enpp2 | 16 | OL-associated; top OPC drivers are mostly axon guidance genes |
+| COP | Fa2h | 1 | Strongest COP driver; SHAP rank 16 |
+| COP | Olig2 | 4 | Canonical OL TF |
+| COP | Cldn11 | 19 | Myelin tight junction |
+| OL | Olig2 | 1 | Corr=98, dominant OL driver |
+| OL | Tspan2 | 3 | SHAP rank 19 |
+| OL | Mag | 5 | Myelin-associated glycoprotein |
+| OL | Fa2h | 8 | Also top COP driver — spans both stages |
+
+These genes are active in their respective cell types independently. Ptprz1 and Enpp2 are unrelated genes — they do not form a cascade or handoff.
+
 ### Key Biological Finding
 
-**The absence of a strong OL-fate gene in the TAP column is itself a finding.** Fa2h only appears at COP stage, Tspan2 only at OL stage — suggesting OL commitment does not have a single dominant early transcriptional driver in TAPs the way NB commitment does with Bcl11a. OL fate appears to be encoded through multiple weaker signals (Fa2h, Tspan2, Gjc3) that only become prominent after OPC commitment.
+**Ptprz1 is the only gene showing velocity dynamics specifically at the TAP→OPC transition.** Everything else only becomes prominent at COP or OL stage. This makes Ptprz1 the best candidate for an early OL-fate marker in TAPs — even though SHAP did not rank it, because it does not discriminate OL vs NB at steady-state expression (it marks OPC-committed cells regardless of how they got there).
+
+**The NB arm has one dominant early driver (Bcl11a, TAP rank 1). The OL arm has a staged cascade** — Ptprz1 at TAP stage, Fa2h/Olig2 at COP stage, Olig2/Tspan2/Mag at OL stage. OL fate commitment appears to be a gradual multi-step process rather than a single transcriptional switch.
+
+```
+gene,fate,tap_rank,cop_rank,ol_rank,shap_rank,notes
+Ptprz1,OL,10,none,none,none,only TAP-stage OL velocity signal — early commitment marker
+Smpd3,OL,16,none,none,none,myelin sphingolipid metabolism — early TAP signal
+Fa2h,OL,none,1,8,16,constitutive — strongest cross-validated OL driver
+Tspan2,OL,none,none,3,19,constitutive OL surface marker
+Olig2,OL,none,4,1,none,canonical OL TF — strongest OL velocity signal (corr=98)
+Mag,OL,none,none,5,none,late OL maturation marker
+Bcl11a,NB,1,none,none,6,dominant early NB driver — TAP rank 1
+Nfib,NB,3,none,none,17,early NB — present in NSC too
+Meis2,NB,5,none,none,5,strong NB fate discriminator
+```
+
+---
+
+## 8. SHAP Direction Analysis — Critical Methodological Finding
+
+### The Problem
+
+SHAP measures discrimination *magnitude*, not direction. A high SHAP score means a gene strongly distinguishes OL from NB cells — but the model can use that gene as a **positive** OL predictor (high gene → OL fate) OR as a **negative** OL predictor (high gene → NB fate, low gene → OL fate).
+
+The project's goal is to find **positive OL-leaning markers** — genes upregulated when a TAP commits to OL fate. Negative markers (NB markers used in reverse) are biologically interesting but do not meet the deliverable.
+
+### Method
+
+For each of the top 20 SHAP genes, mean expression was compared between OL lineage (OPC + COP + OL) and Neuroblasts:
+- **POSITIVE_OL**: ol_mean > 1.5 × nb_mean
+- **NEGATIVE_OL (NB marker)**: nb_mean > 1.5 × ol_mean
+- **AMBIGUOUS**: similar expression
+
+### Results
+
+```
+shap_rank,gene,shap_value,ol_mean,nb_mean,tap_mean,ol_pct,nb_pct,ol_to_nb_ratio,direction
+1,Stmn2,0.711,0.071,2.965,0.897,5.1,96.1,0.02,NEGATIVE_OL
+2,Igfbpl1,0.440,0.054,2.199,1.119,4.8,93.2,0.02,NEGATIVE_OL
+3,Pllp,0.258,1.836,0.016,0.018,90.2,1.7,114.01,POSITIVE_OL
+4,Dlx6os1,0.209,0.050,2.294,0.840,4.0,93.3,0.02,NEGATIVE_OL
+5,Meis2,0.187,0.275,2.934,1.668,27.5,98.2,0.09,NEGATIVE_OL
+6,Bcl11a,0.139,0.035,1.521,0.972,3.5,84.5,0.02,NEGATIVE_OL
+7,Sox11,0.100,0.218,2.999,2.763,17.8,97.2,0.07,NEGATIVE_OL
+8,Celf4,0.100,0.062,1.613,0.570,6.7,86.9,0.04,NEGATIVE_OL
+9,Tmsb10,0.094,0.802,3.754,2.780,53.1,97.9,0.21,NEGATIVE_OL
+10,Gjc3,0.070,1.955,0.014,0.010,89.1,1.4,137.08,POSITIVE_OL
+11,Meg3,0.067,0.214,2.244,0.232,16.0,72.5,0.10,NEGATIVE_OL
+12,Arx,0.060,0.035,1.487,1.180,3.6,77.8,0.02,NEGATIVE_OL
+13,Dock10,0.042,1.231,0.023,0.016,79.4,2.7,52.63,POSITIVE_OL
+14,Cryab,0.036,2.707,0.091,0.072,90.1,8.5,29.87,POSITIVE_OL
+15,Grin2b,0.029,0.017,0.602,0.241,2.1,42.3,0.03,NEGATIVE_OL
+16,Fa2h,0.028,1.207,0.010,0.008,75.1,1.1,116.07,POSITIVE_OL
+17,Nfib,0.024,0.851,2.888,2.416,69.7,96.6,0.29,NEGATIVE_OL
+18,Cnp,0.023,3.171,0.186,0.244,93.5,17.9,17.02,POSITIVE_OL
+19,Tspan2,0.021,2.211,0.039,0.058,86.3,4.1,56.93,POSITIVE_OL
+20,Hmgn2,0.021,0.731,1.948,2.962,65.3,88.1,0.38,NEGATIVE_OL
+```
+
+**Summary:** 7 positive OL markers, 13 negative OL markers (NB markers used in reverse), 0 ambiguous.
+
+### The 7 True Positive OL-Leaning Markers
+
+These are the genes that genuinely mark OL commitment by their **presence** (not absence):
+
+| SHAP rank | Gene | OL pct | NB pct | OL/NB ratio | Notes |
+|---|---|---|---|---|---|
+| 3 | Pllp | 90% | 2% | 114× | Plasmolipin — myelin lipid raft component |
+| 10 | Gjc3 | 89% | 1% | 137× | Connexin 30.2 — gap junction protein; CupRap-enriched in velocity |
+| 13 | Dock10 | 79% | 3% | 53× | Cytoskeletal regulator |
+| 14 | Cryab | 90% | 9% | 30× | αB-crystallin — stress response, myelin maintenance |
+| 16 | Fa2h | 75% | 1% | 116× | Fatty acid 2-hydroxylase — myelin sphingolipid synthesis |
+| 18 | Cnp | 94% | 18% | 17× | 2',3'-cyclic nucleotide phosphodiesterase — myelin marker |
+| 19 | Tspan2 | 86% | 4% | 57× | Tetraspanin 2 — early oligodendrocyte surface marker |
+
+All 7 are biologically coherent **myelin/membrane structural genes** — consistent with the metabolic/structural priming hypothesis identified earlier (vs the single dominant TF that NB fate uses with Bcl11a).
+
+### The 13 Negative OL Markers (NB Markers in Reverse)
+
+These genes have high SHAP rank because they are **strong Neuroblast markers** — the model uses their *absence* as an OL signal. Their presence indicates a TAP is heading to NB fate, not OL fate.
+
+Includes the highest SHAP genes: Stmn2 (#1), Igfbpl1 (#2), Dlx6os1 (#4), Meis2 (#5), Bcl11a (#6), Sox11 (#7).
+
+### Conclusion: The Refined Panel
+
+The project's deliverable should be the **7 positive OL-leaning markers**:
+1. Pllp
+2. Gjc3
+3. Dock10
+4. Cryab
+5. Fa2h
+6. Cnp
+7. Tspan2
+
+The other 13 are valid lineage discriminators but do not answer the project's question.
+
+### Decision: Keep the Symmetric Classifier
+
+Retraining with NB markers excluded was considered and rejected. The asymmetric filter (removing only NB-biased features while keeping all OL-biased features) imposes a direction-imposing constraint that changes what's being measured — from "OL vs NB discrimination" to "OL identity expression." This is methodologically different from the canonical marker removal (which symmetrically excludes textbook markers from both classes).
+
+The symmetric classifier is retained as the source of truth. The 7 positive OL-leaning markers above are derived by post-hoc filtering of the SHAP top 20 by direction — a description of what the panel contains, not a new model.
+
+---
+
+## 9. Plan: Expand to All 10 Samples
+
+### Why
+
+The current velocity analysis on 2 samples (10,246 cells) shows a clear early NB driver (Bcl11a at TAP velocity rank 1) but **no comparable early OL driver in TAPs**. The only TAP-stage OL signal is Ptprz1 at rank 10 — moderate at best.
+
+Three possibilities for the absent early OL signal:
+
+1. **Sample size** — Only ~5,200 TAPs total in 2 samples. Of those, only a fraction are actively committing to OL fate (most go to the default NB fate). The signal may be present but underpowered.
+2. **Biology** — OL commitment may genuinely lack a dominant early TF switch, instead relying on gradual structural/metabolic priming visible only at OPC/COP stage.
+3. **Methodology** — The 2-sample velocity neighborhood graph differs from the 10-sample UMAP embedding, introducing noise.
+
+Adding all 10 samples addresses (1) and (3) simultaneously:
+- Doubles TAP cell count (more statistical power)
+- Includes 5 CupRap samples (more cells actively transitioning to OL)
+- Velocity neighborhood graph matches the 10-sample UMAP exactly
+
+If a positive OL-leaning TAP marker exists, the 10-sample run is the most likely place to find it. If none emerges, that supports interpretation (2) as a real biological finding — OL commitment is structurally different from NB commitment.
+
+### Sample Inventory
+
+| GSM | Strain | Treatment | Timepoint | Cells | Priority |
+|---|---|---|---|---|---|
+| GSM8253796 | NesCre | Cntl | 3wks | 6,035 | ✓ done |
+| GSM8253798 | NesCre | CupRap | 3wks | 4,211 | ✓ done |
+| GSM8253799 | NesCre | CupRap | 3wks | 10,567 | running on EC2 |
+| GSM8253797 | NesCre | Cntl | 3wks | 4,710 | next |
+| GSM8253792 | CD1 | Cntl | 0wks | 4,376 | cross-strain |
+| GSM8253793 | CD1 | Cntl | 3wks | 4,061 | cross-strain |
+| GSM8253794 | CD1 | CupRap | 3wks | 3,550 | cross-strain |
+| GSM8253795 | CD1 | CupRap | 3wks | 2,393 | cross-strain |
+| GSM8647352 | CD1 | CupRap | 0wks | 4,134 | early timepoint |
+| GSM8647353 | CD1 | CupRap | 0wks | 3,928 | early timepoint |
+
+Total: 47,965 cells across 10 samples. Approximately 50,000 cells will provide ~5x the TAP signal of the current 2-sample run.
+
+### Expected Storage and Compute
+
+- FASTQ data per sample: ~80–200 GB (kept only during kb count, deleted after)
+- kb count output (`counts_unfiltered/`): ~150 MB per sample
+- Velocity pipeline RAM: ~30 GB peak with all 10 samples
+- Velocity pipeline time: ~5 hours (dominated by `recover_dynamics`)
+- AWS cost estimate: ~$10–15 total on r6i.2xlarge
+
+### What to Look For After the 10-Sample Run
+
+Re-run the `velocity_drivers_TAP.csv` analysis and look specifically for:
+
+1. **Positive OL markers appearing in TAP velocity** — any of Pllp, Gjc3, Dock10, Cryab, Fa2h, Cnp, Tspan2 showing up in the TAP driver list at high rank would be the deliverable: a confirmed early OL-fate marker.
+2. **Ptprz1 rank stability** — if it stays high or strengthens, it's confirmed as the dominant early OL marker. If it drops, it was sample-specific noise.
+3. **Cntl vs CupRap differential in TAP** — genes that appear as TAP drivers only in CupRap samples are condition-dependent OL commitment drivers, directly linked to microglial IGF1/OSM signaling.
+
+If no positive OL markers emerge in TAP velocity even with 10 samples and 5x the TAP cell count, the finding is biological: **OL commitment lacks a dominant early transcriptional driver** — a publishable mechanistic insight in itself.
