@@ -32,31 +32,31 @@ The **bias score is conservative by design** — it requires actual upregulation
 
 ---
 
-## 3. Results — 1,630 TAPs from 3 NesCre Samples
+## 3. Results — 2,506 TAPs from 4 Samples (CD1_Cntl 0wks + 3 NesCre)
 
 ### Distribution of scores
 
 | Method | Mean | SD | Min | Max |
 |---|---|---|---|---|
-| CellRank P(OL) | 0.38 | 0.32 | 0.00 | 0.97 |
-| ML P(OL) | 0.27 | 0.29 | 0.06 | 0.95 |
-| Bias score | −0.98 | 0.54 | −2.01 | 0.44 |
+| CellRank P(OL) | 0.407 | 0.326 | 0.000 | 0.951 |
+| ML P(OL) | 0.292 | 0.303 | 0.055 | 0.945 |
+| Bias score | −0.939 | 0.555 | −2.010 | 0.491 |
 
 ### Pairwise method comparison
 
-| Pair | Pearson r | Cohen's kappa | Interpretation |
-|---|---|---|---|
-| **ML vs CellRank** | **0.84** | **0.69 (good)** | **Strong genuine agreement** |
-| ML vs Bias | 0.84 | 0.23 (fair) | High correlation, low kappa — agreement on NB calls only |
-| CellRank vs Bias | 0.86 | 0.19 (slight) | Same pattern — Bias is far more conservative |
+| Pair | Pearson r | Spearman r | Agreement | Cohen's kappa |
+|---|---|---|---|---|
+| **ML vs CellRank** | **0.832** | **0.805** | **86.3%** | **0.679 (good)** |
+| ML vs Bias | 0.848 | 0.856 | 78.6% | 0.251 (fair) |
+| CellRank vs Bias | 0.857 | 0.810 | 70.6% | 0.188 (slight) |
 
 ### Per-condition OL-leaning fraction
 
-| Method | Cntl (n=743) | CupRap_Rep1 (n=370) | CupRap_Rep2 (n=517) |
-|---|---|---|---|
-| CellRank (P > 0.5) | 32.3% | 34.1% | 26.5% |
-| ML (P > 0.5) | 24.6% | 25.1% | 19.0% |
-| Bias score (>0) | 4.6% | 6.2% | 2.7% |
+| Method | CD1_Cntl (n=876) | Cntl (n=743) | CupRap_Rep1 (n=370) | CupRap_Rep2 (n=517) |
+|---|---|---|---|---|
+| CellRank (P > 0.5) | 41.3% (362) | 32.8% (244) | 33.5% (124) | 26.5% (137) |
+| ML (P > 0.5) | 31.7% (278) | 24.6% (183) | 25.1% (93) | 19.0% (98) |
+| Bias score (>0) | 7.3% (64) | 4.6% (34) | 6.2% (23) | 2.7% (14) |
 
 ---
 
@@ -64,8 +64,8 @@ The **bias score is conservative by design** — it requires actual upregulation
 
 The original `PROJECT_NARRATIVE.md` used the bias score to validate the ML model, reporting 82% agreement on GSM8253799. That number is technically correct but uninformative — it reflects mostly the trivial fact that both methods correctly classify the abundant NB-fated cells.
 
-**Of ML's 374 OL predictions, Bias confirms only 64 (17.1%).**
-**Of ML's 374 OL predictions, CellRank confirms 339 (90.6%).**
+**Of ML's OL predictions, Bias confirms 19.2%.**
+**Of ML's OL predictions, CellRank confirms 90.2%.**
 
 The 82% bias-vs-ML number was misleading. The actual validation is CellRank's confirmation of ML's OL calls — and that confirmation rate is strong.
 
@@ -97,7 +97,7 @@ Bias is **high precision, low sensitivity** — it only flags the most committed
 
 ## 5. Bottom Line
 
-**For TAP fate prediction, the trajectory framing is what you want — and ML answers that question well enough that it agrees with the gold-standard CellRank method on 87.8% of cells (Cohen's kappa 0.69, GOOD).**
+**ML agrees with CellRank on 86.3% of cells (Cohen's kappa 0.679, good agreement).**
 
 - If your project explicitly wants "predict TAP fate before maturation," **ML is the right tool**.
 - If you want "describe which TAPs already look OL," **Bias score is more honest** (but more restrictive).
@@ -109,23 +109,23 @@ ML beats Bias for the trajectory question — note that both methods use both di
 2. **Non-linear gene interactions** — ML can encode conditional patterns; Bias is purely additive
 3. **Cell-based calibration** — ML learned from real OPC/COP/OL cells; Bias normalizes against random background genes
 
-The functional consequence: **Bias has perfect precision (100%) but only catches 14% of velocity-confirmed OL-fated TAPs. ML catches 67% with 90.6% precision** — much higher sensitivity, which is what trajectory prediction needs.
+The functional consequence: **Bias confirms only 15.2% of CellRank's OL calls. ML confirms 67.8% of CellRank's OL calls** — much higher sensitivity against the velocity-based reference.
 
 ML's predictions are validated by CellRank's independent velocity-based analysis — when ML calls a TAP OL-leaning, CellRank confirms 90.6% of the time.
 
 ---
 
-## 6. CupRap Effect at the TAP Stage — Reproducible Across Methods
+## 6. OL-Leaning Fraction Across Conditions
 
-Across all three methods, CupRap samples do NOT show consistently higher OL-leaning TAP fractions than Cntl:
+CD1_Cntl (0wks) has the highest OL-leaning fraction across both ML and CellRank (41.3% and 31.7%). CupRap_Rep2 has the lowest across all three methods.
 
-- CellRank: Cntl 32.3% < CupRap_Rep1 34.1%, but > CupRap_Rep2 26.5%
-- ML: Cntl 24.6% ≈ CupRap_Rep1 25.1%, but > CupRap_Rep2 19.0%
-- Bias: Cntl 4.6% < CupRap_Rep1 6.2%, but > CupRap_Rep2 2.7%
+CupRap samples do not consistently show higher OL-leaning TAP fractions than Cntl:
 
-CupRap_Rep2 (the largest CupRap sample, 10,567 cells) consistently has the lowest fraction of OL-leaning TAPs across all three methods. **The CupRap effect on OL commitment is not at the TAP stage.** It manifests downstream at OPC/COP cell types (see condition-split velocity analysis in `rna_velocity_trajectory.md` Section 7b — Igf1 appears as a CupRap-specific COP velocity driver, Gjc3 OL velocity jumps from rank 22 → 1 with CupRap inclusion).
+- CellRank: CD1_Cntl 41.3% > Cntl 32.8% ≈ CupRap_Rep1 33.5% > CupRap_Rep2 26.5%
+- ML: CD1_Cntl 31.7% > Cntl 24.6% ≈ CupRap_Rep1 25.1% > CupRap_Rep2 19.0%
+- Bias: CD1_Cntl 7.3% > Cntl 4.6% ≈ CupRap_Rep1 6.2% > CupRap_Rep2 2.7%
 
-This is consistent with the Wegleiter et al. (2025) source-paper mechanism: microglial IGF1/OSM acts on already-committed OL precursors (OPCs), increasing their proliferation and maturation — not redirecting TAP fate.
+ML and CellRank agree on the ordering across all four conditions.
 
 ---
 

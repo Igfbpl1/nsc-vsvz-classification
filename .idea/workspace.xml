@@ -4,12 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="add cd1 to velocity">
+    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="add cd1 to comparison">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/tap_fate_comparison.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/tap_fate_comparison.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/tap_fate_method_summary.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/tap_fate_method_summary.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/tap_fate_per_condition.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/tap_fate_per_condition.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/rna_velocity_trajectory.md" beforeDir="false" afterPath="$PROJECT_DIR$/rna_velocity_trajectory.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tap_fate_comparison.md" beforeDir="false" afterPath="$PROJECT_DIR$/tap_fate_comparison.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -476,7 +474,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781642326295</updated>
     </task>
-    <option name="localTasksCounter" value="41" />
+    <task id="LOCAL-00041" summary="add cd1 to comparison">
+      <option name="closed" value="true" />
+      <created>1781643729689</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1781643729689</updated>
+    </task>
+    <option name="localTasksCounter" value="42" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -507,7 +513,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="renamed file" />
     <MESSAGE value="got rid of unnecessary comments" />
     <MESSAGE value="added project narrative" />
     <MESSAGE value="update" />
@@ -532,6 +537,7 @@
     <MESSAGE value="fix" />
     <MESSAGE value="add scripts" />
     <MESSAGE value="add cd1 to velocity" />
-    <option name="LAST_COMMIT_MESSAGE" value="add cd1 to velocity" />
+    <MESSAGE value="add cd1 to comparison" />
+    <option name="LAST_COMMIT_MESSAGE" value="add cd1 to comparison" />
   </component>
 </project>

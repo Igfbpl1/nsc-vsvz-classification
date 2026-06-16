@@ -183,6 +183,21 @@ The OL commitment arm is clearly more active in CupRap vs both Cntl conditions. 
 
 This confirms that OL commitment is not encoded by a positive transcriptional switch at the TAP stage. The commitment decision is defined by failure to engage the NB program (Bcl11a, Meis2, Srrm4, Nfib), with OL identity only becoming velocity-active at the OPC/COP stage downstream.
 
+### ML Model and Velocity Converge on the Same Non-Canonical OL Genes
+
+The ML model was trained on 1,965 non-canonical HVGs with no prior gene list — it discovered OL-discriminating features from data alone. The 7 genes it identified as positive OL markers (SHAP direction = POSITIVE_OL) are: Pllp, Gjc3, Dock10, Cryab, Fa2h, Cnp, Tspan2.
+
+RNA velocity, using a completely independent method based on splicing dynamics, identifies 4 of these same genes as active drivers at the COP stage:
+
+| Gene | SHAP rank (ML) | COP velocity rank | OL velocity rank |
+|---|---|---|---|
+| Fa2h | 16 | **1** | 11 |
+| Gjc3 | 10 | 16 | 3 |
+| Dock10 | 13 | 26 | 30 |
+| Tspan2 | 19 | 35 | 4 |
+
+The ML model did not use velocity. Velocity did not use the ML model's gene list. Both methods arrived at the same 4 genes through independent routes. This means when the ML model calls a TAP OL-fated, it is detecting early low-level expression of the same genes that velocity confirms are kinetically active at the OPC→COP commitment stage.
+
 ### OPC/COP Velocity Drivers — Key Patterns
 
 **Pattern 1: 4 of 7 SHAP positive OL markers converge as COP velocity drivers**
