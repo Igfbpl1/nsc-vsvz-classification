@@ -227,111 +227,194 @@ A gene qualifies as an early marker if it satisfies all three:
 
 ---
 
-## 7. Results (Cntl GSM8253796 vs CupRap GSM8253798)
+## 7. Results — 3 Sample Run (Cntl + 2× CupRap)
 
-### SHAP Top 20 × Velocity Driver Cross-Reference
+Velocity computed on 20,813 cells: GSM8253796 (Cntl, 6,035 cells) + GSM8253798 (CupRap Rep1, 4,211 cells) + GSM8253799 (CupRap Rep2, 10,567 cells).
 
-```
-gene,shap_rank,shap_value,velocity_column,velocity_rank,interpretation
-Bcl11a,6,0.139,TAP,1,strongest early NB marker — TAP velocity rank 1
-Bcl11a,6,0.139,Neuroblast,43,confirmed in committed NB too
-Nfib,17,0.024,TAP,3,early NB — present in TAP and NSC
-Nfib,17,0.024,NSC,58,detectable even at NSC stage
-Meis2,5,0.187,TAP,5,strong NB fate discriminator
-Meis2,5,0.187,Neuroblast,52,confirmed downstream
-Grin2b,15,0.029,Neuroblast,10,NB commitment marker
-Grin2b,15,0.029,TAP,41,weak TAP signal
-Fa2h,16,0.028,COP,1,strongest OL-lineage velocity driver
-Fa2h,16,0.028,OL,8,confirmed in mature OL
-Tspan2,19,0.021,OL,3,early OL surface marker
-Gjc3,10,0.070,OL,22,OL marker but weaker in combined Cntl+CupRap analysis
-Gjc3,10,0.070,OPC,21,present across OL lineage
-Igfbpl1,2,0.440,TAP,69,weak TAP velocity signal — not a robust cell-intrinsic OL driver
-Stmn2,1,0.711,none,none,stable NB state marker — not dynamically induced
-```
+### TAP Velocity Drivers — No Positive OL-Leaning Markers
 
-### Cntl vs CupRap: What Changed in Velocity Rankings
+The top 30 TAP velocity drivers are dominated by NB-associated genes. With 5× more cells than the 2-sample run, no positive OL marker emerged in TAP velocity.
 
-Comparing CupRap-only placeholder run to real Cntl + CupRap:
-
-```
-gene,previous_velocity_rank,new_velocity_rank,column,interpretation
-Bcl11a,6,1,TAP,strengthened — constitutive early NB driver in both conditions
-Nfib,2,3,TAP,stable — robust early NB marker in both conditions
-Fa2h,19,1,COP,strengthened — now top COP driver across both conditions
-Tspan2,16,3,OL,strengthened — more prominent OL marker with Cntl added
-Gjc3,3,22,OL,weakened — was CupRap-specific; less prominent with Cntl included
-Gjc3,24,66,COP,weakened — same pattern confirms CupRap-dependence
-Igfbpl1,99,69,TAP,marginal — not a robust velocity driver in either run
-```
-
-**Gjc3 dropping from OL rank 3 to rank 22** when Cntl is added suggests its OL dynamics are partially CupRap-dependent — stronger when microglia are activated (IGF1/OSM signaling). This directly connects to the project's central question about microglial signaling driving TAP→OL commitment.
-
-**Fa2h and Tspan2 strengthening** with Cntl added confirms they are constitutive OL commitment markers, present regardless of treatment condition.
-
-**Bcl11a at TAP rank 1** in both conditions confirms it as the dominant early NB fate marker, constitutive and condition-independent.
-
-### Final Summary: Best Cross-Validated Early Markers
-
-```
-gene,fate,shap_rank,shap_value,best_velocity_rank,velocity_column,condition_dependence,conclusion
-Bcl11a,NB,6,0.139,1,TAP,constitutive,strongest early NB marker — both analyses agree
-Nfib,NB,17,0.024,3,TAP,constitutive,early NB — detectable at NSC stage
-Meis2,NB,5,0.187,5,TAP,constitutive,strong NB fate discriminator
-Fa2h,OL,16,0.028,1,COP,constitutive,strongest OL-lineage velocity driver
-Tspan2,OL,19,0.021,3,OL,constitutive,early OL surface marker
-Gjc3,OL,10,0.070,22,OL,CupRap-enriched,OL marker but condition-dependent — weaker in Cntl
-Stmn2,NB,1,0.711,none,none,constitutive,stable NB state marker — not an early driver
-Igfbpl1,OL,2,0.440,69,TAP,none,SHAP high but velocity weak — not a cell-intrinsic OL driver
-```
-
-### OL-Fate Velocity Drivers Across the Lineage
-
-Checking Ptprz1 and OL lineage genes across TAP, OPC, COP, OL columns:
-
-**Ptprz1 appears only in TAP (rank 10) and nowhere downstream.** Its splicing dynamics are active during the TAP→OPC transition and have already stabilized by the time the cell becomes an OPC. This is the definition of an early commitment marker — being switched on in TAPs heading toward OL fate before any canonical OPC marker is visible.
-
-OPC top drivers are dominated by axon guidance and adhesion genes (Ntn1, Spry4, Ntm, F3) rather than canonical OPC markers like Pdgfra or Olig1. The OPC velocity field captures structural remodeling dynamics.
-
-COP is where OL commitment first becomes clearly visible in velocity: Fa2h rank 1 (SHAP 16), Olig2 rank 4, Cldn11 rank 19.
-
-OL has the strongest and cleanest signal of any cell type: Olig2 corr=98.45, Mag rank 5, Fa2h rank 8, Tspan2 rank 3 (SHAP 19).
-
-OL-associated velocity drivers per cell type (independent ranked lists — ranks are NOT comparable across columns):
-
-| Cell type | Gene | Rank within cell type | Note |
+| Rank | Gene | Corr | Fate association |
 |---|---|---|---|
-| TAP | Ptprz1 | 10 | Only OL-associated gene with strong TAP velocity signal |
-| TAP | Smpd3 | 16 | Myelin sphingolipid metabolism |
-| OPC | Enpp2 | 16 | OL-associated; top OPC drivers are mostly axon guidance genes |
-| COP | Fa2h | 1 | Strongest COP driver; SHAP rank 16 |
-| COP | Olig2 | 4 | Canonical OL TF |
-| COP | Cldn11 | 19 | Myelin tight junction |
-| OL | Olig2 | 1 | Corr=98, dominant OL driver |
-| OL | Tspan2 | 3 | SHAP rank 19 |
-| OL | Mag | 5 | Myelin-associated glycoprotein |
-| OL | Fa2h | 8 | Also top COP driver — spans both stages |
+| 1 | Nsg2 | 94 | NB |
+| 2 | Rnf165 | 86 | NB |
+| 3 | Srrm4 | 85 | NB |
+| 4 | Bcl11a | 83 | NB (SHAP #6) |
+| 5 | Meis2 | 77 | NB (SHAP #5) |
+| 6 | Nfib | 75 | NB-leaning |
+| 29 | Smpd3 | 49 | weak OL-related (sphingolipid metabolism) |
 
-These genes are active in their respective cell types independently. Ptprz1 and Enpp2 are unrelated genes — they do not form a cascade or handoff.
+No OL canonical or non-canonical markers (Pllp, Gjc3, Cnp, Cryab, Fa2h, Tspan2, Dock10, Lhfpl3, Ptprz1, Pdgfra) appear in TAP top 100.
 
-### Key Biological Finding
+Ptprz1, which appeared at TAP rank 10 in the 2-sample run, dropped to **rank 44** with 5× more cells — confirming it was a sample-size artifact, not a real early marker.
 
-**Ptprz1 is the only gene showing velocity dynamics specifically at the TAP→OPC transition.** Everything else only becomes prominent at COP or OL stage. This makes Ptprz1 the best candidate for an early OL-fate marker in TAPs — even though SHAP did not rank it, because it does not discriminate OL vs NB at steady-state expression (it marks OPC-committed cells regardless of how they got there).
+### Cell-Type Velocity Cascade
 
-**The NB arm has one dominant early driver (Bcl11a, TAP rank 1). The OL arm has a staged cascade** — Ptprz1 at TAP stage, Fa2h/Olig2 at COP stage, Olig2/Tspan2/Mag at OL stage. OL fate commitment appears to be a gradual multi-step process rather than a single transcriptional switch.
+The OL identity program turns on sharply at the COP stage with no detectable TAP precursor.
+
+| Stage | Top OL-relevant drivers (rank, corr) |
+|---|---|
+| TAP | none |
+| OPC | Gjc3 (14, 21), Cmtm5 (13, 22), Ncam1 (12, 23) |
+| COP | Fa2h (1, 28), Cldn11 (5, 17), Olig2 (6, 16), Mag (12, 13), **Igf1 (13, 13)**, Gjc3 (15, 12), Gatm (18, 12) |
+| OL | **Gjc3 (1, 261)**, Mag (2, 155), Tspan2 (4, 120), Ugt8a (8, 96), Olig2 (15, 66), Fa2h (19, 61), Mog (24, 49) |
+
+### Three Major Positive Findings
+
+**1. Gjc3 explosion in OL velocity (rank 22 → rank 1, corr 52 → 261)**
+
+The two added CupRap samples produced a 5× jump in Gjc3 OL velocity correlation. This is the strongest condition-responsive signal in the analysis. Direct evidence that CupRap treatment activates an OL commitment program — connecting to the project's IGF1/OSM microglial hypothesis.
+
+**2. Igf1 itself appears as a COP velocity driver (rank 13)**
+
+First direct molecular evidence in the velocity layer of IGF1 signaling at the OL commitment stage. The COP cells have active IGF1 splicing dynamics, consistent with either autocrine IGF1 or IGF1-responsive transcriptional changes — both supporting the project's central hypothesis.
+
+**3. The myelin program is cleanly detectable at COP and OL stages**
+
+OL-relevant genes appearing as top velocity drivers within each cell type (independent ranked lists — ranks are NOT sequential or comparable across cell types):
+
+| Cell type | OL-relevant velocity drivers (rank within cell type, corr) |
+|---|---|
+| COP | Fa2h (1, 28), Cldn11 (5, 17), Olig2 (6, 16), Mag (12, 13), Igf1 (13, 13), Gjc3 (15, 12), Gatm (18, 12) |
+| OL | Gjc3 (1, 261), Mag (2, 155), Tspan2 (4, 120), Olig2 (15, 66), Fa2h (19, 61), Mog (24, 49) |
+
+These genes are simultaneously active in their respective cell types — Fa2h and Cldn11 are not in sequence, they are both top velocity drivers in COP cells at the same time.
+
+What this shows: the myelin program is detectable as a coordinated set of velocity drivers at COP and OL stages. None of these genes appear in TAP velocity, indicating the program turns on after OL commitment, not before.
+
+### Other Observations
+
+- **Bcl11a dropped from TAP rank 1 to rank 4**; Nsg2 took over. Both are NB markers — the early NB signal is reproducible.
+- **Nfib appears in both NSC (rank 47) and TAP (rank 6) velocity** — the earliest NB-leaning signal in the dataset, active across the NSC→TAP transition.
+- **Ncam1 appears in OL rank 5 and OPC rank 12** — myelin-relevant adhesion molecule, confirmed velocity driver across the OL lineage.
+- **Aldh1l1 in NSC rank 21** — astrocyte/quiescent NSC marker, confirms the NSC end of the trajectory.
+
+### Reinterpretation: OL Fate May Be Encoded by Failure to Engage NB Program
+
+With 5× the TAP cells and zero positive OL markers in TAP velocity, the absence of an early OL transcriptional switch is now strongly supported. Hypothesis worth considering:
+
+**The fate decision may be on the NB side, not the OL side.** When a TAP fails to upregulate Bcl11a/Nsg2/Srrm4/Meis2, it defaults to OL fate. The molecular decision is "engage NB program or not" — there is nothing positive to detect in TAP velocity for OL-fated cells because their commitment is defined by *absence* of NB signal.
+
+This is consistent with:
+- SHAP repeatedly surfacing NB markers as top discriminators (13 of 20 are NB-direction)
+- The sharp transition of OL identity at COP stage rather than gradual buildup
+- The NB arm having clear early TAP drivers (Bcl11a, Nfib, Meis2) while the OL arm has none
+
+---
+
+## 7b. Cntl vs CupRap Condition-Split Velocity Analysis
+
+To test whether CupRap treatment changes the transcriptional program within specific cell types, velocity drivers were ranked per (cell_type × condition) — splitting Cntl and CupRap cells of the same cell type into separate groups.
+
+### Cell Counts Per Cell Type × Condition
+
+| Cell Type | Cntl cells | CupRap cells | Statistical balance |
+|---|---|---|---|
+| TAP | 743 | 889 | balanced |
+| OPC | 27 | 145 | Cntl underpowered |
+| COP | 44 | 491 | Cntl severely underpowered |
+| OL | 655 | 1,510 | imbalanced but workable |
+
+The asymmetry itself is a finding — Cntl mice have far fewer OPCs and COPs because no white matter injury is driving OL commitment.
+
+### Top 30 Driver Overlap Between Conditions
+
+| Cell Type | Top 30 overlap | Top 50 overlap | Interpretation |
+|---|---|---|---|
+| TAP | ~100% | ~100% | Identical — no CupRap effect on TAP transcription |
+| OPC | 27/30 (90%) | 45/50 (90%) | Very similar — same core identity program |
+| COP | 19/30 (63%) | 36/50 (72%) | Meaningful differences — strongest CupRap modulation |
+| OL | 24/30 (80%) | 39/50 (78%) | Similar program, much stronger dynamics in CupRap |
+
+### TAP Stage — Identical Programs (Cntl ≈ CupRap)
+
+Both conditions show essentially the same NB-leaning velocity drivers:
+
+| Rank | Cntl | CupRap |
+|---|---|---|
+| 1 | Nsg2 | Nsg2 |
+| 2 | Rnf165 | Srrm4 |
+| 3 | Srrm4 | Rnf165 |
+| 4 | Bcl11a | Bcl11a |
+| 5 | Meis2 | Plxna2 |
+| 6 | Nfib | Meis2 |
+
+**Conclusion:** CupRap treatment does **not** alter the transcriptional program of TAPs. Both Cntl and CupRap TAPs run the same NB-default trajectory. The CupRap effect on OL commitment is not encoded at the TAP stage.
+
+### OPC Stage — CupRap Amplifies an Existing Program
+
+Top 30 are ~90% identical (Ntn1, Ntm, Dpysl3, Gpr37l1, Fut9, F3 dominant in both). Same OL identity genes appear at similar ranks:
+
+| Gene | Cntl rank | CupRap rank |
+|---|---|---|
+| Cmtm5 | 11 | 13 |
+| Ncam1 | 13 | 12 |
+| Gjc3 | 17 | 14 |
+
+But CupRap OPCs uniquely show **active myelin biosynthesis** genes at moderate ranks:
+
+| Gene | CupRap rank | Function |
+|---|---|---|
+| **Myrf** | 43 | Myelin Regulatory Factor — master myelin TF |
+| **Ugt8a** | 48 | UDP-galactose:ceramide galactosyltransferase — myelin galactolipid |
+| **Ptprk** | 50 | Receptor tyrosine phosphatase — myelin signaling |
+| **Elovl7** | 55 | Fatty acid elongase — myelin lipid synthesis |
+| **Fa2h** | 58 | Fatty acid 2-hydroxylase — myelin sphingolipid |
+
+These genes exist in Cntl OPCs too (Fa2h at Cntl rank 60, corr 4.6) but at much weaker velocity correlation. CupRap **amplifies** the existing OPC myelin program; it does not switch it on de novo.
+
+**Conclusion:** CupRap effect at OPC stage is quantitative amplification of the myelin biosynthesis program. Myrf emergence is mechanistically meaningful — Myrf is the master TF committing OPCs to mature myelinating OLs.
+
+### COP Stage — Strongest CupRap-Driven Differences
+
+Cntl top correlations are ~3× weaker than CupRap (Fa2h Cntl corr=7.6 vs CupRap corr=26). Several OL commitment genes appear in CupRap COPs but not Cntl:
+
+| Gene | CupRap COP rank | Cntl COP rank | Function |
+|---|---|---|---|
+| **Igf1** | 12 (corr 12.4) | not in top 50 | IGF1 ligand — same molecule the source paper identifies as microglial driver |
+| **Gjc3** | 13 (corr 12.2) | not in top 50 | Gap junction protein — connects to OL maturation |
+| **Cmtm5** | 24 (corr 10.6) | not in top 50 | CKLF-like MARVEL transmembrane protein |
+| **Tspan2** | 55 (corr 6.6) | not in top 50 | OL surface marker |
+
+**Conclusion:** Igf1 emergence as a COP velocity driver in CupRap (but not Cntl) is mechanistically significant. The Cell Reports 2025 paper identifies Igf1 as a *microglia-derived* ligand. Our analysis shows COP cells themselves have active Igf1 splicing dynamics during CupRap-induced commitment — suggesting either autocrine signaling or response to incoming microglial IGF1 includes transcriptional Igf1 upregulation in target cells.
+
+### OL Stage — Same Program, Dramatically Stronger in CupRap
+
+Top OL identity genes appear in both conditions but with very different correlation magnitudes:
+
+| Gene | Cntl rank (corr) | CupRap rank (corr) | Ratio |
+|---|---|---|---|
+| Gjc3 | 2 (81) | 1 (141) | 1.7× stronger in CupRap |
+| Mag | 1 (82) | 3 (92) | comparable |
+| Tspan2 | 3 (66) | 5 (77) | 1.2× stronger in CupRap |
+| Olig2 | 26 (25) | 11 (58) | 2.3× stronger in CupRap |
+| Fa2h | 17 (37) | 20 (43) | comparable |
+| Ptprk | 14 (41) | 10 (59) | 1.4× stronger in CupRap |
+
+CupRap-specific OL drivers include Pex5l, Tppp, Enpp2 (additional myelin/cytoskeletal genes). Cntl-specific includes Sox10 (canonical OL TF still detectable in Cntl OLs, while it falls outside CupRap top 50 because the dominant Gjc3 signal compresses the relative rankings).
+
+**Conclusion:** Both Cntl and CupRap have functioning mature OLs running the same identity program. CupRap dramatically accelerates the velocity dynamics — particularly the Gjc3/Olig2/Ptprk axis.
+
+### Summary: Where the CupRap Effect Actually Lives
 
 ```
-gene,fate,tap_rank,cop_rank,ol_rank,shap_rank,notes
-Ptprz1,OL,10,none,none,none,only TAP-stage OL velocity signal — early commitment marker
-Smpd3,OL,16,none,none,none,myelin sphingolipid metabolism — early TAP signal
-Fa2h,OL,none,1,8,16,constitutive — strongest cross-validated OL driver
-Tspan2,OL,none,none,3,19,constitutive OL surface marker
-Olig2,OL,none,4,1,none,canonical OL TF — strongest OL velocity signal (corr=98)
-Mag,OL,none,none,5,none,late OL maturation marker
-Bcl11a,NB,1,none,none,6,dominant early NB driver — TAP rank 1
-Nfib,NB,3,none,none,17,early NB — present in NSC too
-Meis2,NB,5,none,none,5,strong NB fate discriminator
+Stage      Cntl vs CupRap difference            CupRap-specific signature
+-----------------------------------------------------------------------------
+TAP        None (~100% overlap)                  —
+OPC        Mild (90% overlap)                   Myrf, Ugt8a, Ptprk, Fa2h amplified
+COP        Strong (63% overlap)                 Igf1 (rank 12!), Gjc3, Cmtm5, Tspan2
+OL         Same program, ~1.5-2× stronger        Gjc3 corr 141 vs 81, Olig2 rank 11 vs 26
 ```
+
+The CupRap effect is a **gradient that accumulates downstream of commitment**, not a TAP-stage decision switch:
+
+1. **TAPs** behave identically in both conditions (NB-default program)
+2. **OPCs** show CupRap-specific upregulation of myelin biosynthesis (Myrf, Ugt8a, Fa2h, Elovl7)
+3. **COPs** show CupRap-specific activation of Igf1 and Gjc3 — strongest condition-driven signal
+4. **OLs** show same identity but accelerated dynamics under CupRap
+
+The Igf1 appearance at COP rank 12 in CupRap (but not Cntl) is mechanistic evidence connecting your downstream transcriptional readout to the IGF1 signaling hypothesis from the source paper.
 
 ---
 
@@ -446,7 +529,7 @@ If a positive OL-leaning TAP marker exists, the 10-sample run is the most likely
 |---|---|---|---|---|---|
 | GSM8253796 | NesCre | Cntl | 3wks | 6,035 | ✓ done |
 | GSM8253798 | NesCre | CupRap | 3wks | 4,211 | ✓ done |
-| GSM8253799 | NesCre | CupRap | 3wks | 10,567 | running on EC2 |
+| GSM8253799 | NesCre | CupRap | 3wks | 10,567 | ✓ done |
 | GSM8253797 | NesCre | Cntl | 3wks | 4,710 | next |
 | GSM8253792 | CD1 | Cntl | 0wks | 4,376 | cross-strain |
 | GSM8253793 | CD1 | Cntl | 3wks | 4,061 | cross-strain |
@@ -465,12 +548,22 @@ Total: 47,965 cells across 10 samples. Approximately 50,000 cells will provide ~
 - Velocity pipeline time: ~5 hours (dominated by `recover_dynamics`)
 - AWS cost estimate: ~$10–15 total on r6i.2xlarge
 
-### What to Look For After the 10-Sample Run
+### Status After 3 Samples
 
-Re-run the `velocity_drivers_TAP.csv` analysis and look specifically for:
+Completed:
+- ✓ Positive OL markers (Pllp, Gjc3, Dock10, Cryab, Fa2h, Cnp, Tspan2) checked against TAP velocity — **none appear**
+- ✓ Ptprz1 dropped from TAP rank 10 → 44 with more cells — confirmed as sample-specific noise
+- ✓ Gjc3 in OL velocity jumped from rank 22 → 1 (corr 52 → 261) with added CupRap samples — strong CupRap-responsive OL commitment signal
+- ✓ Igf1 surfaced as COP velocity driver (rank 13) — direct molecular evidence of IGF1 signaling at OL commitment
 
-1. **Positive OL markers appearing in TAP velocity** — any of Pllp, Gjc3, Dock10, Cryab, Fa2h, Cnp, Tspan2 showing up in the TAP driver list at high rank would be the deliverable: a confirmed early OL-fate marker.
-2. **Ptprz1 rank stability** — if it stays high or strengthens, it's confirmed as the dominant early OL marker. If it drops, it was sample-specific noise.
-3. **Cntl vs CupRap differential in TAP** — genes that appear as TAP drivers only in CupRap samples are condition-dependent OL commitment drivers, directly linked to microglial IGF1/OSM signaling.
+### Whether to Expand Further
 
-If no positive OL markers emerge in TAP velocity even with 10 samples and 5x the TAP cell count, the finding is biological: **OL commitment lacks a dominant early transcriptional driver** — a publishable mechanistic insight in itself.
+The remaining 7 samples may strengthen the COP→OL cascade but are unlikely to produce a TAP-stage OL driver — the 5× increase from 2 samples to 3 samples (and 2× cell count) produced no TAP-stage OL signal. The biological hypothesis (OL fate = failure to engage NB program) is now supported.
+
+Adding the cross-strain CD1 samples would address whether findings are NesCre-specific. Adding the 0wks CupRap samples would address whether the commitment signal differs at early vs late post-injury timepoints.
+
+If the remaining 7 samples are added, the specific test would be:
+- Does the COP→OL cascade strengthen further?
+- Does any TAP-stage OL signal emerge with 50K cells?
+- Are the findings reproducible across strains?
+---

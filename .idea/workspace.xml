@@ -4,28 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="add velocity drivers">
-      <change afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CupRap_Rep1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CupRap_Rep2.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/csv-editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/csv-editor.xml" afterDir="false" />
+    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="add another sample">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_heatmap_latent_time_heatmap.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_heatmap_latent_time_heatmap.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_latent_time.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_latent_time.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_phase_NSC_TAP.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_phase_NSC_TAP.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_phase_TAP_Neuroblast.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_phase_TAP_Neuroblast.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_phase_TAP_OL.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_phase_TAP_OL.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_Cntl.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_Cntl.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_all.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_all.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_zoom_NSC_TAP.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_zoom_NSC_TAP.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_zoom_TAP_Neuroblast.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_zoom_TAP_Neuroblast.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_zoom_TAP_OL.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_zoom_TAP_OL.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_COP.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_COP.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_NSC.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_NSC.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_Neuroblast.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_Neuroblast.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_OL.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_OL.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_OPC.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_OPC.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_TAP.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_TAP.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rna_velocity_pipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/rna_velocity_pipeline.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/rna_velocity_trajectory.md" beforeDir="false" afterPath="$PROJECT_DIR$/rna_velocity_trajectory.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -445,7 +426,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781564977531</updated>
     </task>
-    <option name="localTasksCounter" value="35" />
+    <task id="LOCAL-00035" summary="add another sample">
+      <option name="closed" value="true" />
+      <created>1781575921945</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1781575921945</updated>
+    </task>
+    <option name="localTasksCounter" value="36" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -476,7 +465,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="clean-up" />
     <MESSAGE value="made test 1 for 99.85% accuracy" />
     <MESSAGE value="made test 2" />
     <MESSAGE value="fixed the mapping issue (like a true programmer)" />
@@ -501,6 +489,7 @@
     <MESSAGE value="setup ec2" />
     <MESSAGE value="missed techincal files" />
     <MESSAGE value="add velocity drivers" />
-    <option name="LAST_COMMIT_MESSAGE" value="add velocity drivers" />
+    <MESSAGE value="add another sample" />
+    <option name="LAST_COMMIT_MESSAGE" value="add another sample" />
   </component>
 </project>
