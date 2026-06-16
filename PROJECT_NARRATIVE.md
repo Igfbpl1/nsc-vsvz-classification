@@ -1,4 +1,4 @@
-Goal: Given a sample of genes in a cell, I want to identify the top 20 most important representative non-canonical marker genes by building a model that can identify whether this cell is more OL-leaning or NB-leaning. To achieve that, this model uses all Highly Variable non-canonical, background markers (1,971 genes) as features and predicts the probability of the cell being an OL or an NB. In other words, it distinguishes a cell’s identity as OL leaning or NB leaning. As an application, I want to apply this model to an out-of-sample dataset and observe the accuracy of the model in the identification of OL or NB. Finally, I want to apply this model to a TAP dataset, which is completely excluded from the training. Here, I can compare the Marker Panel Scoring (using relative expression of OPC/COP/OL compared to the expression of NB) to the Machine Learning Classifier score.
+Goal: Given a sample of genes in a cell, I want to identify the top 20 most important representative non-canonical marker genes by building a model that can identify whether this cell is more OL-leaning or NB-leaning. To achieve that, this model uses all Highly Variable non-canonical, background markers (1,965 genes) as features and predicts the probability of the cell being an OL or an NB. In other words, it distinguishes a cell’s identity as OL leaning or NB leaning. As an application, I want to apply this model to an out-of-sample dataset and observe the accuracy of the model in the identification of OL or NB. Finally, I want to apply this model to a TAP dataset, which is completely excluded from the training. Here, I can compare the Marker Panel Scoring (using relative expression of OPC/COP/OL compared to the expression of NB) to the Machine Learning Classifier score.
 
 Broad Steps (3):
 1) From an NCBI Databse, gather the barcodes and the genes in a matrix and conduct quality control on them. Then, find normalized log values for every gene in each cell. After this, use the representative genes found in the literature to classify every cell to their respective cell_type. 
@@ -124,21 +124,21 @@ XGBoost · binary classifier - Reference 2
 
 * positive = OPC + COP + OL (n = 7,514), negative = Neuroblast (n = 10,205)  
 * held-out sample = GSM8253799  
-* features = HVGs - 29 known lineage markers  
+* features = HVGs - 35 known lineage markers  
 * SHAP TreeExplainer → ranked feature importance (Reference 3)
 
 How the Model Works (High Level)
 
 1) First, Scanpy is used to fit the [markers.py](http://markers.py) Python file, which has the 12 labels/cells and their representative genes, into the main CSV file raw_barcodes_genes_top100.csv. The main CSV file has the barcodes/cell identity on the y-axis, and the genes on the x-axis. After the representative genes are fit onto this Python file, the resulting file barocde_to_cell_type_mapping.csv has the complete list of every cell_id matched to the cell_type. It is important to note that this process is done on the full 19k genes, not just the top 2,000 HVGs.   
 2) After this is created, the bias score for every cell is created. This process is elaborated on in a little bit. The model’s results are compared to these scores.   
-3) Now, the training features are chosen. These include the top 2,000 HVGs minus the 29 canonical markers, so 1,971 genes in total. These 29 canonical markers only belong to the OPC/COP/OL/NB lineages. All the other canonical markers for the other cell types can be included as part of the features. The main CSV being used here is normalized_barcodes_genes_top100.csv, which has all of the normalized values.   
+3) Now, the training features are chosen. These include the top 2,000 HVGs minus the 35 canonical markers, so 1,965 genes in total. These 35 canonical markers only belong to the OPC/COP/OL/NB lineages (12 OPC + 7 COP + 11 OL + 11 NB = 41 raw, deduplicated to 35 unique because Sox10, Olig2, Pdgfra, and Olig1 appear in multiple panels). All the other canonical markers for the other cell types can be included as part of the features. The main CSV being used here is normalized_barcodes_genes_top100.csv, which has all of the normalized values.   
 4) Now, the targets have to be created, which are saved as ol_commitment. Here, for every one of the cells, a number which is indicative of it becoming an OL (1) or NB (0) is created. It’s also marked as being positive for OL leaning and negative for NB leaning. The model now attempts to fit the features into these targets using the binary decision trees with the XGBoost classifier (Reference 2). After the trees have been created, SHAP (Reference 3) tests out the model and determines which are the most important genes that the model depends on. This is explained in more detail in a bit.  
 5) The held-out sample is now confirmed using this model. This is also explained in the following section. 
 
-Actual Features of the Model: As described in Part 3, the actual features of this model are the 1,971 genes. These are the non-canonical genes from the 2,000 gene list that surfaced. And these are the main features that are put into the model. 
+Actual Features of the Model: As described in Part 3, the actual features of this model are the 1,965 genes. These are the non-canonical genes from the 2,000 gene list that surfaced. And these are the main features that are put into the model. 
 
 Targets of the Model: y = 1 (OPC/COP/OL) or y = 0 (NB)  
-During this section, I am actually training the classifier to match the 1971 background features to 1 and 0 targets. Again, this is just training the classifier.
+During this section, I am actually training the classifier to match the 1965 background features to 1 and 0 targets. Again, this is just training the classifier.
 
 Output of the Model: Two outputs (we are actually running the model during parts a and b)
 
@@ -172,7 +172,7 @@ Output of the Model: Two outputs (we are actually running the model during parts
 
 Data Table 3 is the top 20 genes found by SHAP. (Reference 18) This is found in trigger_genes.csv. 
 
-There are two tests for the model. These results are corroborated by using a hand-rolled bias score calculator, which uses the 29 canonical, well-known genes in the literature, and they agree 82% of the time. Another way of measuring how accurate this model is was by using a held-out sample (GSM8253799), where the cell fate commitment is known, and running the cells through the model. The accuracy is 99.85%. 
+There are two tests for the model. These results are corroborated by using a hand-rolled bias score calculator, which uses the 35 canonical, well-known genes in the literature, and they agree 82% of the time. Another way of measuring how accurate this model is was by using a held-out sample (GSM8253799), where the cell fate commitment is known, and running the cells through the model. The accuracy is 99.85%. 
 
 1) Model trained on cells whose fate is known.  
    1) Then, using a dataset that is excluded from the actual training, see what percentage overlaps. Basically, you run cells whose fate is already known into the model and see if the model gets it correct. This gives a 99.85% accuracy, so you know that the model is very good at identifying both extremes. The model only missed 3 cells from the OL-lineage class, and only 1 cell from the Neuroblast class, as seen in Data Table 4.  
@@ -195,7 +195,7 @@ There are two tests for the model. These results are corroborated by using a han
       2) Scanpy looks at the rest of the genome and selects a control group amongst the random background genes, which should have a similar expression level to each representative gene.   
       3) Then, it subtracted the representative score and the background score. If the difference is around 0, there is a high chance that the representative genes are at the same level as the background genes, meaning that the cell is probably not what you think it is. For example, if you calculate the mean expression values for all the representative genes for an OPC in Cell A, and calculate the mean expression values of the background genes in Cell A, and if you subtract these two values and get 0, then the background noise is equal to the OPC noise, meaning that the cell would most likely not be an OPC. Think of it like this: if the processes a certain cell should participate in are at the same level as the rest of the background processes, then that means the cell isn’t doing those specific activities and defining itself by them, meaning it isn’t the cell you thought it was.   
          1) However, if the difference is highly positive, then the representative genes are being expressed at a much higher rate compared to the background genes, so there is a higher chance that this cell is what you think it is. In the same example, if the OPC expression values are much greater than the background gene expression values, you know the cell is most likely an OPC.   
-            1) It’s also important to note that these background genes aren’t the other 1,971 genes, it is actually the other canonical genes. It’s like a tug of war between the gene sets, seeing which specific OL lineage (either OL, OPC, or COP) or NB lineage is winning based on the sign and magnitude of the difference.   
+            1) It’s also important to note that these background genes aren’t the other 1,965 genes, it is actually the other canonical genes. It’s like a tug of war between the gene sets, seeing which specific OL lineage (either OL, OPC, or COP) or NB lineage is winning based on the sign and magnitude of the difference.   
       4) This process is then repeated for each of the 4 marker panels. This system allows you to create a bias score for each TAP, indicative of what path it will most likely take.  
    2) These two systems are compared, and they agree roughly 82.1% (410 + 16 / 519) of the time. It is important to note that there is no answer key; we are just confirming two separate ways of doing things with each other. We know that by having a score of 82%, meaning that these two independently-derived systems agree with each other 82% of the time, the derivative work we have done using the model matches the work done directly. Table #5 sums it up. Only 87 + 6 cells were disagreed upon, and the bulk of the disagreements (87) came from when the bias score system thought the TAP was heading towards an NB fate, while the model gave a probability saying the TAP was heading towards an OL fate. 
 
@@ -221,7 +221,7 @@ Cell Classification Flowchart (Table #6):
 | 19,139 genes |  |
 | ----- | :---- |
 | Path 1: Marker Panel Scoring | Path 2: Machine Learning Classifier   |
-| Step 1. Input Features 29 marker genes | Step 1. Input Features 1,971 non–marker HVGs (markers excluded) |
+| Step 1. Input Features 35 marker genes | Step 1. Input Features 1,965 non–marker HVGs (markers excluded) |
 | Step 2. Method sc.tl.score_genes per panel  | Step 2. Method XGBoost classifier (Reference 2) |
 | Step 3. Intermediate Metrics score_OPC, COP, OL, Neuroblast | Step 3. Classification Output P(OL) = 0.804 |
 | Step 4. Final Value bias = +0.128 | — |

@@ -10,8 +10,8 @@ The project's central deliverable is a per-TAP fate prediction: "is this TAP hea
 
 | Method | Approach | Input |
 |---|---|---|
-| **ML model (XGBoost)** | Supervised classifier trained on terminal cells | 1,971 non-canonical HVGs |
-| **Bias score** | Canonical marker panel scoring | 29 known lineage markers |
+| **ML model (XGBoost)** | Supervised classifier trained on terminal cells | 1,965 non-canonical HVGs |
+| **Bias score** | Canonical marker panel scoring | 35 unique known lineage markers (across OPC/COP/OL/NB panels) |
 | **CellRank** | Velocity-based fate probability | RNA velocity transition matrix + terminal states |
 
 CellRank is methodologically principled for intermediate cells because it uses each cell's actual velocity vector to compute drift toward terminal states. It provides an independent validation reference for the other methods.
@@ -71,14 +71,27 @@ The 82% bias-vs-ML number was misleading. The actual validation is CellRank's co
 
 ### Three reasons ML beats Bias for trajectory
 
-**1. ML uses negative-direction signal (NB markers in reverse).**
-We showed that 13 of 20 SHAP top genes are NB markers used as "low NB marker = OL-like" predictors. Bias score on canonical OL markers alone has no access to this signal. For a TAP that has not yet turned on OL genes but has already downregulated NB genes, Bias misses it — ML catches it.
+Note: Both methods use positive AND negative direction signals. The bias score formula `mean(OL panels) − NB panel score` already incorporates NB-direction. The real differences are elsewhere.
 
-**2. ML captures non-linear gene interactions.**
-XGBoost trees can learn conditional patterns like "Gjc3 elevated AND Stmn2 reduced → OL-like." Bias score is purely additive — it cannot encode interactions. At the TAP stage where individual OL gene expression is weak, integrating co-occurrence patterns is exactly what matters.
+**1. Feature breadth — not direction.**
+Bias uses only **35 unique canonical markers** (24 OL-lineage + 11 NB, deduplicated across OPC/COP/OL/NB panels). These are genes that activate at OPC/COP/OL stages, not in TAPs that are *about to* commit. ML uses 1,965 non-canonical HVGs, many of which are expressed at intermediate levels in early-committing TAPs. ML can see subtle patterns Bias is blind to because Bias's vocabulary is restricted to late-stage canonical markers.
 
-**3. ML is calibrated to actual cells, not abstract background.**
-Bias score normalizes against random background genes — an abstract reference. ML learned what "OL-like" looks like by seeing real OPC/COP/OL cells. When ML scores a TAP, it asks "how close is this to the cells I saw labeled OL?" — a more cell-aware comparison than "how much above background is the OL panel?"
+**2. Non-linear gene interactions vs additive averaging.**
+Bias = arithmetic mean of OL panel − mean of NB panel. Purely additive — cannot encode conditional patterns like "Gjc3 elevated AND Stmn2 reduced → OL-like." XGBoost trees can. At the TAP stage where individual OL gene expression is weak, integrating co-occurrence patterns across many genes is exactly what reveals commitment.
+
+**3. Cell-based calibration vs background normalization.**
+Bias score's `score_genes` subtracts the mean of random background genes — an abstract reference. ML learned what "OL-like" looks like by seeing real OPC/COP/OL cells. When ML scores a TAP, it asks "how close is this to the cells I saw labeled OL?" — a cell-aware comparison that's more sensitive to intermediate states because real intermediate cells were in the training distribution.
+
+### Precision vs sensitivity
+
+Both methods are validated against CellRank. The split between them is in precision vs sensitivity:
+
+| Metric | Bias score | ML model |
+|---|---|---|
+| Precision (when called OL, is CellRank confirming?) | **100%** | 90.6% |
+| Sensitivity (catches how many of CellRank's OL TAPs?) | 14% | **67%** |
+
+Bias is **high precision, low sensitivity** — it only flags the most committed TAPs, but every one of those is real. ML is **moderate precision, much higher sensitivity** — it catches 5× more OL-leaning TAPs at the cost of slightly lower precision. For "predict TAP fate before maturation," sensitivity matters: you want to catch cells early in commitment, not just confirm the obvious cases.
 
 ---
 
@@ -90,10 +103,13 @@ Bias score normalizes against random background genes — an abstract reference.
 - If you want "describe which TAPs already look OL," **Bias score is more honest** (but more restrictive).
 - The 82% bias-vs-ML agreement that the original project relied on was technically true but uninformative — both methods are conservative and just agreed on the easy NB cells.
 
-ML beats Bias for the trajectory question because:
-1. **It uses negative-direction signal** (NB markers in reverse)
-2. **It captures non-linear gene interactions** that simple averaging misses
-3. **It's calibrated to actual cells** rather than abstract background
+ML beats Bias for the trajectory question — note that both methods use both directional signals (the bias formula `OL_panels − NB_panel` already incorporates NB-direction). The real differences are:
+
+1. **Feature breadth** — ML uses 1,965 non-canonical HVGs; Bias uses only 35 unique canonical markers (24 OL-lineage + 11 NB) that don't activate until late commitment stages
+2. **Non-linear gene interactions** — ML can encode conditional patterns; Bias is purely additive
+3. **Cell-based calibration** — ML learned from real OPC/COP/OL cells; Bias normalizes against random background genes
+
+The functional consequence: **Bias has perfect precision (100%) but only catches 14% of velocity-confirmed OL-fated TAPs. ML catches 67% with 90.6% precision** — much higher sensitivity, which is what trajectory prediction needs.
 
 ML's predictions are validated by CellRank's independent velocity-based analysis — when ML calls a TAP OL-leaning, CellRank confirms 90.6% of the time.
 
