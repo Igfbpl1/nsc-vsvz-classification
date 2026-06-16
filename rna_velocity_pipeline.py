@@ -1,10 +1,6 @@
 """
 RNA Velocity & Trajectory Pipeline — Phase 2–4
 Loads kb-python MTX output (spliced + unspliced) and merges with processed.h5ad.
-
-When GSM8253796 download completes, update the Cntl entry in SAMPLE_CONFIGS:
-    "h5ad_sample_id": "GSM8253796",
-    "kb_dir": "sra_runs/kb_output_GSM8253796/counts_unfiltered",
 """
 
 import os
@@ -21,9 +17,12 @@ H5AD_PATH = "outputs/processed.h5ad"
 T2G_PATH = "sra_runs/t2g.txt"
 OUTPUT_DIR = "outputs/velocity"
 
-# Both paths point to the same folder until GSM8253796 finishes processing.
-# To switch to real data: set h5ad_sample_id="GSM8253796" and update kb_dir.
 SAMPLE_CONFIGS = [
+    {
+        "h5ad_sample_id": "GSM8253792",
+        "velocity_label": "CD1_Cntl",
+        "kb_dir": "sra_runs/kb_output_GSM8253792/counts_unfiltered",
+    },
     {
         "h5ad_sample_id": "GSM8253796",
         "velocity_label": "Cntl",
@@ -216,9 +215,6 @@ def main():
     print("[scVelo] Building velocity graph ...")
     scv.tl.velocity_graph(combined, show_progress_bar=False)
 
-    print("[scVelo] Computing latent time ...")
-    scv.tl.latent_time(combined)
-
     # ── Save ───────────────────────────────────────────────────────────────────
     out_h5ad = f"{OUTPUT_DIR}/velocity_combined.h5ad"
     combined.write_h5ad(out_h5ad)
@@ -236,12 +232,6 @@ def main():
         save="stream_all.png", show=False,
     )
 
-    scv.pl.scatter(
-        combined, color="latent_time", color_map="gnuplot",
-        title="Latent time",
-        save="latent_time.png", show=False,
-    )
-
     for label in combined.obs["velocity_label"].unique():
         sub = combined[combined.obs["velocity_label"] == label]
         scv.pl.velocity_embedding_stream(
@@ -250,19 +240,8 @@ def main():
             save=f"stream_{label}.png", show=False,
         )
 
-    print("\n[scVelo] Ranking velocity genes ...")
-    scv.tl.rank_velocity_genes(combined, groupby=color_key, min_corr=0.3)
-    rvg = combined.uns["rank_velocity_genes"]
-    driver_df  = pd.DataFrame(rvg["names"])
-    scores_df  = pd.DataFrame(rvg["scores"])
-
     # load ensembl → gene name mapping
     ensembl_to_name = load_ensembl_to_name(T2G_PATH)
-
-    # per-gene stats from scVelo dynamical model (indexed by ensembl ID)
-    var_df = combined.var[
-        [c for c in ["fit_likelihood", "spearmans_score"] if c in combined.var.columns]
-    ]
 
     # SHAP lookup (gene name → rank + value)
     shap_df = pd.read_csv("outputs/trigger_genes.csv")
@@ -273,126 +252,84 @@ def main():
     from markers import MARKERS
     canonical_genes = {g for genes in MARKERS.values() for g in genes}
 
-    # only output lineage-relevant cell types
-    lineage_cols = [c for c in ["NSC", "TAP", "Neuroblast", "OPC", "COP", "OL"]
-                    if c in driver_df.columns]
+    def write_driver_csvs(adata, label_suffix=""):
+        scv.tl.rank_velocity_genes(adata, groupby=color_key, min_corr=0.3)
+        rvg = adata.uns["rank_velocity_genes"]
+        driver_df = pd.DataFrame(rvg["names"])
+        scores_df = pd.DataFrame(rvg["scores"])
 
-    # write one CSV per cell type
-    for col in lineage_cols:
-        ensembl_ids = driver_df[col]
-        gene_names  = ensembl_ids.map(lambda x: ensembl_to_name.get(x, x))
+        var_df = adata.var[
+            [c for c in ["fit_likelihood", "spearmans_score"] if c in adata.var.columns]
+        ]
 
-        cell_df = pd.DataFrame()
-        cell_df["rank"]          = range(1, len(ensembl_ids) + 1)
-        cell_df["ensembl_id"]    = ensembl_ids.values
-        cell_df["gene_name"]     = gene_names.values
-        cell_df["corr"]          = scores_df[col].values
-        cell_df["likelihood"]    = ensembl_ids.map(
-            lambda x: var_df["fit_likelihood"].get(x, None) if "fit_likelihood" in var_df.columns else None
-        ).values
-        cell_df["spearmans"]     = ensembl_ids.map(
-            lambda x: var_df["spearmans_score"].get(x, None) if "spearmans_score" in var_df.columns else None
-        ).values
-        cell_df["shap_rank"]     = gene_names.map(
-            lambda g: shap_lookup.loc[g, "shap_rank"] if g in shap_lookup.index else None
-        ).values
-        cell_df["shap_value"]    = gene_names.map(
-            lambda g: shap_lookup.loc[g, "shap_mean_abs"] if g in shap_lookup.index else None
-        ).values
-        cell_df["canonical"]     = gene_names.map(
-            lambda g: 1 if g in canonical_genes else 0
-        ).values
+        lineage_cols = [c for c in ["NSC", "TAP", "Neuroblast", "OPC", "COP", "OL"]
+                        if c in driver_df.columns]
 
-        out_path = f"{OUTPUT_DIR}/velocity_drivers_{col}.csv"
-        cell_df.to_csv(out_path, index=False)
-        print(f"  {col} drivers → {out_path}")
+        for col in lineage_cols:
+            ensembl_ids = driver_df[col]
+            gene_names  = ensembl_ids.map(lambda x: ensembl_to_name.get(x, x))
 
-    top_drivers = [g for g in pd.unique(driver_df.values.flatten())[:300]
-                   if g in combined.var_names]
-    scv.pl.heatmap(
-        combined,
-        var_names=top_drivers,
-        sortby="latent_time",
-        col_color="cell_type",
-        n_convolve=100,
-        save="latent_time_heatmap.png",
-        show=False,
+            cell_df = pd.DataFrame()
+            cell_df["rank"]       = range(1, len(ensembl_ids) + 1)
+            cell_df["ensembl_id"] = ensembl_ids.values
+            cell_df["gene_name"]  = gene_names.values
+            cell_df["corr"]       = scores_df[col].values
+            cell_df["likelihood"] = ensembl_ids.map(
+                lambda x: var_df["fit_likelihood"].get(x, None) if "fit_likelihood" in var_df.columns else None
+            ).values
+            cell_df["spearmans"]  = ensembl_ids.map(
+                lambda x: var_df["spearmans_score"].get(x, None) if "spearmans_score" in var_df.columns else None
+            ).values
+            cell_df["shap_rank"]  = gene_names.map(
+                lambda g: shap_lookup.loc[g, "shap_rank"] if g in shap_lookup.index else None
+            ).values
+            cell_df["shap_value"] = gene_names.map(
+                lambda g: shap_lookup.loc[g, "shap_mean_abs"] if g in shap_lookup.index else None
+            ).values
+            cell_df["canonical"]  = gene_names.map(
+                lambda g: 1 if g in canonical_genes else 0
+            ).values
+
+            suffix = f"_{label_suffix}" if label_suffix else ""
+            out_path = f"{OUTPUT_DIR}/velocity_drivers_{col}{suffix}.csv"
+            cell_df.to_csv(out_path, index=False)
+            print(f"  {col}{suffix} drivers → {out_path}")
+
+    print("\n[scVelo] Ranking velocity genes (pooled) ...")
+    write_driver_csvs(combined)
+    # capture pooled rankings before per-condition runs can overwrite combined.uns
+    driver_df_pooled = pd.DataFrame(combined.uns["rank_velocity_genes"]["names"])
+
+    print("\n[scVelo] Ranking velocity genes per condition ...")
+    for condition in combined.obs["treatment"].unique():
+        subset = combined[combined.obs["treatment"] == condition].copy()
+        print(f"  condition={condition}: {subset.n_obs:,} cells")
+        write_driver_csvs(subset, label_suffix=condition)
+
+    # ── Phase portraits using top velocity driver genes ────────────────────────
+    combined_named = combined.copy()
+    combined_named.var_names = pd.Index(
+        [ensembl_to_name.get(g, g) for g in combined.var_names]
     )
+    combined_named.var_names_make_unique()
+    lineage_cols_plot = [c for c in ["NSC", "TAP", "Neuroblast", "OPC", "COP", "OL"]
+                         if c in driver_df_pooled.columns]
 
-    # ── Zoomed stream plots ────────────────────────────────────────────────────
-    def umap_bounds(adata, cell_types, pad=1.5):
-        """Return (xlim, ylim) covering the UMAP region for the given cell types."""
-        mask = adata.obs["cell_type"].isin(cell_types)
-        coords = adata.obsm["X_umap"][mask]
-        return (
-            (coords[:, 0].min() - pad, coords[:, 0].max() + pad),
-            (coords[:, 1].min() - pad, coords[:, 1].max() + pad),
-        )
-
-    print("\nSaving zoomed stream plots ...")
-
-    xl, yl = umap_bounds(combined, ["NSC", "TAP"])
-    scv.pl.velocity_embedding_stream(
-        combined, basis="umap", color=color_key,
-        xlim=xl, ylim=yl,
-        title="Velocity — NSC → TAP",
-        save="zoom_NSC_TAP.png", show=False,
-    )
-
-    # Two separate zooms: one per arm of the bifurcation
-    xl, yl = umap_bounds(combined, ["TAP", "Neuroblast"], pad=0.5)
-    scv.pl.velocity_embedding_stream(
-        combined, basis="umap", color=color_key,
-        xlim=xl, ylim=yl,
-        title="Velocity — TAP → Neuroblast arm",
-        save="zoom_TAP_Neuroblast.png", show=False,
-    )
-
-    xl, yl = umap_bounds(combined, ["TAP", "OPC", "COP", "OL"], pad=0.5)
-    scv.pl.velocity_embedding_stream(
-        combined, basis="umap", color=color_key,
-        xlim=xl, ylim=yl,
-        title="Velocity — TAP → OL arm",
-        save="zoom_TAP_OL.png", show=False,
-    )
-
-    # ── Phase portraits for transition marker genes ────────────────────────────
-    # gene_name is dropped during HVG subsetting; re-attach from the mapping
-    combined.var["gene_name"] = [ensembl_to_name.get(g, g) for g in combined.var_names]
-
-    def ensembl_ids_for(adata, gene_names):
-        """Return Ensembl IDs in adata.var_names whose gene_name matches."""
-        name_to_id = adata.var["gene_name"].reset_index()
-        name_to_id.columns = ["ensembl_id", "gene_name"]
-        matched = name_to_id[name_to_id["gene_name"].isin(gene_names)]["ensembl_id"].tolist()
-        return [g for g in matched if g in adata.var_names]
-
-    # NSC → TAP transition markers
-    nsc_tap_genes = ensembl_ids_for(combined, ["Sox2", "Egfr", "Mki67", "Ascl1", "Ccnd2"])
-    if nsc_tap_genes:
+    print("\nSaving phase portraits (top 4 driver genes per cell type) ...")
+    for col in lineage_cols_plot:
+        top_genes = [
+            ensembl_to_name.get(g, g)
+            for g in driver_df_pooled[col].iloc[:4].tolist()
+        ]
+        top_genes = [g for g in top_genes if g in combined_named.var_names]
+        if not top_genes:
+            continue
         scv.pl.velocity(
-            combined, var_names=nsc_tap_genes, basis="umap",
+            combined_named, var_names=top_genes, basis="umap",
             color=color_key,
-            save="phase_NSC_TAP.png", show=False,
+            save=f"phase_{col}.png", show=False,
         )
-
-    # TAP → Neuroblast markers
-    tap_nb_genes = ensembl_ids_for(combined, ["Dcx", "Dlx1", "Tubb3", "Dlx2"])
-    if tap_nb_genes:
-        scv.pl.velocity(
-            combined, var_names=tap_nb_genes, basis="umap",
-            color=color_key,
-            save="phase_TAP_Neuroblast.png", show=False,
-        )
-
-    # TAP → OL lineage markers
-    tap_ol_genes = ensembl_ids_for(combined, ["Olig2", "Pdgfra", "Mbp", "Mog", "Gpr17"])
-    if tap_ol_genes:
-        scv.pl.velocity(
-            combined, var_names=tap_ol_genes, basis="umap",
-            color=color_key,
-            save="phase_TAP_OL.png", show=False,
-        )
+        print(f"  {col}: {top_genes}")
 
     print(f"\nDone. Outputs in {OUTPUT_DIR}/")
 

@@ -44,7 +44,8 @@ echo "  SRRs: $SRR_LIST"
 # ── Download FASTQs (sequentially to avoid disk spikes) ──────────────────
 echo "[2/5] Downloading FASTQs ..."
 for SRR in $SRR_LIST; do
-    if [[ -f "${SRR}_4.fastq" ]] && [[ -f "${SRR}_3.fastq" ]]; then
+    if { [[ -f "${SRR}_3.fastq" ]] && [[ -f "${SRR}_4.fastq" ]]; } || \
+       { [[ -f "${SRR}_2.fastq" ]] && [[ -f "${SRR}_3.fastq" ]]; }; then
         echo "  ${SRR}: already present"
         continue
     fi
@@ -58,7 +59,13 @@ done
 echo "[3/5] Running kb count for ${SAMPLE_NAME} ..."
 FASTQS=()
 for SRR in $SRR_LIST; do
-    FASTQS+=("${SRR}_3.fastq" "${SRR}_4.fastq")
+    if [[ -f "${SRR}_4.fastq" ]]; then
+        # layout: _3=R1 (barcode+UMI), _4=R2 (cDNA)
+        FASTQS+=("${SRR}_3.fastq" "${SRR}_4.fastq")
+    else
+        # layout: _1=I1 (index), _2=R1 (barcode+UMI), _3=R2 (cDNA)
+        FASTQS+=("${SRR}_2.fastq" "${SRR}_3.fastq")
+    fi
 done
 
 kb count \
@@ -77,9 +84,8 @@ tar czf "${SAMPLE_NAME}_counts.tgz" -C "kb_output_${SAMPLE_NAME}" counts_unfilte
 
 # ── Cleanup to free disk ─────────────────────────────────────────────────
 echo "[5/5] Cleaning up ..."
-# remove FASTQs
 for SRR in $SRR_LIST; do
-    rm -f ${SRR}_*.fastq
+    rm -f "${SRR}"_*.fastq
     rm -rf "$SRR"
 done
 

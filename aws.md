@@ -217,13 +217,14 @@ nohup kb count \
   -i index.idx \
   -g t2g.txt \
   -x 10xv3 \
-  -o kb_output_GSM8253799 \
+  -o kb_output_GSM8647353 \
   -c1 cdna_t2c.txt \
   -c2 intron_t2c.txt \
   --workflow lamanno \
-  SRR28912869_3.fastq SRR28912869_4.fastq \
-  SRR28912870_3.fastq SRR28912870_4.fastq \
-  SRR28912871_3.fastq SRR28912871_4.fastq \
+  SRR31443695_3.fastq SRR31443695_4.fastq \
+  SRR31443696_3.fastq SRR31443696_4.fastq \
+  SRR31443697_3.fastq SRR31443697_4.fastq \
+  SRR31443700_3.fastq SRR31443700_4.fastq \
   > kb_count.log 2>&1 &
 
 tail -f kb_count.log

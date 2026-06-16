@@ -17,6 +17,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/normalized_cell_counts_top_10.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/outputs/barcode_to_cell_type_mapping.csv">
           <value>
             <Attribute>
@@ -52,13 +59,6 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="/outputs/ol_commitment_positive.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
         <entry key="/outputs/out_of_sample_comparison.csv">
           <value>
             <Attribute>
@@ -67,13 +67,6 @@
           </value>
         </entry>
         <entry key="/outputs/out_of_sample_tap_comparison_test2.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/outputs/random_gene_auc.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -101,21 +94,7 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="/outputs/tap_predictions_per_model.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
         <entry key="/outputs/trigger_genes.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/outputs/velocity/velocity_driver_genes.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
