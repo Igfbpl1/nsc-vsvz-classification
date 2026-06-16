@@ -1,4 +1,4 @@
 method_1,method_2,n_TAPs,pearson_r,spearman_r,overall_agreement_pct,cohen_kappa
-ML,CellRank,2506,0.832,0.805,86.3,0.679
-ML,Bias,2506,0.848,0.856,78.6,0.251
-CellRank,Bias,2506,0.857,0.81,70.6,0.188
+ML,CellRank,4268,0.829,0.856,84.6,0.668
+ML,Bias,4268,0.841,0.858,76.2,0.253
+CellRank,Bias,4268,0.87,0.877,64.3,0.166
