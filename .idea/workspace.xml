@@ -4,19 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="cleanup">
-      <change beforePath="$PROJECT_DIR$/.idea/csv-editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/csv-editor.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cell_marker_Mouse.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/Cell_marker_Mouse.xlsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/compare_tap_fate_methods.py" beforeDir="false" afterPath="$PROJECT_DIR$/compare_tap_fate_methods.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hvg_10.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/hvg_10.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/log1p_cell_counts_top_10.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/log1p_cell_counts_top_10.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nhvg_10.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/nhvg_10.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/normalized_cell_counts_top_10.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/normalized_cell_counts_top_10.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/process_all_remaining.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/process_sample.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/raw_cell_counts_top_10.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/raw_cell_counts_top_10.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rna_velocity_trajectory.md" beforeDir="false" afterPath="$PROJECT_DIR$/rna_velocity_trajectory.md" afterDir="false" />
+    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="move">
+      <change beforePath="$PROJECT_DIR$/aws.md" beforeDir="false" afterPath="$PROJECT_DIR$/aws.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -547,7 +536,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781702106905</updated>
     </task>
-    <option name="localTasksCounter" value="49" />
+    <task id="LOCAL-00049" summary="move">
+      <option name="closed" value="true" />
+      <created>1781703250469</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1781703250469</updated>
+    </task>
+    <option name="localTasksCounter" value="50" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -578,7 +575,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added broad steps at beginning" />
     <MESSAGE value="used Cell_marker 2.0" />
     <MESSAGE value="change" />
     <MESSAGE value="holdout add NesCre CR Rep2/Rep1" />
@@ -603,6 +599,7 @@
     <MESSAGE value="update" />
     <MESSAGE value="rerun shap using out of sample" />
     <MESSAGE value="cleanup" />
-    <option name="LAST_COMMIT_MESSAGE" value="cleanup" />
+    <MESSAGE value="move" />
+    <option name="LAST_COMMIT_MESSAGE" value="move" />
   </component>
 </project>

@@ -1,10 +1,87 @@
-# AWS EC2 Reference — RNA Velocity Pipeline
-
-Quick reference for running the V-SVZ velocity pipeline on AWS EC2.
+# V-SVZ Pipeline — Run Reference
 
 ---
 
-## Quick Reference — Connecting & Monitoring
+## Running Locally (Mac)
+
+### Prerequisites
+- kb-python, kallisto, bustools installed via Homebrew
+- `uv` for Python
+
+### Steps in order
+
+**1. Download FASTQs**
+
+```bash
+cd /Users/chandra/development/nsc-vsvz-classification/sra_runs
+
+nohup fasterq-dump --split-files --include-technical SRR_ID1 --outdir . > SRR_ID1.log 2>&1 &
+nohup fasterq-dump --split-files --include-technical SRR_ID2 --outdir . > SRR_ID2.log 2>&1 &
+
+# check layout after download
+awk 'NR==2{print length($0); exit}' SRR_ID1_1.fastq   # 8bp=I1, 28bp=R1, 91bp=R2
+awk 'NR==2{print length($0); exit}' SRR_ID1_2.fastq
+awk 'NR==2{print length($0); exit}' SRR_ID1_3.fastq
+```
+
+**2. kb count for each sample**
+
+```bash
+cd /Users/chandra/development/nsc-vsvz-classification/sra_runs
+
+kb count \
+  -i index.idx \
+  -g t2g.txt \
+  -x 10xv3 \
+  -o kb_output_<GSM> \
+  -c1 cdna_t2c.txt \
+  -c2 intron_t2c.txt \
+  --workflow lamanno \
+  --kallisto /opt/homebrew/bin/kallisto \
+  --bustools /opt/homebrew/bin/bustools \
+  <SRR>_2.fastq <SRR>_3.fastq   # single-indexed layout (_1=I1, _2=R1, _3=R2)
+  # OR
+  <SRR>_3.fastq <SRR>_4.fastq   # dual-indexed layout (_3=R1, _4=R2)
+```
+
+Check layout first:
+```bash
+awk 'NR==2{print length($0); exit}' SRR_ID_1.fastq   # 8bp = I1 (index, skip)
+awk 'NR==2{print length($0); exit}' SRR_ID_2.fastq   # 28bp = R1 or 91bp = R2
+awk 'NR==2{print length($0); exit}' SRR_ID_3.fastq
+```
+
+**3. Run the full pipeline**
+
+```bash
+cd /Users/chandra/development/nsc-vsvz-classification
+
+# first run (builds everything)
+uv run python run_pipeline.py
+
+# force rebuild if inputs changed
+uv run python run_pipeline.py --rebuild
+```
+
+This runs in order:
+- `build_processed()` → `outputs/processed.h5ad`
+- `train_ol_classifier` → `outputs/trigger_genes.csv`, `outputs/ol_commitment.csv`
+- `tap_analysis` → `outputs/out_of_sample_tap_comparison_test2.csv`
+- `velocity_build.build_velocity()` → `outputs/velocity/velocity_combined.h5ad` (~30 min)
+- `rna_velocity_pipeline` → stream plots + driver CSVs in `outputs/velocity/`
+- `compare_tap_fate_methods` → `outputs/tap_fate_*.csv`
+
+**4. Individual steps** (if you only need to re-run part)
+
+```bash
+uv run python -c "import velocity_build; velocity_build.build_velocity()"
+uv run python rna_velocity_pipeline.py
+uv run python compare_tap_fate_methods.py
+```
+
+---
+
+## EC2 — Connecting & Monitoring
 
 ### Current instance
 - **Public DNS**: `ec2-3-80-204-115.compute-1.amazonaws.com`
@@ -14,157 +91,96 @@ Quick reference for running the V-SVZ velocity pipeline on AWS EC2.
 - **AMI**: Ubuntu 26.04 LTS
 
 ### Connect
-
 ```bash
-# fix key permissions (one-time)
-chmod 400 ~/.ssh/vsvz-key.pem
-
-# SSH in
+chmod 400 ~/.ssh/vsvz-key.pem   # one-time
 ssh -i ~/.ssh/vsvz-key.pem ubuntu@ec2-3-80-204-115.compute-1.amazonaws.com
 ```
 
 ### Copy files Mac → EC2
-
 ```bash
-# single file
 scp -i ~/.ssh/vsvz-key.pem \
   /Users/chandra/development/nsc-vsvz-classification/<file> \
   ubuntu@ec2-3-80-204-115.compute-1.amazonaws.com:~/project/
 
-# directory recursive
-scp -r -i ~/.ssh/vsvz-key.pem \
-  /path/to/dir \
-  ubuntu@ec2-3-80-204-115.compute-1.amazonaws.com:~/project/
-
 # multiple files
 scp -i ~/.ssh/vsvz-key.pem \
-  process_sample.sh process_all_remaining.sh rna_velocity_pipeline.py \
+  velocity_build.py rna_velocity_pipeline.py preprocess.py markers.py \
   ubuntu@ec2-3-80-204-115.compute-1.amazonaws.com:~/project/
 ```
 
 ### Copy files EC2 → Mac
-
 ```bash
-# from your Mac
+# kb_output tarballs
 scp -i ~/.ssh/vsvz-key.pem \
-  ubuntu@ec2-3-80-204-115.compute-1.amazonaws.com:~/project/sra_runs/GSM*_counts.tgz \
+  "ubuntu@ec2-3-80-204-115.compute-1.amazonaws.com:~/project/sra_runs/GSM*_counts.tgz" \
   /Users/chandra/development/nsc-vsvz-classification/sra_runs/
 
-# directory recursive
+# velocity outputs
 scp -r -i ~/.ssh/vsvz-key.pem \
   ubuntu@ec2-3-80-204-115.compute-1.amazonaws.com:~/project/outputs/velocity/ \
-  /Users/chandra/development/nsc-vsvz-classification/outputs/velocity_remote/
+  /Users/chandra/development/nsc-vsvz-classification/outputs/
 ```
 
-### Monitoring commands (run on EC2)
-
+### Extract tarballs (on Mac after download)
 ```bash
-# overall disk usage
-df -h
-
-# folder-level usage (find what's eating space)
-du -sh ~/project/sra_runs/*
-du -sh ~/project/sra_runs/kb_output_*/
-
-# running processes
-ps aux | grep -E "kb|kallisto|bustools|fasterq"
-jobs                    # background jobs in current shell
-top                     # interactive process viewer (q to quit)
-htop                    # nicer if installed (sudo apt install htop)
-
-# memory usage
-free -h
-
-# CPU info
-nproc
-cat /proc/cpuinfo | grep "model name" | head -1
-
-# follow log files
-tail -f ~/project/sra_runs/ref.log
-tail -f ~/project/sra_runs/kb_count.log
-tail -f ~/project/process_all.log
-
-# check if specific file exists & size
-ls -lh ~/project/sra_runs/index.idx
-ls -lh ~/project/sra_runs/GSM*_counts.tgz
+cd /Users/chandra/development/nsc-vsvz-classification
+for tgz in sra_runs/GSM*_counts.tgz; do
+    GSM=$(basename "$tgz" _counts.tgz)
+    mkdir -p sra_runs/kb_output_${GSM}
+    tar xzf "$tgz" -C sra_runs/kb_output_${GSM}
+done
 ```
 
-### Background jobs that survive SSH disconnect
-
+### Monitoring (on EC2)
 ```bash
-# launch in background, redirect logs
-nohup bash some_script.sh > some_script.log 2>&1 &
+df -h                                        # disk usage
+du -sh ~/project/sra_runs/kb_output_*/      # per-sample size
+ps aux | grep -E "kb|fasterq"               # running processes
+tail -f ~/project/sra_runs/kb_count.log     # kb count progress
+free -h                                      # memory
+```
 
-# check if it's still running
-jobs
-ps aux | grep some_script
-
-# follow log (Ctrl+C to stop following, process keeps running)
-tail -f some_script.log
-
-# kill a background job by PID
-kill <PID>
+### Background jobs (survive SSH disconnect)
+```bash
+nohup <command> > output.log 2>&1 &
+tail -f output.log     # follow (Ctrl+C to stop following)
+ps aux | grep <name>   # check still running
+kill <PID>             # stop if needed
 ```
 
 ### Shutdown / cost control
-
 ```bash
-# auto-shutdown on completion (saves money)
-some_long_command && sudo shutdown -h now
-
-# manual stop from EC2 (instance can be restarted, EBS still charges)
-sudo shutdown -h now
-
-# permanent stop — must terminate from AWS Console:
-# Console → EC2 → select instance → "Terminate Instance"
+sudo shutdown -h now   # stop instance (EBS still bills)
+# To terminate fully: AWS Console → EC2 → Terminate Instance
 ```
 
-**Billing reminder:**
-- **Running** = ~$0.40/hr (r6i.2xlarge on-demand) + ~$0.05/hr EBS
-- **Stopped** = compute charge stops; **EBS still bills** at ~$1.50/day for 800GB
-- **Terminated** = all billing stops; volume deleted
+**Billing:** Running ~$0.40/hr + ~$0.05/hr EBS. Stopped: EBS still ~$1.50/day. Terminated: all billing stops.
 
 ---
 
-## One-Time Setup (when launching a new instance)
-
-### Launch instance via AWS Console
-
-1. Go to [console.aws.amazon.com](https://console.aws.amazon.com) → **EC2** → **Launch Instance**
-2. Set:
-   - **Name**: `vsvz-velocity`
-   - **AMI**: Ubuntu 26.04 LTS
-   - **Instance type**: `r6i.2xlarge` (64GB RAM, 8 vCPUs)
-   - **Key pair**: `vsvz-key` (or create new and save `.pem` to `~/.ssh/`)
-   - **Storage**: 800 GiB gp3 root volume
-   - **Purchasing option**: On-Demand (Spot is cheaper but can be interrupted)
-3. Click **Launch Instance**
-
-### Install dependencies (one-time per instance)
+## EC2 — One-Time Setup
 
 ```bash
 # system packages
 sudo apt update && sudo apt install -y git curl tmux htop sra-toolkit kallisto entrez-direct
 
-# uv (Python package manager)
-curl -Ls https://astral.sh/uv/install.sh | sh
-source ~/.bashrc
+# uv
+curl -Ls https://astral.sh/uv/install.sh | sh && source ~/.bashrc
 
-# create venv (python3-venv required on Ubuntu 26.04)
+# python venv
 sudo apt install python3.14-venv -y
 python3 -m venv ~/venv
 source ~/venv/bin/activate
 echo "source ~/venv/bin/activate" >> ~/.bashrc
 
-# install Python packages
-uv pip install bustools kb-python
+# python packages
+uv pip install kb-python scvelo cellrank xgboost shap scanpy
 
-# create project dir
-mkdir -p ~/project/sra_runs ~/project/outputs
+# project dirs
+mkdir -p ~/project/sra_runs ~/project/outputs/velocity
 ```
 
-### Build kb reference (one-time per instance, ~30 min)
-
+### Build kb reference (one-time, ~30 min)
 ```bash
 cd ~/project/sra_runs
 
@@ -178,180 +194,64 @@ nohup kb ref \
   Mus_musculus.GRCm39.dna.primary_assembly.fa.gz \
   Mus_musculus.GRCm39.110.gtf.gz > ref.log 2>&1 &
 
-tail -f ref.log    # Ctrl+C to stop tailing
+tail -f ref.log
 ```
 
 ---
 
-## Processing One Sample (small/test runs)
+## EC2 — Processing a Sample
 
-### Look up SRR sizes first
-
-Before downloading, check sizes at:
-```
-https://www.ncbi.nlm.nih.gov/Traces/study/?acc=<GSM_ID>
-```
-
-### Download FASTQs — in parallel for speed
-
-For a sample with multiple SRR runs, download all in parallel to maximize throughput:
-
+### 1. Download FASTQs
 ```bash
 cd ~/project/sra_runs
 
-# parallel prefetch + fasterq-dump per SRR
-nohup fasterq-dump --split-files --include-technical SRR_ID1 --outdir . > fastq_1.log 2>&1 &
-nohup fasterq-dump --split-files --include-technical SRR_ID2 --outdir . > fastq_2.log 2>&1 &
-nohup fasterq-dump --split-files --include-technical SRR_ID3 --outdir . > fastq_3.log 2>&1 &
+# run in parallel for speed
+nohup fasterq-dump --split-files --include-technical SRR_ID1 --outdir . > SRR_ID1.log 2>&1 &
+nohup fasterq-dump --split-files --include-technical SRR_ID2 --outdir . > SRR_ID2.log 2>&1 &
 
-# follow all three
-tail -f fastq_1.log fastq_2.log fastq_3.log
+tail -f SRR_ID1.log SRR_ID2.log
+ps aux | grep fasterq   # confirm running
 ```
 
-**Important:** `--include-technical` is required to get the barcode reads (`_3` files). Without it, fasterq-dump only writes cDNA reads (`_4` files) and kb count fails.
-
-### Run kb count directly
-
+**Check layout** after download (single-indexed → use `_2`+`_3`; dual-indexed → use `_3`+`_4`):
 ```bash
+awk 'NR==2{print length($0); exit}' SRR_ID1_1.fastq
+awk 'NR==2{print length($0); exit}' SRR_ID1_2.fastq
+awk 'NR==2{print length($0); exit}' SRR_ID1_3.fastq
+```
+
+### 2. Run kb count
+```bash
+# single-indexed (_2=R1 barcode, _3=R2 cDNA)
 nohup kb count \
-  -i index.idx \
-  -g t2g.txt \
-  -x 10xv3 \
-  -o kb_output_GSM8647353 \
-  -c1 cdna_t2c.txt \
-  -c2 intron_t2c.txt \
+  -i index.idx -g t2g.txt -x 10xv3 \
+  -o kb_output_<GSM> \
+  -c1 cdna_t2c.txt -c2 intron_t2c.txt \
   --workflow lamanno \
-  SRR31443695_3.fastq SRR31443695_4.fastq \
-  SRR31443696_3.fastq SRR31443696_4.fastq \
-  SRR31443697_3.fastq SRR31443697_4.fastq \
-  SRR31443700_3.fastq SRR31443700_4.fastq \
+  SRR_ID1_2.fastq SRR_ID1_3.fastq \
+  SRR_ID2_2.fastq SRR_ID2_3.fastq \
   > kb_count.log 2>&1 &
 
 tail -f kb_count.log
 ```
 
-### Clean up to free disk after kb count finishes
-
+### 3. Package and clean up
 ```bash
-cd ~/project/sra_runs
+tar czf <GSM>_counts.tgz -C kb_output_<GSM> counts_unfiltered
 
-# delete FASTQs
+# free disk: delete FASTQs and intermediates
 rm SRR*.fastq
-
-# delete BUS files and intermediates (keep only counts_unfiltered/)
 cd kb_output_<GSM>
 rm -f *.bus matrix.ec transcripts.txt inspect*.json 10x_version3_whitelist.txt
 rm -rf tmp
-cd ..
-
-# package counts_unfiltered for download
-tar czf <GSM>_counts.tgz -C kb_output_<GSM> counts_unfiltered
 ```
 
 ---
 
-## Processing All Remaining Samples (batch mode)
+## Tips
 
-Use the helper scripts `process_sample.sh` and `process_all_remaining.sh` in the project root.
-
-### Upload scripts to EC2
-
-```bash
-# from Mac
-scp -i ~/.ssh/vsvz-key.pem \
-  process_sample.sh process_all_remaining.sh \
-  ubuntu@ec2-3-80-204-115.compute-1.amazonaws.com:~/project/
-```
-
-### Test with one sample first
-
-```bash
-# on EC2
-cd ~/project
-bash process_sample.sh GSM8253792
-```
-
-This auto-looks-up SRR IDs via NCBI Entrez, downloads + runs kb count + cleans up. Output: `~/project/sra_runs/GSM8253792_counts.tgz`.
-
-### Run all 7 remaining samples sequentially
-
-```bash
-# on EC2
-cd ~/project
-nohup bash process_all_remaining.sh > process_all.log 2>&1 &
-
-# monitor
-tail -f process_all.log
-
-# check disk between samples
-df -h
-```
-
-Estimated runtime: ~3-4 hours per sample × 7 ≈ 24-28 hours unattended.
-
-### Download tarballs back to Mac
-
-```bash
-# from Mac
-scp -i ~/.ssh/vsvz-key.pem \
-  ubuntu@ec2-3-80-204-115.compute-1.amazonaws.com:~/project/sra_runs/GSM*_counts.tgz \
-  /Users/chandra/development/nsc-vsvz-classification/sra_runs/
-
-# extract each
-cd /Users/chandra/development/nsc-vsvz-classification
-for tgz in sra_runs/GSM*_counts.tgz; do
-    GSM=$(basename "$tgz" _counts.tgz)
-    mkdir -p sra_runs/kb_output_${GSM}
-    tar xzf "$tgz" -C sra_runs/kb_output_${GSM}
-done
-```
-
----
-
-## Running the Velocity Pipeline on EC2
-
-If you want to run the full velocity pipeline on EC2 (avoids Mac RAM/CPU bottleneck for 10-sample analysis):
-
-```bash
-# upload pipeline + processed.h5ad
-scp -i ~/.ssh/vsvz-key.pem \
-  /Users/chandra/development/nsc-vsvz-classification/rna_velocity_pipeline.py \
-  /Users/chandra/development/nsc-vsvz-classification/markers.py \
-  ubuntu@ec2-3-80-204-115.compute-1.amazonaws.com:~/project/
-
-scp -i ~/.ssh/vsvz-key.pem \
-  /Users/chandra/development/nsc-vsvz-classification/outputs/processed.h5ad \
-  ubuntu@ec2-3-80-204-115.compute-1.amazonaws.com:~/project/outputs/
-
-# on EC2: run with auto-shutdown
-cd ~/project
-nohup bash -c "python rna_velocity_pipeline.py && sudo shutdown -h now" > velocity.log 2>&1 &
-tail -f velocity.log
-```
-
-Instance auto-stops when done — billing pauses (EBS still bills).
-
----
-
-## Cost Estimate for Full 10-Sample Run
-
-- **kb count per sample**: ~3-4 hrs × 7 samples = ~25 hrs
-- **Velocity pipeline**: ~5 hrs
-- **Total compute**: ~30 hrs × $0.40/hr = **$12**
-- **EBS storage** during run (800GB × ~2 days): **$5**
-- **Data transfer out** (~10GB results to download): **$0.90**
-- **Total: ~$18**
-
-Spot pricing on r6i.2xlarge can reduce this 60-70%, but interruption risk during long runs makes On-Demand safer.
-
----
-
-## Tips & Gotchas
-
-- **Always run long steps with `nohup` or `tmux`** — otherwise they die when SSH disconnects.
-- **`sudo apt install entrez-direct`** provides `esearch`/`elink`/`efetch` — needed for the auto-SRR-lookup in `process_sample.sh`.
-- **The old `_4` files from a non-`--include-technical` run** may be incompatible with the new `_3` files. If kb count complains about mismatched read counts, delete and regenerate.
-- **EBS volume size cannot be decreased**, only increased. Start conservative; if you run out, expand via Console.
-- **Spot interruption mid-kb-count** loses ~3 hours of work for that sample. The cleanup logic in `process_sample.sh` handles partial state by re-checking for `counts_unfiltered/spliced.mtx`.
-- **`df -h` regularly** during multi-sample runs to make sure you're not approaching disk full.
-- **Terminate the instance** after downloading results — a stopped instance still bills for EBS.
+- **Always use `nohup`** — processes die when SSH disconnects without it.
+- **FASTQ layout matters** — dual-indexed (4 files) uses `_3`+`_4`; single-indexed (3 files) uses `_2`+`_3`. Verify with `awk` before running kb count.
+- **`df -h` regularly** during multi-sample runs.
+- **Terminate, don't just stop** — stopped instances still bill for EBS (~$1.50/day for 800GB).
+- **Local kb count** requires `--kallisto /opt/homebrew/bin/kallisto --bustools /opt/homebrew/bin/bustools` on Mac (EC2 doesn't need these as they're in PATH).
