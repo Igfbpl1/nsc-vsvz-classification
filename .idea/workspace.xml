@@ -63,7 +63,7 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.run_pipeline_rebuild">
+  <component name="RunManager" selected="Python.run_pipeline_no_rebuild">
     <configuration name="run_pipeline_no_rebuild" type="PythonConfigurationType" factoryName="Python">
       <module name="nsc-vsvz-classification" />
       <option name="ENV_FILES" value="" />
