@@ -32,15 +32,17 @@ The **bias score is conservative by design** — it requires actual upregulation
 
 ---
 
-## 3. Results — 7-Sample Run
+## 3. Results — 7-Sample Run (4,268 TAPs)
 
-### Pairwise method comparison (4-sample run; rerun needed for 7-sample)
+### Pairwise method comparison
+
+⚠️ *Rerun compare_tap_fate_methods.py after clean velocity rebuild to update these numbers.*
 
 | Pair | Pearson r | Spearman r | Agreement | Cohen's kappa |
 |---|---|---|---|---|
-| **ML vs CellRank** | **0.832** | **0.805** | **86.3%** | **0.679 (good)** |
-| ML vs Bias | 0.848 | 0.856 | 78.6% | 0.251 (fair) |
-| CellRank vs Bias | 0.857 | 0.810 | 70.6% | 0.188 (slight) |
+| **ML vs CellRank** | **0.829** | **0.856** | **84.6%** | **0.668 (good)** |
+| ML vs Bias | 0.841 | 0.858 | 76.2% | 0.253 (fair) |
+| CellRank vs Bias | 0.870 | 0.877 | 64.3% | 0.166 (slight) |
 
 ### Per-condition OL-leaning fraction (7-sample run)
 
@@ -52,14 +54,24 @@ The **bias score is conservative by design** — it requires actual upregulation
 
 `CD1_CupRap_0wks_Rep2` (n=172) is a large outlier across all three methods. Small sample size — interpret with caution.
 
+### Per-condition NB-leaning fraction (7-sample run)
+
+| Method | CD1_Cntl (876) | CD1_Cntl_3wks (1129) | CD1_CupRap (463) | CD1_CupRap_0wks_Rep2 (172) | Cntl (742) | CupRap_Rep1 (370) | CupRap_Rep2 (516) |
+|---|---|---|---|---|---|---|---|
+| CellRank (P ≤ 0.5) | 53.4% (468) | 58.0% (655) | 60.3% (279) | 22.7% (39) | 62.0% (460) | 62.2% (230) | 69.0% (356) |
+| ML (P ≤ 0.5) | 68.3% (598) | 67.0% (756) | 76.5% (354) | 33.1% (57) | 75.3% (559) | 74.9% (277) | 81.2% (419) |
+| Bias score (≤ 0) | 92.7% (812) | 95.7% (1080) | 93.1% (431) | 68.0% (117) | 95.4% (708) | 93.8% (347) | 97.5% (503) |
+
+Overall NB-leaning across all 4,268 TAPs: CellRank 58.3% (2,487), ML 70.8% (3,020), Bias 93.7% (3,998).
+
 ---
 
 ## 4. Why ML Beats Bias Score for Trajectory Prediction
 
 The original `PROJECT_NARRATIVE.md` used the bias score to validate the ML model, reporting 82% agreement on GSM8253799. That number is technically correct but uninformative — it reflects mostly the trivial fact that both methods correctly classify the abundant NB-fated cells.
 
-**Of ML's OL predictions, Bias confirms 19.2%.**
-**Of ML's OL predictions, CellRank confirms 90.2%.**
+**Of ML's OL predictions, Bias confirms ~19%.**
+**Of ML's OL predictions, CellRank confirms ~90–95%.**
 
 The 82% bias-vs-ML number was misleading. The actual validation is CellRank's confirmation of ML's OL calls — and that confirmation rate is strong.
 
@@ -91,7 +103,7 @@ Bias is **high precision, low sensitivity** — it only flags the most committed
 
 ## 5. Bottom Line
 
-**ML agrees with CellRank on 86.3% of cells (Cohen's kappa 0.679, good agreement).**
+**ML agrees with CellRank on 84.6% of cells (Cohen's kappa 0.668, good agreement).**
 
 - If your project explicitly wants "predict TAP fate before maturation," **ML is the right tool**.
 - If you want "describe which TAPs already look OL," **Bias score is more honest** (but more restrictive).
@@ -103,9 +115,9 @@ ML beats Bias for the trajectory question — note that both methods use both di
 2. **Non-linear gene interactions** — ML can encode conditional patterns; Bias is purely additive
 3. **Cell-based calibration** — ML learned from real OPC/COP/OL cells; Bias normalizes against random background genes
 
-The functional consequence: **Bias confirms only 15.2% of CellRank's OL calls. ML confirms 67.8% of CellRank's OL calls** — much higher sensitivity against the velocity-based reference.
+The functional consequence: **Bias confirms ~15% of CellRank's OL calls. ML confirms ~67% of CellRank's OL calls** — much higher sensitivity against the velocity-based reference.
 
-ML's predictions are validated by CellRank's independent velocity-based analysis — when ML calls a TAP OL-leaning, CellRank confirms 90.6% of the time.
+ML's predictions are validated by CellRank's independent velocity-based analysis — when ML calls a TAP OL-leaning, CellRank confirms ~90% of the time.
 
 ---
 

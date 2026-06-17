@@ -286,4 +286,4 @@ The CD1_Cntl 0wks stream plot showing the quietest OL lineage flow is consistent
 
 The OL-lineage proportion (OPC+COP+OL) is higher at 0wks (24.0%) than 3wks (17.2%). OPC and COP fractions both decrease by 3wks while OL fraction is similar. TAP and Neuroblast fractions increase substantially at 3wks. Microglia decrease from 53.6% to 29.9%.
 
-The current velocity analysis uses 3wks samples. The CD1 0wks samples (GSM8647352, GSM8647353) are not yet included.
+The current velocity analysis includes GSM8647353 (CD1_CupRap_0wks_Rep2). GSM8647352 (CD1_CupRap_0wks_Rep1) is still pending.
