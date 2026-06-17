@@ -79,13 +79,45 @@ def validate(raw_barcodes_path: str, kb_output_dir: str) -> bool:
 
 
 SAMPLES = {
+    "GSM8253792": {
+        "raw": "data/raw/GSM8253792_CD1_Cntl_0wksRecov_barcodes.tsv",
+        "kb_output": "sra_runs/kb_output_GSM8253792",
+    },
+    "GSM8253793": {
+        "raw": "data/raw/GSM8253793_CD1_Cntl_3wksRecov_barcodes.tsv",
+        "kb_output": "sra_runs/kb_output_GSM8253793",
+    },
+    "GSM8253794": {
+        "raw": "data/raw/GSM8253794_CD1_CR_Rep1_barcodes.tsv",
+        "kb_output": "sra_runs/kb_output_GSM8253794",
+    },
+    "GSM8253795": {
+        "raw": "data/raw/GSM8253795_CD1_CR_Rep2_barcodes.tsv",
+        "kb_output": "sra_runs/kb_output_GSM8253795",
+    },
     "GSM8253796": {
         "raw": "data/raw/GSM8253796_NesCre_Cntl_Rep1_barcodes.tsv",
-        "kb_output": "sra_runs/kb_output_GSM8253798",
+        "kb_output": "sra_runs/kb_output_GSM8253796",
+    },
+    "GSM8253797": {
+        "raw": "data/raw/GSM8253797_NesCre_Cntl_Rep2_barcodes.tsv",
+        "kb_output": "sra_runs/kb_output_GSM8253797",
     },
     "GSM8253798": {
         "raw": "data/raw/GSM8253798_NesCre_CR_Rep1_barcodes.tsv",
         "kb_output": "sra_runs/kb_output_GSM8253798",
+    },
+    "GSM8253799": {
+        "raw": "data/raw/GSM8253799_NesCre_CR_Rep2_barcodes.tsv",
+        "kb_output": "sra_runs/kb_output_GSM8253799",
+    },
+    "GSM8647352": {
+        "raw": "data/raw/GSM8647352_CD1_CR1_NoRecov1_barcodes.tsv",
+        "kb_output": "sra_runs/kb_output_GSM8647352",
+    },
+    "GSM8647353": {
+        "raw": "data/raw/GSM8647353_CD1_CR1_NoRecov2_barcodes.tsv",
+        "kb_output": "sra_runs/kb_output_GSM8647353",
     },
 }
 
@@ -110,9 +142,9 @@ if __name__ == "__main__":
         raw_path, kb_dir = args.raw, args.kb_output
     else:
         print("Usage:")
-        print("  python3 validate_barcodes.py --gsm GSM8253796")
-        print("  python3 validate_barcodes.py --gsm GSM8253798")
-        print("  python3 validate_barcodes.py --gsm GSM8253798 --matrix-only")
+        print("  python3 validate_barcodes.py --gsm GSM8253792")
+        print(f"  valid --gsm values: {', '.join(SAMPLES)}")
+        print("  python3 validate_barcodes.py --gsm GSM8253796 --matrix-only")
         print("  python3 validate_barcodes.py --raw <path> --kb-output <dir>")
         sys.exit(1)
 

@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="move">
-      <change beforePath="$PROJECT_DIR$/aws.md" beforeDir="false" afterPath="$PROJECT_DIR$/aws.md" afterDir="false" />
+    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="cleanup">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/validate_barcodes.py" beforeDir="false" afterPath="$PROJECT_DIR$/validate_barcodes.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,7 +62,7 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.run_pipeline_no_rebuild">
+  <component name="RunManager" selected="Python.validate_bar_codes">
     <configuration name="run_pipeline_no_rebuild" type="PythonConfigurationType" factoryName="Python">
       <module name="nsc-vsvz-classification" />
       <option name="ENV_FILES" value="" />
@@ -122,7 +123,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="validate_barcodes" />
-      <option name="PARAMETERS" value="--gsm GSM8253798" />
+      <option name="PARAMETERS" value="--gsm GSM8253797" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="true" />
@@ -151,14 +152,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1779721552530</updated>
-    </task>
-    <task id="LOCAL-00001" summary="update gitignore">
-      <option name="closed" value="true" />
-      <created>1779721973411</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1779721973411</updated>
     </task>
     <task id="LOCAL-00002" summary="set up packages">
       <option name="closed" value="true" />
@@ -544,7 +537,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781703250469</updated>
     </task>
-    <option name="localTasksCounter" value="50" />
+    <task id="LOCAL-00050" summary="cleanup">
+      <option name="closed" value="true" />
+      <created>1781703679439</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1781703679439</updated>
+    </task>
+    <option name="localTasksCounter" value="51" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -598,8 +599,8 @@
     <MESSAGE value="run 7 samples" />
     <MESSAGE value="update" />
     <MESSAGE value="rerun shap using out of sample" />
-    <MESSAGE value="cleanup" />
     <MESSAGE value="move" />
-    <option name="LAST_COMMIT_MESSAGE" value="move" />
+    <MESSAGE value="cleanup" />
+    <option name="LAST_COMMIT_MESSAGE" value="cleanup" />
   </component>
 </project>
