@@ -4,10 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="cleanup">
+    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="predecit NB too">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rna_velocity_trajectory.md" beforeDir="false" afterPath="$PROJECT_DIR$/rna_velocity_trajectory.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tap_fate_comparison.md" beforeDir="false" afterPath="$PROJECT_DIR$/tap_fate_comparison.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -153,14 +151,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1779721552530</updated>
-    </task>
-    <task id="LOCAL-00004" summary="ingested data and created csv for viewing">
-      <option name="closed" value="true" />
-      <created>1779723780814</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1779723780814</updated>
     </task>
     <task id="LOCAL-00005" summary="quality control, normalizing, and embedding has happened">
       <option name="closed" value="true" />
@@ -546,7 +536,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781708770623</updated>
     </task>
-    <option name="localTasksCounter" value="53" />
+    <task id="LOCAL-00053" summary="predecit NB too">
+      <option name="closed" value="true" />
+      <created>1781709384627</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1781709384627</updated>
+    </task>
+    <option name="localTasksCounter" value="54" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -577,7 +575,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="used Cell_marker 2.0" />
     <MESSAGE value="change" />
     <MESSAGE value="holdout add NesCre CR Rep2/Rep1" />
     <MESSAGE value="log filtered data" />
@@ -602,6 +599,7 @@
     <MESSAGE value="rerun shap using out of sample" />
     <MESSAGE value="move" />
     <MESSAGE value="cleanup" />
-    <option name="LAST_COMMIT_MESSAGE" value="cleanup" />
+    <MESSAGE value="predecit NB too" />
+    <option name="LAST_COMMIT_MESSAGE" value="predecit NB too" />
   </component>
 </project>
