@@ -17,10 +17,11 @@ import data_io
 from pathlib import Path
 import scanpy as sc
 import preprocess
+from compare_tap_fate_methods import run_compare_fate_methods
 from markers import MARKERS, OL_LINEAGE
 import train_ol_classifier
 import tap_analysis
-
+from rna_velocity_pipeline import run_rna_velocity_pipeline
 
 ROOT = Path(__file__).parent
 OUT = ROOT / "outputs"
@@ -90,6 +91,10 @@ def main() -> None:
     train_ol_classifier.run_classifier()
     print("running corroboration analysis")
     tap_analysis.run_analysis()
+    print("running rna velocity pipeline")
+    run_rna_velocity_pipeline()
+    print("comparing fate methods")
+    run_compare_fate_methods()
     print(f"\n=== ALL DONE in {time.time() - overall:.0f}s ===")
 
 

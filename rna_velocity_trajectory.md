@@ -107,8 +107,8 @@ Each driver CSV contains: `rank`, `ensembl_id`, `gene_name`, `corr`, `likelihood
 Each driver CSV corresponds to **where in the trajectory the gene's velocity is active**:
 
 ```
-NSC → TAP → OPC → COP → OL
-              ↘ Neuroblast
+NSC → TAP → Neuroblast
+          ↘ OPC → COP → OL
 
 Early ←————————————————————→ Late
 (NSC/TAP)                  (OL/NB)
@@ -153,7 +153,7 @@ Velocity computed on 7 samples:
 The 7-sample stream plot shows the same trajectory topology as the 4-sample run:
 - **NSC → TAP**: clear flow
 - **TAP → Neuroblast**: strong dominant arm
-- **TAP → OPC → COP → OL**: rightward flow visible; bifurcation structurally clear
+- **TAP bifurcation**: rightward arm toward OPC → COP → OL visible alongside dominant Neuroblast arm
 - Non-lineage cells (Microglia, Astrocyte, Endothelial, Mural, Ependymal) self-contained
 
 Adding 3 samples did not change the trajectory structure.
@@ -170,33 +170,21 @@ Adding 3 samples did not change the trajectory structure.
 
 **Meis2** is rank 1 in CupRap TAPs (corr 79.77, likelihood 0.79, Spearman 0.93) and rank 17 in Cntl. It is also **SHAP rank 5** — two independent methods converge on the same gene specifically in the treatment condition. However, Meis2 is **NB-leaning** (OL mean 0.275 vs NB mean 2.934 — NEGATIVE_OL in the SHAP direction analysis). The model uses its *absence* as an OL signal.
 
-**No positive OL-leaning signal exists at the TAP stage.** The 7 SHAP-confirmed positive OL markers (Pllp, Gjc3, Dock10, Cryab, Fa2h, Cnp, Tspan2) are absent from the top 100 TAP drivers in both conditions. Olig2 and Ncam1 appear but at low ranks with weak correlations.
-
-### ML Model and Velocity Converge on the Same Non-Canonical OL Genes
-
-The ML model was trained on 1,965 non-canonical HVGs with no prior gene list — it discovered OL-discriminating features from data alone. The 7 genes it identified as positive OL markers (SHAP direction = POSITIVE_OL) are: Pllp, Gjc3, Dock10, Cryab, Fa2h, Cnp, Tspan2.
-
-RNA velocity, using a completely independent method based on splicing dynamics, identifies 4 of these same genes as active drivers at the COP stage:
-
-| Gene | SHAP rank (ML) | COP velocity rank | OL velocity rank |
-|---|---|---|---|
-| Fa2h | 16 | **1** | — |
-| Gjc3 | 10 | 9 | — |
-| Dock10 | 13 | 49 | — |
-
-The ML model did not use velocity. Velocity did not use the ML model's gene list. Both methods arrived at the same 3 genes through independent routes. This means when the ML model calls a TAP OL-fated, it is detecting early low-level expression of the same genes that velocity confirms are kinetically active at the OPC→COP commitment stage.
+**No positive OL-leaning signal exists at the TAP stage.** All 16 SHAP-confirmed positive OL markers are absent from the top 100 TAP drivers in both conditions. Olig2 and Ncam1 appear but at low ranks with weak correlations.
 
 ### OPC/COP Velocity Drivers — Key Patterns
 
-**Pattern 1: 3 of 7 SHAP positive OL markers converge as COP velocity drivers**
+**Pattern 1: ML model and velocity converge on the same OL genes at the COP stage**
 
-| Gene | SHAP rank | OPC rank | COP rank | OL rank |
-|---|---|---|---|---|
-| Fa2h | 16 | 38 | **1** | — |
-| Gjc3 | 10 | 18 | 9 | — |
-| Dock10 | 13 | — | 49 | — |
+The ML model (trained on non-canonical HVGs, no prior gene list) identified 16 positive OL markers. Velocity independently identifies 3 of these as COP drivers:
 
-The XGBoost model and velocity analysis independently identify the same genes as OL-defining. The convergence occurs at the COP stage. Tspan2 dropped out of COP top 100 in the 7-sample run.
+| Gene | SHAP rank | OPC rank | COP rank |
+|---|---|---|---|
+| Fa2h | 15 | 38 | **1** |
+| Gjc3 | 10 | 18 | 9 |
+| Dock10 | 12 | — | 49 |
+
+Neither method used the other's output. Both arrived at the same 3 genes independently.
 
 **Pattern 2: Myelin lipid biosynthesis program across OPC→COP**
 
@@ -228,51 +216,34 @@ The strongest velocity signal at OPC stage, ahead of all myelin genes. Corr incr
 
 ## 8. SHAP Direction Analysis — Critical Methodological Finding
 
-### The Problem
+SHAP measures discrimination *magnitude*, not direction. A high SHAP score means a gene strongly distinguishes OL from NB cells — but the model can use that gene as a **positive** OL predictor (high gene → OL fate) OR as a **negative** OL predictor (high gene → NB fate, low gene → OL fate). Direction is determined by comparing mean expression in OL-lineage (OPC+COP+OL) vs Neuroblast cells. Full rankings with direction in `outputs/trigger_genes.csv`.
 
-SHAP measures discrimination *magnitude*, not direction. A high SHAP score means a gene strongly distinguishes OL from NB cells — but the model can use that gene as a **positive** OL predictor (high gene → OL fate) OR as a **negative** OL predictor (high gene → NB fate, low gene → OL fate).
+Top 10 SHAP genes (SHAP computed on held-out NesCre test set): Stmn2, Igfbpl1, Pllp, Dlx6os1, Meis2, Bcl11a, Celf4, Sox11, Tmsb10, Gjc3. Of these, Pllp (rank 3) and Gjc3 (rank 10) are POSITIVE_OL; the remaining 8 are NEGATIVE_OL (NB markers used in reverse).
 
-### Results
+**Summary across top 50:** 24 POSITIVE_OL, 26 NEGATIVE_OL.
 
-```
-shap_rank,gene,shap_value,ol_mean,nb_mean,direction
-1,Stmn2,0.711,0.071,2.965,NEGATIVE_OL
-2,Igfbpl1,0.440,0.054,2.199,NEGATIVE_OL
-3,Pllp,0.258,1.836,0.016,POSITIVE_OL
-4,Dlx6os1,0.209,0.050,2.294,NEGATIVE_OL
-5,Meis2,0.187,0.275,2.934,NEGATIVE_OL
-6,Bcl11a,0.139,0.035,1.521,NEGATIVE_OL
-7,Sox11,0.100,0.218,2.999,NEGATIVE_OL
-8,Celf4,0.100,0.062,1.613,NEGATIVE_OL
-9,Tmsb10,0.094,0.802,3.754,NEGATIVE_OL
-10,Gjc3,0.070,1.955,0.014,POSITIVE_OL
-11,Meg3,0.067,0.214,2.244,NEGATIVE_OL
-12,Arx,0.060,0.035,1.487,NEGATIVE_OL
-13,Dock10,0.042,1.231,0.023,POSITIVE_OL
-14,Cryab,0.036,2.707,0.091,POSITIVE_OL
-15,Grin2b,0.029,0.017,0.602,NEGATIVE_OL
-16,Fa2h,0.028,1.207,0.010,POSITIVE_OL
-17,Nfib,0.024,0.851,2.888,NEGATIVE_OL
-18,Cnp,0.023,3.171,0.186,POSITIVE_OL
-19,Tspan2,0.021,2.211,0.039,POSITIVE_OL
-20,Hmgn2,0.021,0.731,1.948,NEGATIVE_OL
-```
-
-**Summary:** 7 positive OL markers, 13 negative OL markers (NB markers used in reverse).
-
-### The 7 True Positive OL-Leaning Markers
+### True Positive OL-Leaning Markers (SHAP top 50)
 
 | SHAP rank | Gene | OL% | NB% | OL/NB ratio | Notes |
 |---|---|---|---|---|---|
 | 3 | Pllp | 90% | 2% | 114× | Plasmolipin — myelin lipid raft |
 | 10 | Gjc3 | 89% | 1% | 137× | Connexin 30.2 — gap junction |
-| 13 | Dock10 | 79% | 3% | 53× | Cytoskeletal regulator |
-| 14 | Cryab | 90% | 9% | 30× | αB-crystallin — myelin maintenance |
-| 16 | Fa2h | 75% | 1% | 116× | Myelin sphingolipid synthesis — top COP velocity driver |
+| 12 | Dock10 | 79% | 3% | 53× | Cytoskeletal regulator |
+| 13 | Cryab | 90% | 9% | 30× | αB-crystallin — myelin maintenance |
+| 15 | Fa2h | 75% | 1% | 116× | Myelin sphingolipid synthesis — top COP velocity driver |
+| 17 | Tspan2 | 86% | 4% | 57× | Early OL surface marker |
 | 18 | Cnp | 94% | 18% | 17× | 2',3'-CNPase — myelin marker |
-| 19 | Tspan2 | 86% | 4% | 57× | Early OL surface marker |
+| 29 | Myrf | 72% | 1% | 244× | Master myelin TF |
+| 31 | Trf | 76% | 8% | 26× | Transferrin — iron transport for myelination |
+| 35 | Gatm | 89% | 4% | 53× | Creatine synthesis |
+| 36 | Mal | 68% | 5% | 45× | Myelin and lymphocyte protein |
+| 40 | Gsn | 78% | 10% | 15× | Gelsolin — cytoskeletal |
+| 41 | Neat1 | 71% | 7% | 20× | lncRNA expressed in OL |
+| 42 | Ndrg1 | 63% | 2% | 54× | Myelin maintenance |
+| 44 | Car2 | 69% | 9% | 23× | Carbonic anhydrase II — myelin |
+| 45 | S100a1 | 65% | 3% | 34× | S100 calcium-binding protein |
 
-All 7 are myelin/membrane structural genes. **Fa2h** is cross-validated: SHAP rank 16 (positive OL marker) AND top COP velocity driver in both conditions (corr 26.7 CupRap vs 15.4 Cntl).
+**Fa2h** is cross-validated: SHAP rank 15 (POSITIVE_OL) AND top COP velocity driver in both conditions.
 
 ---
 

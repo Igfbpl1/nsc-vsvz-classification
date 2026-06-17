@@ -163,12 +163,12 @@ def run_classifier() -> None:
     # ------------------------------------------------------------------
     # SHAP feature importance
     # ------------------------------------------------------------------
-    print("  computing SHAP on a 2000-cell sample of the training set")
+    print("  computing SHAP on held-out test set")
     rng = np.random.default_rng(42)
-    n_shap = min(2000, X_train.shape[0])
-    idx = rng.choice(X_train.shape[0], size=n_shap, replace=False)
+    n_shap = min(2000, X_test.shape[0])
+    idx = rng.choice(X_test.shape[0], size=n_shap, replace=False)
     explainer = shap.TreeExplainer(clf)
-    sv = explainer.shap_values(X_train[idx])
+    sv = explainer.shap_values(X_test[idx])
     shap_abs_mean = np.abs(sv).mean(axis=0)
     importance = (
         pd.DataFrame(
@@ -187,7 +187,31 @@ def run_classifier() -> None:
         .reset_index(drop=True)
     )
 
-    importance.head(50).to_csv(OUT / "trigger_genes.csv", index=False)
+    top = importance.head(50).copy()
+
+    ol_mask = adata.obs["cell_type"].isin(POS_TYPES)
+    nb_mask = adata.obs["cell_type"].isin(NEG_TYPES)
+    directions = []
+    for gene in top["gene"]:
+        if gene not in adata.var_names:
+            directions.append("NOT_FOUND")
+            continue
+        import scipy.sparse as _sp
+        x = adata[:, gene].X
+        if _sp.issparse(x):
+            x = x.toarray().flatten()
+        ol_mean = float(x[ol_mask].mean())
+        nb_mean = float(x[nb_mask].mean())
+        ratio = ol_mean / nb_mean if nb_mean > 0 else float("inf")
+        if ratio > 1.5:
+            directions.append("POSITIVE_OL")
+        elif nb_mean > 0 and (1 / ratio) > 1.5:
+            directions.append("NEGATIVE_OL")
+        else:
+            directions.append("AMBIGUOUS")
+    top["direction"] = directions
+
+    top.to_csv(OUT / "trigger_genes.csv", index=False)
     print("  top-50 features -> trigger_genes.csv")
     print(importance.head(15).to_string(index=False))
 

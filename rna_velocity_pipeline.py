@@ -150,7 +150,7 @@ def build_sample_adata(
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
-def main():
+def run_rna_velocity_pipeline():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
     print("Loading processed.h5ad ...")
@@ -321,33 +321,4 @@ def main():
         print(f"  condition={condition}: {subset.n_obs:,} cells")
         write_driver_csvs(subset, label_suffix=condition)
 
-    # ── Phase portraits using top velocity driver genes ────────────────────────
-    combined_named = combined.copy()
-    combined_named.var_names = pd.Index(
-        [ensembl_to_name.get(g, g) for g in combined.var_names]
-    )
-    combined_named.var_names_make_unique()
-    lineage_cols_plot = [c for c in ["NSC", "TAP", "Neuroblast", "OPC", "COP", "OL"]
-                         if c in driver_df_pooled.columns]
-
-    print("\nSaving phase portraits (top 4 driver genes per cell type) ...")
-    for col in lineage_cols_plot:
-        top_genes = [
-            ensembl_to_name.get(g, g)
-            for g in driver_df_pooled[col].iloc[:4].tolist()
-        ]
-        top_genes = [g for g in top_genes if g in combined_named.var_names]
-        if not top_genes:
-            continue
-        scv.pl.velocity(
-            combined_named, var_names=top_genes, basis="umap",
-            color=color_key,
-            save=f"phase_{col}.png", show=False,
-        )
-        print(f"  {col}: {top_genes}")
-
     print(f"\nDone. Outputs in {OUTPUT_DIR}/")
-
-
-if __name__ == "__main__":
-    main()

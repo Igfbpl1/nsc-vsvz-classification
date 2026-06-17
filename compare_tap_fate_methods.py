@@ -17,7 +17,6 @@ from __future__ import annotations
 import warnings
 warnings.filterwarnings("ignore")
 
-import numpy as np
 import pandas as pd
 import scanpy as sc
 import scvelo as scv
@@ -35,7 +34,7 @@ def cohen_kappa(a, b):
     return (p_observed - p_chance) / (1 - p_chance)
 
 
-def main():
+def run_compare_fate_methods():
     print("loading velocity_combined.h5ad ...")
     adata = sc.read_h5ad("outputs/velocity/velocity_combined.h5ad")
     adata.obs_names_make_unique()
@@ -62,7 +61,7 @@ def main():
     fate_states = list(g.fate_probabilities.names)
     ol_idx = fate_states.index("OL")
     adata.obs["cellrank_P_OL"] = fate_df[:, ol_idx]
-    print(f"  CellRank P(OL) computed.")
+    print("  CellRank P(OL) computed.")
 
     # ── ML and bias score from existing predictions ──────────────────────────
     print("\n[ML/Bias] loading XGBoost predictions ...")
@@ -153,7 +152,7 @@ def main():
         "cohen_kappa": r["cohen_kappa"],
     } for r in rows])
     summary_df.to_csv("outputs/tap_fate_method_summary.csv", index=False)
-    print(f"\n  → outputs/tap_fate_method_summary.csv")
+    print("\n  → outputs/tap_fate_method_summary.csv")
 
     # ── Per-condition OL-leaning fractions ───────────────────────────────────
     print(f"\n{'='*80}")
@@ -173,8 +172,4 @@ def main():
     pivot = pd.DataFrame(pivot_rows)
     print(pivot.to_string(index=False))
     pivot.to_csv("outputs/tap_fate_per_condition.csv", index=False)
-    print(f"\n  → outputs/tap_fate_per_condition.csv")
-
-
-if __name__ == "__main__":
-    main()
+    print("\n  → outputs/tap_fate_per_condition.csv")
