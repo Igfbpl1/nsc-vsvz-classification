@@ -15,6 +15,7 @@ Output:
 
 from __future__ import annotations
 import warnings
+from pathlib import Path
 
 import cellrank as cr
 import pandas as pd
@@ -24,6 +25,9 @@ from cellrank.kernels import ConnectivityKernel, VelocityKernel
 from scipy.stats import pearsonr, spearmanr
 
 warnings.filterwarnings("ignore")
+
+ROOT = Path(__file__).parent
+OUT  = ROOT / "outputs"
 
 
 def cohen_kappa(a, b):
@@ -37,7 +41,7 @@ def cohen_kappa(a, b):
 
 def run_compare_fate_methods():
     print("loading velocity_combined.h5ad ...")
-    adata = sc.read_h5ad("outputs/velocity/velocity_combined.h5ad")
+    adata = sc.read_h5ad(OUT / "velocity" / "velocity_combined.h5ad")
     adata.obs_names_make_unique()
     print(f"  cells: {adata.n_obs:,}  genes: {adata.n_vars:,}")
 
@@ -66,7 +70,7 @@ def run_compare_fate_methods():
 
     # ── ML and bias score from existing predictions ──────────────────────────
     print("\n[ML/Bias] loading XGBoost predictions ...")
-    ml = pd.read_csv("outputs/ol_commitment.csv").set_index("cell_id")
+    ml = pd.read_csv(OUT / "ol_commitment.csv").set_index("cell_id")
 
     # ── Align on common TAP cells ────────────────────────────────────────────
     adata.obs["original_cell_id"] = (
@@ -88,8 +92,8 @@ def run_compare_fate_methods():
     tap_df["ml_is_ol"]       = (tap_df["ml_P_OL"] > 0.5).astype(int)
     tap_df["bias_is_ol"]     = (tap_df["bias_score"] > 0).astype(int)
 
-    tap_df.to_csv("outputs/tap_fate_comparison.csv", index=False)
-    print(f"  → outputs/tap_fate_comparison.csv  (n={len(tap_df)})")
+    tap_df.to_csv(OUT / "tap_fate_comparison.csv", index=False)
+    print(f"  → {OUT}/tap_fate_comparison.csv  (n={len(tap_df)})")
 
     # ── Comparison stats ─────────────────────────────────────────────────────
     print(f"\n{'='*80}")
@@ -152,8 +156,8 @@ def run_compare_fate_methods():
         "overall_agreement_pct": r["overall_agreement"],
         "cohen_kappa": r["cohen_kappa"],
     } for r in rows])
-    summary_df.to_csv("outputs/tap_fate_method_summary.csv", index=False)
-    print("\n  → outputs/tap_fate_method_summary.csv")
+    summary_df.to_csv(OUT / "tap_fate_method_summary.csv", index=False)
+    print(f"\n  → {OUT}/tap_fate_method_summary.csv")
 
     # ── Per-condition OL-leaning fractions ───────────────────────────────────
     print(f"\n{'='*80}")
@@ -172,5 +176,5 @@ def run_compare_fate_methods():
 
     pivot = pd.DataFrame(pivot_rows)
     print(pivot.to_string(index=False))
-    pivot.to_csv("outputs/tap_fate_per_condition.csv", index=False)
-    print("\n  → outputs/tap_fate_per_condition.csv")
+    pivot.to_csv(OUT / "tap_fate_per_condition.csv", index=False)
+    print(f"\n  → {OUT}/tap_fate_per_condition.csv")

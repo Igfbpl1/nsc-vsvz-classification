@@ -3,6 +3,13 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
+        <entry key="/hvg_10.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/log1p_cell_counts_top_10.csv">
           <value>
             <Attribute>
@@ -158,6 +165,13 @@
           </value>
         </entry>
         <entry key="/outputs/velocity/velocity_drivers_TAP_CupRap.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/raw_cell_counts_top_10.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
