@@ -15,14 +15,15 @@ Output:
 
 from __future__ import annotations
 import warnings
-warnings.filterwarnings("ignore")
 
+import cellrank as cr
 import pandas as pd
 import scanpy as sc
 import scvelo as scv
+from cellrank.kernels import ConnectivityKernel, VelocityKernel
 from scipy.stats import pearsonr, spearmanr
-import cellrank as cr
-from cellrank.kernels import VelocityKernel, ConnectivityKernel
+
+warnings.filterwarnings("ignore")
 
 
 def cohen_kappa(a, b):

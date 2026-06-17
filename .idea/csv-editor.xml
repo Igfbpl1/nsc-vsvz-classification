@@ -108,6 +108,20 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/outputs/velocity/velocity_drivers_COP_Cntl.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/outputs/velocity/velocity_drivers_COP_CupRap.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/outputs/velocity/velocity_drivers_NSC.csv">
           <value>
             <Attribute>

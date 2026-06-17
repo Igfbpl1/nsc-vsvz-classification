@@ -44,12 +44,12 @@ def validate_matrix(kb_output_dir: str) -> bool:
 
 
 def validate(raw_barcodes_path: str, kb_output_dir: str) -> bool:
-    raw = set(l.strip().replace("-1", "") for l in open(raw_barcodes_path) if l.strip())
+    raw = set(line.strip().replace("-1", "") for line in open(raw_barcodes_path) if line.strip())
 
     results = {}
     for layer in ("spliced", "unspliced"):
         kb_path = f"{kb_output_dir}/counts_unfiltered/{layer}.barcodes.txt"
-        kb = set(l.strip() for l in open(kb_path) if l.strip())
+        kb = set(line.strip() for line in open(kb_path) if line.strip())
         overlap = raw & kb
         pct = len(overlap) / len(raw) * 100 if raw else 0
         results[layer] = (len(raw), len(kb), len(overlap), pct)

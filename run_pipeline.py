@@ -21,6 +21,7 @@ from compare_tap_fate_methods import run_compare_fate_methods
 from markers import MARKERS, OL_LINEAGE
 import train_ol_classifier
 import tap_analysis
+import velocity_build
 from rna_velocity_pipeline import run_rna_velocity_pipeline
 
 ROOT = Path(__file__).parent
@@ -33,7 +34,7 @@ def build_processed() -> None:
     adata = preprocess.qc_filter(adata, output_dir=OUT)
     print("completed quality control")
     adata.to_df().head(100).to_csv(f"{OUT}/raw_barcodes_genes_top100.csv")
-    adata = preprocess.normalize_and_embed(adata)
+    adata = preprocess.normalize_and_embed(adata, output_dir=OUT)
     print("completed normalizing and embeding")
     adata.to_df().head(100).to_csv(f"{OUT}/normalized_barcodes_genes_top100.csv")
 
@@ -57,7 +58,9 @@ def build_processed() -> None:
     adata.obs["cell_type"] = adata.obs["leiden"].map(cluster_to_type).astype("category")
     adata.uns["cluster_to_type"] = cluster_to_type
     adata.obs["fate_OL_lineage"] = adata.obs["cell_type"].isin(OL_LINEAGE).astype(int)
-    sc.pl.umap(adata, color="cell_type", size=40, alpha=1.0)
+    sc.settings.figdir = str(OUT)
+    sc.pl.umap(adata, color="cell_type", size=40, alpha=1.0,
+               save="leiden_cell_type.png", show=False)
 
     OUT.mkdir(exist_ok=True)
     h5 = OUT / "processed.h5ad"
@@ -73,7 +76,7 @@ def main() -> None:
     p.add_argument(
         "--rebuild",
         action="store_true",
-        help="rebuild outputs/processed.h5ad even if it exists",
+        help="rebuild outputs/processed.h5ad and velocity_combined.h5ad even if they exist",
     )
     args = p.parse_args()
 
@@ -91,6 +94,15 @@ def main() -> None:
     train_ol_classifier.run_classifier()
     print("running corroboration analysis")
     tap_analysis.run_analysis()
+    print("=== velocity build: velocity_combined.h5ad ===")
+    vel_h5ad = Path(velocity_build.OUT_H5AD)
+    if vel_h5ad.exists() and not args.rebuild:
+        print(f"  {vel_h5ad} exists; skipping (use --rebuild to force)")
+    else:
+        t0 = time.time()
+        velocity_build.build_velocity()
+        print(f"  done in {time.time() - t0:.0f}s")
+
     print("running rna velocity pipeline")
     run_rna_velocity_pipeline()
     print("comparing fate methods")

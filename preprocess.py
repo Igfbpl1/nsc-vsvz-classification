@@ -117,27 +117,54 @@ def qc_filter(
     return adata
 
 
-def normalize_and_embed(
-    adata: ad.AnnData, n_hvg: int = 2000, n_pcs: int = 30, resolution: float = 0.8
+def _normalize_embed_hvg(
+    adata: ad.AnnData,
+    n_top_genes: int,
+    n_pcs: int,
+    n_neighbors: int,
 ) -> ad.AnnData:
+    """Normalize, select HVGs, scale, PCA, neighbors. Copies graph back into adata.
+    Returns the HVG-only working copy (adata_hvg) for callers that need it."""
     adata.layers["counts"] = adata.X.copy()
-    adata.to_df().head(10).to_csv("raw_cell_counts_top_10.csv")
     sc.pp.normalize_total(adata, target_sum=1e4)
-    adata.to_df().head(10).to_csv("normalized_cell_counts_top_10.csv")
     sc.pp.log1p(adata)
-    adata.to_df().head(10).to_csv("log1p_cell_counts_top_10.csv")
     sc.pp.highly_variable_genes(
-        adata, n_top_genes=n_hvg, flavor="seurat", batch_key="sample_id"
+        adata, n_top_genes=n_top_genes, flavor="seurat", batch_key="sample_id"
     )
     print(f"  HVGs: {int(adata.var['highly_variable'].sum())}")
 
     adata_hvg = adata[:, adata.var["highly_variable"]].copy()
-    adata_nhvg = adata[:, ~adata.var["highly_variable"]].copy()
-    adata_hvg.to_df().head(10).to_csv("hvg_10.csv")
-    adata_nhvg.to_df().head(10).to_csv("nhvg_10.csv")
     sc.pp.scale(adata_hvg, max_value=10)
     sc.tl.pca(adata_hvg, n_comps=n_pcs)
-    sc.pp.neighbors(adata_hvg, n_pcs=n_pcs, n_neighbors=15)
+    sc.pp.neighbors(adata_hvg, n_pcs=n_pcs, n_neighbors=n_neighbors)
+
+    adata.obsm["X_pca"]          = adata_hvg.obsm["X_pca"]
+    adata.obsp["connectivities"] = adata_hvg.obsp["connectivities"]
+    adata.obsp["distances"]      = adata_hvg.obsp["distances"]
+    adata.uns["neighbors"]       = adata_hvg.uns["neighbors"]
+    return adata_hvg
+
+
+def normalize_embed_velocity(
+    adata: ad.AnnData,
+    n_top_genes: int = 2000,
+    n_pcs: int = 30,
+    n_neighbors: int = 30,
+) -> ad.AnnData:
+    """Normalize and embed for velocity analysis. Returns adata subset to HVGs."""
+    _normalize_embed_hvg(adata, n_top_genes, n_pcs, n_neighbors)
+    return adata[:, adata.var["highly_variable"]].copy()
+
+
+def normalize_and_embed(
+    adata: ad.AnnData,
+    n_hvg: int = 2000,
+    n_pcs: int = 30,
+    resolution: float = 0.8,
+    output_dir: Path | None = None,
+) -> ad.AnnData:
+    adata_hvg = _normalize_embed_hvg(adata, n_hvg, n_pcs, n_neighbors=15)
+
     sc.tl.leiden(
         adata_hvg,
         resolution=resolution,
@@ -145,14 +172,14 @@ def normalize_and_embed(
         n_iterations=2,
         directed=False,
     )
-    # Export Leiden clustering results
     sc.tl.umap(adata_hvg)
-    sc.pl.umap(adata_hvg, color=["leiden"], size=40, alpha=1.0)
-    adata.obsm["X_pca"] = adata_hvg.obsm["X_pca"]
+
+    if output_dir is not None:
+        sc.settings.figdir = str(output_dir)
+        sc.pl.umap(adata_hvg, color=["leiden"], size=40, alpha=1.0,
+                   save="leiden.png", show=False)
+
     adata.obsm["X_umap"] = adata_hvg.obsm["X_umap"]
     adata.obs["leiden"] = adata_hvg.obs["leiden"].values
-    adata.obsp["connectivities"] = adata_hvg.obsp["connectivities"]
-    adata.obsp["distances"] = adata_hvg.obsp["distances"]
-    adata.uns["neighbors"] = adata_hvg.uns["neighbors"]
     print(f"  leiden clusters: {adata_hvg.obs['leiden'].nunique()}")
     return adata
