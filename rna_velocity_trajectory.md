@@ -90,7 +90,6 @@ Output: `outputs/velocity/`
 |---|---|
 | `scvelo_stream_all.png` | Global velocity arrows on UMAP — direction of differentiation for all cells |
 | `scvelo_stream_{label}.png` | Per-condition velocity stream (CD1_Cntl, Cntl, CupRap_Rep1, CupRap_Rep2) |
-| `scvelo_phase_{CellType}.png` | Phase portraits for top 4 velocity driver genes per cell type |
 | `velocity_drivers_{CellType}.csv` | Pooled velocity driver genes per cell type, ranked by correlation |
 | `velocity_drivers_{CellType}_Cntl.csv` | Driver genes for Cntl cells of that type |
 | `velocity_drivers_{CellType}_CupRap.csv` | Driver genes for CupRap cells of that type |

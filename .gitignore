@@ -219,3 +219,7 @@ __marimo__/
 /data/raw/
 /outputs/processed.h5ad
 .aider*
+/sra_runs
+/trajectories
+/memory
+*.h5ad
