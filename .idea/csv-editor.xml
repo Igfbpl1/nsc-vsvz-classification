@@ -38,6 +38,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/outputs/bias_cellrank_disagreement.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/outputs/failed_max_pct_mt_cells_metadata_top10.csv">
           <value>
             <Attribute>
@@ -74,6 +81,13 @@
           </value>
         </entry>
         <entry key="/outputs/out_of_sample_tap_comparison_test2.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/outputs/raw_barcodes_genes_top100.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

@@ -176,6 +176,7 @@ def normalize_and_embed(
 
     if output_dir is not None:
         sc.settings.figdir = str(output_dir)
+        sc.settings.dpi_save = 300
         sc.pl.umap(adata_hvg, color=["leiden"], size=40, alpha=1.0,
                    save="leiden.png", show=False)
 
