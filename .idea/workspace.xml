@@ -4,7 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="predecit NB too">
+    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="add summary">
+      <change beforePath="$PROJECT_DIR$/.idea/csv-editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/csv-editor.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -151,14 +152,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1779721552530</updated>
-    </task>
-    <task id="LOCAL-00005" summary="quality control, normalizing, and embedding has happened">
-      <option name="closed" value="true" />
-      <created>1779724242503</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1779724242503</updated>
     </task>
     <task id="LOCAL-00006" summary="created csv with all annotations">
       <option name="closed" value="true" />
@@ -544,7 +537,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781709384627</updated>
     </task>
-    <option name="localTasksCounter" value="54" />
+    <task id="LOCAL-00054" summary="add summary">
+      <option name="closed" value="true" />
+      <created>1781716639102</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1781716639102</updated>
+    </task>
+    <option name="localTasksCounter" value="55" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -575,7 +576,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="change" />
     <MESSAGE value="holdout add NesCre CR Rep2/Rep1" />
     <MESSAGE value="log filtered data" />
     <MESSAGE value="add filtered genes" />
@@ -600,6 +600,7 @@
     <MESSAGE value="move" />
     <MESSAGE value="cleanup" />
     <MESSAGE value="predecit NB too" />
-    <option name="LAST_COMMIT_MESSAGE" value="predecit NB too" />
+    <MESSAGE value="add summary" />
+    <option name="LAST_COMMIT_MESSAGE" value="add summary" />
   </component>
 </project>

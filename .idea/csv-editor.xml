@@ -73,6 +73,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/outputs/opc_de_cuprep_vs_cntl.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/outputs/out_of_sample_comparison.csv">
           <value>
             <Attribute>
@@ -88,6 +95,13 @@
           </value>
         </entry>
         <entry key="/outputs/raw_barcodes_genes_top100.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/outputs/tap_de_cuprep_vs_cntl.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -164,7 +178,35 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/outputs/velocity/velocity_drivers_OL_Cntl.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/outputs/velocity/velocity_drivers_OL_CupRap.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/outputs/velocity/velocity_drivers_OPC.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/outputs/velocity/velocity_drivers_OPC_Cntl.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/outputs/velocity/velocity_drivers_OPC_CupRap.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
