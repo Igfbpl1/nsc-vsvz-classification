@@ -3,7 +3,7 @@ name = "nsc-vsvz-classification"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.12,<3.14"
 dependencies = [
     "anndata>=0.12.13",
     "kb-python>=0.28.2",
@@ -19,13 +19,14 @@ dependencies = [
     "ruff>=0.15.15",
     "scanpy>=1.12.1",
     "scikit-learn>=1.8.0",
-    "scipy>=1.17.1",
+    "scipy>=1.13,<1.17",
     "scrublet>=0.2.3",
     "scvelo>=0.3.4",
     "shap>=0.51.0",
     "tqdm>=4.67.3",
     "umap-learn>=0.5.12",
     "xgboost>=3.2.0",
+    "cellrank>=2.3.1",
 ]
 
 

@@ -1,8 +1,8 @@
-velocity_label,n_TAPs,cellrank_n_OL,cellrank_mean_P_OL,ml_n_OL,ml_mean_P_OL
-CD1_Cntl,876,408,0.455,278,0.331
-CD1_Cntl_3wks,1129,474,0.425,373,0.343
-CD1_CupRap,463,184,0.398,109,0.281
-CD1_CupRap_0wks_Rep2,172,133,0.722,115,0.619
-Cntl,742,282,0.391,183,0.286
-CupRap_Rep1,370,140,0.407,93,0.288
-CupRap_Rep2,516,160,0.333,97,0.238
+velocity_label,n_TAPs,cellrank_n_OL,cellrank_mean_P_OL,cellrank_n_NB,cellrank_mean_P_NB,ml_n_OL,ml_mean_P_OL,ml_n_NB,ml_mean_P_NB
+CD1_Cntl,876,408,0.455,468,0.545,278,0.331,598,0.669
+CD1_Cntl_3wks,1129,474,0.425,655,0.575,373,0.343,756,0.657
+CD1_CupRap,463,184,0.398,279,0.602,109,0.281,354,0.719
+CD1_CupRap_0wks_Rep2,172,133,0.722,39,0.278,115,0.619,57,0.381
+Cntl,742,282,0.391,460,0.609,183,0.286,559,0.714
+CupRap_Rep1,370,140,0.407,230,0.593,93,0.288,277,0.712
+CupRap_Rep2,516,160,0.333,356,0.667,97,0.238,419,0.762
