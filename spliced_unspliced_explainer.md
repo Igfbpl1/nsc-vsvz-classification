@@ -395,36 +395,162 @@ row   col    value   → gene
 ## 8. The Full Pipeline in One Diagram
 
 ```
-SRA Download
-    │
-    ▼
-SRR_ID_2.fastq (R1, 28bp)   SRR_ID_3.fastq (R2, 91bp)
-[CTGTGGGAGGTCACCC][UMI]     [GCAGCAGTGACTGGAG...91bp cDNA...]
-    │                              │
-    │ ←─── kb count ──────────────┘
-    │       ↓
-    │  1. Extract barcode + UMI from R1
-    │  2. Pseudo-align R2 k-mers against combined index
-    │  3. Assign to equivalence class:
-    │       cdna only     → spliced vote
-    │       intron only   → unspliced vote
-    │       both / mixed  → ambiguous → discard
-    │  4. Collapse by barcode+UMI → one count per molecule
-    │  5. Aggregate by gene via t2g.txt
-    ▼
-counts_unfiltered/
-├── spliced.mtx    ← s matrix (mature mRNA counts per cell per gene)
-└── unspliced.mtx  ← u matrix (nascent pre-mRNA counts per cell per gene)
-    │
-    ▼
-RNA Velocity (scVelo / velocyto)
-  ds/dt = β·u − γ·s
-  
-  For each gene in each cell, estimate whether s is going UP or DOWN
-  based on the current u/s ratio vs the equilibrium γ.
-  
-  Sntg1 in CTGTGGGAGGTCACCC:  u=47, s=1  →  velocity > 0  (increasing)
-  Pcmtd1 in CTGTGGGAGGTCACCC: u=8,  s=13 →  near steady state
+╔══════════════════════════════════════════════════════════════════════╗
+║  STEP 1 — SEQUENCING                                                 ║
+║                                                                      ║
+║  SRA Download: fasterq-dump SRR_ID --split-files                     ║
+║                                                                      ║
+║  SRR_ID_2.fastq (R1, 28bp)      SRR_ID_3.fastq (R2, 91bp)           ║
+║  ┌──────────────────┬──────────┐  ┌───────────────────────────────┐  ║
+║  │ cell barcode     │  UMI     │  │ cDNA sequence (91 bp)         │  ║
+║  │ CTGTGGGAGGTCACCC │GATTACAGT │  │ GCAGCAGTGACTGGAGAAGCCAT...    │  ║
+║  │ (16 bp)          │ (12 bp)  │  │                               │  ║
+║  └──────────────────┴──────────┘  └───────────────────────────────┘  ║
+║       ↑ WHO + WHICH MOLECULE            ↑ WHAT WAS TRANSCRIBED       ║
+╚══════════════════════════════════════════════════════════════════════╝
+                              │
+                              ▼
+╔══════════════════════════════════════════════════════════════════════╗
+║  STEP 2 — REFERENCE BUILDING (done once, reused for all samples)     ║
+║                                                                      ║
+║  Inputs:                                                             ║
+║    Mus_musculus.GRCm39.dna.primary_assembly.fa  (2.7B bp genome)     ║
+║    Mus_musculus.GRCm39.110.gtf                  (exon coordinates)   ║
+║                                                                      ║
+║  GTF defines exon boundaries — introns are inferred gaps:            ║
+║                                                                      ║
+║    Becn2 chr1:  [═══ Exon1 ═══]──intron──[═Exon2═]                  ║
+║                  175,747,895                       175,749,791       ║
+║                                                                      ║
+║  kb ref builds two indices:                                          ║
+║    cdna.fa    → exon sequences joined (spliced transcripts)          ║
+║    intron.fa  → full gene body incl. introns (pre-mRNA)              ║
+║                                                                      ║
+║  Output: index.idx  t2g.txt  cdna_t2c.txt  intron_t2c.txt           ║
+╚══════════════════════════════════════════════════════════════════════╝
+                              │
+                              ▼
+╔══════════════════════════════════════════════════════════════════════╗
+║  STEP 3 — PSEUDO-ALIGNMENT & COUNTING  (kb count)                    ║
+║                                                                      ║
+║  For every read pair:                                                ║
+║    1. Extract barcode + UMI from R1                                  ║
+║    2. Correct barcode against 10x v3 whitelist                       ║
+║    3. Break R2 into 31-mers, match against index.idx                 ║
+║                                                                      ║
+║  Classify each read by coordinate vs GTF interval:                   ║
+║                                                                      ║
+║   read coords vs GTF exon table                                      ║
+║       │                                                              ║
+║       ├─ entirely within one exon?          → EXONIC (spliced vote)  ║
+║       ├─ overlaps exon-intron boundary?     → INTRONIC (unspl. vote) ║
+║       ├─ entirely within intron gap?        → INTRONIC (unspl. vote) ║
+║       ├─ CIGAR N matches annotated intron?  → EXONIC (spliced vote)  ║
+║       └─ mixed across isoforms?             → AMBIGUOUS → discard    ║
+║                                                                      ║
+║  Collapse by barcode+UMI (one count per unique molecule):            ║
+║    all reads exonic       → 1 spliced molecule                       ║
+║    all reads intronic     → 1 unspliced molecule                     ║
+║    mixed                  → discarded                                ║
+║                                                                      ║
+║  Aggregate by gene via t2g.txt                                       ║
+║                                                                      ║
+║  Output:  counts_unfiltered/                                         ║
+║    spliced.mtx    13,411,965 nonzero entries  ← s  (mature mRNA)     ║
+║    unspliced.mtx  11,422,859 nonzero entries  ← u  (nascent pre-mRNA)║
+║                                                                      ║
+║  NOTE: 816,643 barcodes total — mostly empty droplets.               ║
+║  Real cells (~4,600) are identified by UMI count knee plot.          ║
+╚══════════════════════════════════════════════════════════════════════╝
+                              │
+                              ▼
+╔══════════════════════════════════════════════════════════════════════╗
+║  STEP 4 — CELL FILTERING & NORMALISATION  (scanpy / scVelo)          ║
+║                                                                      ║
+║  Filter to real cells above UMI knee (discard empty droplets)        ║
+║  Normalise counts by cell size                                       ║
+║  Select highly variable genes                                        ║
+║                                                                      ║
+║  Result: two dense matrices for ~4,600 cells × ~3,000 HVGs           ║
+║    s[cells × genes]   u[cells × genes]                               ║
+╚══════════════════════════════════════════════════════════════════════╝
+                              │
+                              ▼
+╔══════════════════════════════════════════════════════════════════════╗
+║  STEP 5 — DEGRADATION RATE ESTIMATION  (scVelo)                      ║
+║                                                                      ║
+║  The model:   du/dt = α − β·u                                        ║
+║               ds/dt = β·u − γ·s                                      ║
+║                                                                      ║
+║    α = transcription rate  ─┐                                        ║
+║    β = splicing rate        ├─ never directly measured               ║
+║    γ = degradation rate    ─┘                                        ║
+║                                                                      ║
+║  Degradation cannot be observed from reads — a degraded mRNA         ║
+║  leaves no trace in the sequencing data.                             ║
+║                                                                      ║
+║  Instead, γ is INFERRED from the steady-state constraint:            ║
+║    At steady state:  du/dt = 0  and  ds/dt = 0                       ║
+║    → β·u = γ·s   →   u = (γ/β)·s                                    ║
+║    → u vs s across cells forms a LINE with slope γ/β                 ║
+║                                                                      ║
+║    u │          · ·                                                  ║
+║      │       · · /← steady-state cells                               ║
+║      │     · · /   cluster on this line                              ║
+║      │   · · /     slope = γ/β  ← estimated by regression            ║
+║      │  · · /      on upper quantile of scatter                      ║
+║      │────────────────── s                                           ║
+║                                                                      ║
+║  scVelo fits this slope gene-by-gene across all cells.               ║
+║  Output: one γ value per gene                                        ║
+╚══════════════════════════════════════════════════════════════════════╝
+                              │
+                              ▼
+╔══════════════════════════════════════════════════════════════════════╗
+║  STEP 6 — VELOCITY COMPUTATION  (scVelo)                             ║
+║                                                                      ║
+║  For each gene in each cell:                                         ║
+║    velocity = ds/dt = β·u − γ·s                                      ║
+║                                                                      ║
+║  Interpretation — where is each cell relative to steady-state line?  ║
+║                                                                      ║
+║    u │    ·  ← ABOVE line: u too high for current s                  ║
+║      │   /     β·u > γ·s  →  ds/dt > 0  →  s is INCREASING          ║
+║      │  /── steady-state line                                        ║
+║      │ /   ·  ← BELOW line: u too low for current s                  ║
+║      │/      β·u < γ·s  →  ds/dt < 0  →  s is DECREASING            ║
+║      │──────────────── s                                             ║
+║                                                                      ║
+║  Real examples from cell CTGTGGGAGGTCACCC:                           ║
+║                                                                      ║
+║    Gene      s     u    position        velocity                     ║
+║    ──────────────────────────────────────────────────────────        ║
+║    Sntg1     1    47    far above line  ds/dt >> 0  (rising fast)    ║
+║    Pcmtd1   13     8    near line       ds/dt ≈ 0   (steady state)   ║
+║    Becn2     1     0    below line      ds/dt < 0   (degrading)      ║
+║                                                                      ║
+║  Output: velocity matrix [cells × genes]                             ║
+╚══════════════════════════════════════════════════════════════════════╝
+                              │
+                              ▼
+╔══════════════════════════════════════════════════════════════════════╗
+║  STEP 7 — PROJECTION ONTO EMBEDDING                                  ║
+║                                                                      ║
+║  Velocity vectors (one per cell, across thousands of genes) are      ║
+║  projected onto a low-dimensional embedding (UMAP / t-SNE / PCA).    ║
+║                                                                      ║
+║  Each arrow on the UMAP shows:                                       ║
+║    direction → which cell state this cell is moving toward           ║
+║    length    → how fast the transition is occurring                  ║
+║                                                                      ║
+║  OPC ──────────────────────────────────────────────────────────      ║
+║   ·  → → →                                                           ║
+║   · · → → → →   ← velocity arrows pointing toward COP fate          ║
+║   · · · → → → →                                                      ║
+║  TAP          COP ──→ OL                                             ║
+║   ·  ·  ·                                                            ║
+║   · · · (no arrows = cells not actively transitioning)               ║
+╚══════════════════════════════════════════════════════════════════════╝
 ```
 
 ---
