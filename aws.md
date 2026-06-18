@@ -113,7 +113,7 @@ uv run kb count \
 **3. Run the full pipeline**
 
 ```bash
-cd /Users/chandra/development/nsc-vsvz-classification
+cd /Users/viv/development/nsc-vsvz-classification
 
 # first run (builds everything)
 uv run python run_pipeline.py
@@ -158,7 +158,7 @@ ssh -i ~/.ssh/vsvz-key.pem ubuntu@ec2-3-80-204-115.compute-1.amazonaws.com
 ### Copy files Mac → EC2
 ```bash
 scp -i ~/.ssh/vsvz-key.pem \
-  /Users/chandra/development/nsc-vsvz-classification/<file> \
+  /Users/viv/development/nsc-vsvz-classification/<file> \
   ubuntu@ec2-3-80-204-115.compute-1.amazonaws.com:~/project/
 
 # multiple files
@@ -172,17 +172,17 @@ scp -i ~/.ssh/vsvz-key.pem \
 # kb_output tarballs
 scp -i ~/.ssh/vsvz-key.pem \
   "ubuntu@ec2-3-80-204-115.compute-1.amazonaws.com:~/project/sra_runs/GSM*_counts.tgz" \
-  /Users/chandra/development/nsc-vsvz-classification/sra_runs/
+  /Users/viv/development/nsc-vsvz-classification/sra_runs/
 
 # velocity outputs
 scp -r -i ~/.ssh/vsvz-key.pem \
   ubuntu@ec2-3-80-204-115.compute-1.amazonaws.com:~/project/outputs/velocity/ \
-  /Users/chandra/development/nsc-vsvz-classification/outputs/
+  /Users/viv/development/nsc-vsvz-classification/outputs/
 ```
 
 ### Extract tarballs (on Mac after download)
 ```bash
-cd /Users/chandra/development/nsc-vsvz-classification
+cd /Users/viv/development/nsc-vsvz-classification
 for tgz in sra_runs/GSM*_counts.tgz; do
     GSM=$(basename "$tgz" _counts.tgz)
     mkdir -p sra_runs/kb_output_${GSM}
