@@ -4,10 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="add dotplot">
+    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="cleanup">
       <change beforePath="$PROJECT_DIR$/.idea/csv-editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/csv-editor.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/next_steps.md" beforeDir="false" afterPath="$PROJECT_DIR$/next_steps.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/compare_tap_fate_methods.py" beforeDir="false" afterPath="$PROJECT_DIR$/compare_tap_fate_methods.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/tap_fate_comparison.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/tap_fate_comparison.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/tap_fate_per_condition.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/tap_fate_per_condition.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/velocity/dotplot__marker_dotplot.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/dotplot__marker_dotplot.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tap_fate_comparison.md" beforeDir="false" afterPath="$PROJECT_DIR$/tap_fate_comparison.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,7 +67,7 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.run_pipeline_rebuild">
+  <component name="RunManager" selected="Python.run_pipeline_no_rebuild">
     <configuration name="run_pipeline_no_rebuild" type="PythonConfigurationType" factoryName="Python">
       <module name="nsc-vsvz-classification" />
       <option name="ENV_FILES" value="" />
@@ -153,14 +157,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1779721552530</updated>
-    </task>
-    <task id="LOCAL-00010" summary="made test 1 for 99.85% accuracy">
-      <option name="closed" value="true" />
-      <created>1779731246049</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1779731246049</updated>
     </task>
     <task id="LOCAL-00011" summary="made test 2">
       <option name="closed" value="true" />
@@ -546,7 +542,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781794078280</updated>
     </task>
-    <option name="localTasksCounter" value="59" />
+    <task id="LOCAL-00059" summary="cleanup">
+      <option name="closed" value="true" />
+      <created>1781795516383</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1781795516383</updated>
+    </task>
+    <option name="localTasksCounter" value="60" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -600,8 +604,8 @@
     <MESSAGE value="add summary" />
     <MESSAGE value="add next steps and splice/unsplice" />
     <MESSAGE value="add full flow" />
-    <MESSAGE value="cleanup" />
     <MESSAGE value="add dotplot" />
-    <option name="LAST_COMMIT_MESSAGE" value="add dotplot" />
+    <MESSAGE value="cleanup" />
+    <option name="LAST_COMMIT_MESSAGE" value="cleanup" />
   </component>
 </project>

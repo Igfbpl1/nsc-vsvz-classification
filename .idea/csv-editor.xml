@@ -24,7 +24,28 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/outputs/hvg_10.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/outputs/log1p_cell_counts_top_10.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/outputs/normalized_barcodes_genes_top100.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/outputs/normalized_cell_counts_top_10.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
