@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="add next steps and splice/unsplice">
+    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="cleanup">
+      <change beforePath="$PROJECT_DIR$/.idea/csv-editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/csv-editor.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/spliced_unspliced_explainer.md" beforeDir="false" afterPath="$PROJECT_DIR$/spliced_unspliced_explainer.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -152,22 +152,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1779721552530</updated>
-    </task>
-    <task id="LOCAL-00007" summary="made a table which counts each cell type by the marker genes">
-      <option name="closed" value="true" />
-      <created>1779725552668</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1779725552668</updated>
-    </task>
-    <task id="LOCAL-00008" summary="top 50 genes created, ol_commitment.csv created, bias score + P(OL) created">
-      <option name="closed" value="true" />
-      <created>1779725976103</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1779725976103</updated>
     </task>
     <task id="LOCAL-00009" summary="clean-up">
       <option name="closed" value="true" />
@@ -545,7 +529,23 @@
       <option name="project" value="LOCAL" />
       <updated>1781789272223</updated>
     </task>
-    <option name="localTasksCounter" value="56" />
+    <task id="LOCAL-00056" summary="add full flow">
+      <option name="closed" value="true" />
+      <created>1781790741240</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1781790741240</updated>
+    </task>
+    <task id="LOCAL-00057" summary="cleanup">
+      <option name="closed" value="true" />
+      <created>1781791329132</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1781791329132</updated>
+    </task>
+    <option name="localTasksCounter" value="58" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -576,7 +576,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="log filtered data" />
     <MESSAGE value="add filtered genes" />
     <MESSAGE value="update leiden" />
     <MESSAGE value="add RNA Velocity &amp; Trajectory Analysis Plan readme" />
@@ -597,10 +596,11 @@
     <MESSAGE value="update" />
     <MESSAGE value="rerun shap using out of sample" />
     <MESSAGE value="move" />
-    <MESSAGE value="cleanup" />
     <MESSAGE value="predecit NB too" />
     <MESSAGE value="add summary" />
     <MESSAGE value="add next steps and splice/unsplice" />
-    <option name="LAST_COMMIT_MESSAGE" value="add next steps and splice/unsplice" />
+    <MESSAGE value="add full flow" />
+    <MESSAGE value="cleanup" />
+    <option name="LAST_COMMIT_MESSAGE" value="cleanup" />
   </component>
 </project>

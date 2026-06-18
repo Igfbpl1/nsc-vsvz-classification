@@ -3,42 +3,7 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
-        <entry key="/hvg_10.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/log1p_cell_counts_top_10.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/nhvg_10.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/normalized_cell_counts_top_10.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
         <entry key="/outputs/barcode_to_cell_type_mapping.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/outputs/bias_cellrank_disagreement.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -73,13 +38,6 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="/outputs/opc_de_cuprep_vs_cntl.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
         <entry key="/outputs/out_of_sample_comparison.csv">
           <value>
             <Attribute>
@@ -95,13 +53,6 @@
           </value>
         </entry>
         <entry key="/outputs/raw_barcodes_genes_top100.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/outputs/tap_de_cuprep_vs_cntl.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -221,13 +172,6 @@
           </value>
         </entry>
         <entry key="/outputs/velocity/velocity_drivers_TAP_CupRap.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/raw_cell_counts_top_10.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

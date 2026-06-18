@@ -23,6 +23,7 @@ import train_ol_classifier
 import tap_analysis
 import velocity_build
 from rna_velocity_pipeline import run_rna_velocity_pipeline
+from marker_dotplot import run_marker_dotplot
 
 ROOT = Path(__file__).parent
 OUT = ROOT / "outputs"
@@ -106,6 +107,8 @@ def main() -> None:
 
     print("running rna velocity pipeline")
     run_rna_velocity_pipeline()
+    print("running marker dotplot")
+    run_marker_dotplot()
     print("comparing fate methods")
     run_compare_fate_methods()
     print(f"\n=== ALL DONE in {time.time() - overall:.0f}s ===")
