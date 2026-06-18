@@ -49,345 +49,239 @@ Together, a barcode+UMI pair defines one unique mRNA **molecule**. Multiple read
 
 ---
 
-## 2. The Reference: How Exons and Introns Are Defined
+## 2. The Reference: Exon & Intron Coordinates
 
-Before any alignment, you need a genome assembly and gene annotation:
-
-```
-Mus_musculus.GRCm39.dna.primary_assembly.fa   # genome sequence
-Mus_musculus.GRCm39.110.gtf                   # gene annotation
-```
-
-The GTF file defines **exon coordinates** for every transcript. Introns are never listed explicitly — they are the gaps between consecutive exons of the same transcript.
-
-### How a read's coordinates are classified against the GTF map
-
-Once the aligner returns `[read_start, read_end]` on a chromosome, the tool works through this decision tree against the GTF exon intervals:
+Two files are needed before any counting can happen:
 
 ```
-Given: read maps to [read_start, read_end] on chrX
-       GTF defines exon intervals [exon_start, exon_end] for each transcript
-
-Is [read_start, read_end] entirely            YES ──→ EXONIC
-within one exon [exon_start, exon_end]?               → SPLICED vote
-                    │
-                    NO
-                    ↓
-Does the read overlap the gap between         YES ──→ spans exon-intron
-two consecutive exons of the same                     boundary
-transcript? (read_start < exon_end            → UNSPLICED vote
-AND read_end > next_exon_start)
-                    │
-                    NO
-                    ↓
-Is the read entirely between two exons        YES ──→ purely intronic
-(read_start > exon_end                                (no exon overlap)
-AND read_end < next_exon_start)?              → UNSPLICED vote
-                    │
-                    NO
-                    ↓
-Does the CIGAR string contain an N (skip)     YES ──→ exon-exon junction
-whose length matches the annotated                    (intron already removed)
-intron length in the GTF?                     → SPLICED vote
-                    │
-                    NO
-                    ↓
-                AMBIGUOUS → discard
+Mus_musculus.GRCm39.dna.primary_assembly.fa   # 2.7B bp genome sequence
+Mus_musculus.GRCm39.110.gtf                   # exon coordinates per transcript
 ```
 
-After collecting all votes across every read in a molecule's supporting read set:
+The GTF lists only **exon** positions. Introns are never written explicitly — they are the gaps between consecutive exons of the same transcript. For example, *Becn2* on chr1:
 
 ```
-All votes → SPLICED                   → molecule counted in spliced.mtx
-All votes → UNSPLICED (for all 
-  compatible transcript models)       → molecule counted in unspliced.mtx
-Mixed votes                           → AMBIGUOUS → discarded
+GTF entries (+ strand):
+
+Exon 1:  chr1  175,747,895 ──────────── 175,749,254   (1,360 bp)
+                                                  ↕
+Intron 1: chr1  175,749,255 ─── 175,749,362   (108 bp, inferred gap)
+                                                  ↕
+Exon 2:  chr1  175,749,363 ─── 175,749,791   (429 bp)
 ```
+
+Everything between two exon entries for the same transcript is intronic by elimination. That is the complete basis for classifying reads as exonic or intronic.
 
 ---
 
-### Real example: *Becn2* (ENSMUSG00000104158.3) — our spliced-only gene
+## 3. Building the Index & Running the Count
 
-```
-GTF entries for Becn2 on chromosome 1, + strand:
+### 3a. kb ref — build two separate indices from the GTF
 
-Exon 1:  chr1  175,747,895 – 175,749,254   (1,360 bp)
-                          ↕↕↕
-Intron 1: chr1  175,749,255 – 175,749,362   (108 bp)  ← inferred gap
-                          ↕↕↕
-Exon 2:  chr1  175,749,363 – 175,749,791   (429 bp)
-```
-
-### Real example: *9330185C12Rik* (ENSMUSG00000097648.2) — our unspliced-only gene
-
-This is a lncRNA on the **minus strand** with 3 exons:
-
-```
-Genomic coordinates (left = lower position on chr1):
-
-[Exon 3]              [Exon 2]          [Exon 1]
-113,819,115-113,819,778  113,837,065-113,837,093  113,891,549-113,891,864
-          └──────── Intron 2 ────────┘└──────────────── Intron 1 (54,455 bp) ───────────────┘
-```
-
-Because it is on the minus strand, transcription runs **right to left** on the chromosome. Reads mapping to intron 1 (chr1:113,837,094–113,891,548) support unspliced status.
-
-### Real example: *Pcmtd1* (ENSMUSG00000051285.18) — our both-spliced-and-unspliced gene
-
-Transcript Pcmtd1-201 has 6 exons on chromosome 1, + strand:
-
-```
-Exon 1: 7,159,144 – 7,159,440   (297 bp)
-Intron 1: 7,159,441 – 7,190,417 (30,977 bp)  ← reads mapping here = unspliced
-Exon 2: 7,190,418 – 7,190,839   (422 bp)
-Intron 2: 7,190,840 – 7,217,860
-Exon 3: 7,217,861 – 7,217,963
-... (3 more exons)
-Exon 6: 7,239,739 – 7,243,852
-```
-
----
-
-## 3. Building the kb-python Index
-
-kb-python (kallisto|bustools) avoids traditional genome alignment entirely. Instead, it performs **pseudo-alignment** — matching reads to a k-mer index built from transcript sequences. For spliced/unspliced quantification, it builds **two separate indices**:
+kb-python performs **pseudo-alignment** — it matches read k-mers against a pre-built index rather than doing full genome alignment. For spliced/unspliced quantification it builds two indices from the same GTF:
 
 ```bash
 kb ref \
-  -i index.idx \
-  -g t2g.txt \
-  -f1 cdna.fa \
-  -f2 intron.fa \
+  -i index.idx -g t2g.txt -f1 cdna.fa -f2 intron.fa \
   --workflow lamanno \
   Mus_musculus.GRCm39.dna.primary_assembly.fa \
   Mus_musculus.GRCm39.110.gtf
 ```
 
-This produces:
+| File | Built from | Captures |
+|------|-----------|---------|
+| `cdna.fa` | Exon sequences joined per transcript | Mature (spliced) mRNA |
+| `intron.fa` | Full gene body including introns | Nascent (unspliced) pre-mRNA |
+| `cdna_t2c.txt` | One entry per transcript | Maps spliced hits → gene |
+| `intron_t2c.txt` | One entry per intronic region (`-I.1` suffix) | Maps unspliced hits → gene |
+| `index.idx` | Both cdna + intron combined | Single pseudo-alignment target |
 
-| File | Contents | Purpose |
-|------|----------|---------|
-| `cdna.fa` | Spliced transcript sequences (exons only, joined) | Detecting mature mRNA |
-| `intron.fa` | Pre-mRNA sequences (full gene body incl. introns) | Detecting nascent mRNA |
-| `cdna_t2c.txt` | Transcript → gene for spliced | Spliced counting |
-| `intron_t2c.txt` | Transcript-I → gene for intronic | Unspliced counting |
-| `index.idx` | Combined k-mer index (both cdna + intron) | Pseudo-alignment target |
-| `t2g.txt` | Full transcript-to-gene mapping with coordinates | Gene-level summarisation |
+The `-I.1` suffix is the signal: `ENSMUST00000180837.2` is the spliced entry for *9330185C12Rik*; `ENSMUST00000180837.2-I.1` is its intronic capture region. A read matching the latter votes unspliced.
 
-From your actual files:
-
-```
-# cdna_t2c.txt (one entry per spliced transcript)
-ENSMUST00000180837.2          → 9330185C12Rik
-
-# intron_t2c.txt (suffix -I.1 = intronic capture region)
-ENSMUST00000180837.2-I.1      → 9330185C12Rik
-```
-
-The `-I.1` suffix marks a capture region that overlaps the intronic sequence. If a read pseudo-aligns to this entry, it is voting for the unspliced count.
-
----
-
-## 4. Running kb count
+### 3b. kb count — align, deduplicate, and produce count matrices
 
 ```bash
 kb count \
-  -i sra_runs/index.idx \
-  -g sra_runs/t2g.txt \
-  -x 10xv3 \
-  --lamanno \
+  -i sra_runs/index.idx -g sra_runs/t2g.txt \
+  -x 10xv3 --lamanno \
   -c1 sra_runs/cdna_t2c.txt \
   -c2 sra_runs/intron_t2c.txt \
   -o sra_runs/kb_output_GSM8253792/ \
   SRR_ID_2.fastq SRR_ID_3.fastq
 ```
 
-What happens internally:
+Internally:
 
-1. **Barcode + UMI extraction:** R1 is parsed — first 16 bp = cell barcode, next 12 bp = UMI. The barcode is corrected against the 10x v3 whitelist.
-2. **Pseudo-alignment:** R2 (91 bp) is broken into k-mers (k=31) and matched against the combined index.
-3. **BUS file:** Every (barcode, UMI, equivalence class) tuple is written to a `.bus` file.
-4. **Sorting and correction:** `bustools sort` + `bustools correct` refine barcode assignments.
-5. **Counting:** `bustools count` using `-c1` (cdna) and `-c2` (intron) capture lists separates molecules into spliced vs unspliced.
+1. **Extract:** First 16 bp of R1 = cell barcode; next 12 bp = UMI. Barcode corrected against 10x v3 whitelist.
+2. **Pseudo-align:** R2 broken into 31-mers, matched against `index.idx`. Each match is a vote for `cdna` or `intron`.
+3. **BUS file:** Every (barcode, UMI, equivalence class) tuple written to disk.
+4. **Collapse by barcode+UMI:** All reads sharing a barcode+UMI = one molecule. Votes aggregated → spliced / unspliced / ambiguous.
+5. **Count:** Molecules tallied per gene via `t2g.txt`, written to `.mtx`.
 
-Output:
 ```
 kb_output_GSM8253792/counts_unfiltered/
-├── spliced.barcodes.txt   # 816,643 barcodes with ≥1 spliced molecule
-├── spliced.genes.txt      # 56,941 genes
-├── spliced.mtx            # 13,411,965 nonzero (barcode × gene) entries
-├── unspliced.barcodes.txt # 712,804 barcodes with ≥1 unspliced molecule
-├── unspliced.genes.txt    # 56,941 genes
-└── unspliced.mtx          # 11,422,859 nonzero entries
+├── spliced.mtx    — 13,411,965 nonzero entries across 816,643 barcodes × 56,941 genes
+└── unspliced.mtx  — 11,422,859 nonzero entries across 712,804 barcodes × 56,941 genes
 ```
 
-The ratio of 11.4M unspliced / 13.4M spliced ≈ **0.85** — consistent with the La Manno et al. observation that 15–25% of 10x reads carry intronic sequence.
+> The 816,643 barcodes are **unfiltered** — they include ~800k empty droplets that captured
+> ambient RNA. Real cells (~4,600) sit above the UMI count knee and are selected in the
+> next analysis step. The ratio 11.4M / 13.4M ≈ 0.85 unspliced:spliced is consistent with
+> La Manno et al.'s observation that 15–25% of 10x reads carry intronic sequence.
 
 ---
 
-## 5. How a Single Read Gets Classified
+## 4. Classification & Examples
 
-This is where the La Manno et al. rules are applied in practice.
+### The decision tree (applied per read, then aggregated per molecule)
 
-### The classification logic
-
-For every unique molecule (barcode + UMI), kb collects all pseudo-alignment hits across both the cdna and intron indices. The rule is:
+Once a read's coordinates are returned by the aligner, the tool checks them against the GTF exon intervals:
 
 ```
-All hits → cdna only?          → SPLICED   → spliced.mtx
-All hits → intron for all 
-  compatible transcripts?      → UNSPLICED → unspliced.mtx
-Mixed (some cdna, some intron)?→ AMBIGUOUS → discarded
+Given: read maps to [read_start, read_end] on chrX
+
+Is read entirely within one exon          YES ──→ SPLICED vote
+[exon_start, exon_end]?                           (exonic)
+                    │ NO
+                    ↓
+Does read overlap the gap between         YES ──→ UNSPLICED vote
+two consecutive exons?                            (spans exon-intron boundary)
+                    │ NO
+                    ↓
+Is read entirely between two exons        YES ──→ UNSPLICED vote
+with no exon overlap?                             (purely intronic)
+                    │ NO
+                    ↓
+Does CIGAR N-skip match annotated         YES ──→ SPLICED vote
+intron length in GTF?                             (exon-exon junction read)
+                    │ NO
+                    ↓
+                AMBIGUOUS → discard
+
+After all reads in a molecule's supporting set are voted:
+
+  All votes SPLICED                              → spliced.mtx
+  All votes UNSPLICED (across all isoforms)      → unspliced.mtx
+  Mixed                                          → discarded
 ```
+
+All examples below are from cell **`CTGTGGGAGGTCACCC`** — the highest-UMI cell in this sample (45,354 spliced + 41,369 unspliced molecules across 7,579 genes).
 
 ---
 
-## 6. Concrete Read-Level Examples
+### Example A: *Becn2* — SPLICED only
 
-All examples below are from **cell barcode `CTGTGGGAGGTCACCC`** — the highest-UMI cell in this sample (45,354 spliced + 41,369 unspliced molecules, 7,579 genes detected).
+**Counts:** 1 spliced UMI, 0 unspliced UMIs → `spliced.mtx` row 1, col 38, value 1
+
+```
+chr1 (+ strand):
+[══════════ Exon 1 ══════════]          [══ Exon 2 ══]
+175,747,895              175,749,254  175,749,363  175,749,791
+                                    ↑
+                           108 bp intron (175,749,255–175,749,362)
+
+Read R2:  [═══════ 91 bp ═══════]
+          175,747,950         175,748,040
+
+Decision: entirely within Exon 1 → SPLICED vote
+          cdna index hit only → molecule = SPLICED
+```
+
+*Mature, fully processed mRNA. The intron has been removed; protein is being translated.*
 
 ---
 
-### Example A: *Becn2* — SPLICED (Rule 1)
+### Example B: *9330185C12Rik* — UNSPLICED only
 
-**Observed:** 1 spliced UMI, 0 unspliced UMIs
+**Counts:** 0 spliced UMIs, 18 unspliced UMIs → `unspliced.mtx` row 1, col 66, value 18
 
 ```
-Gene structure (chr1, + strand):
-[====== Exon 1 ======]          [= Exon 2 =]
-175,747,895    175,749,254  175,749,363   175,749,791
-                           ↑
-                      108 bp intron (175,749,255–175,749,362)
+chr1 (− strand, transcription runs right → left):
 
-Read R2 maps to:
-[=====READ (91bp)=====]
-175,747,950       175,748,040
+[Exon 3]              [Exon 2]         [══════ Exon 1 ══════]
+113,819,115-113,819,778  113,837,065-113,837,093  113,891,549-113,891,864
+           └──── Intron 2 ────┘└───────── Intron 1 (54,455 bp) ──────────┘
 
-→ Entirely within Exon 1 coordinates.
-→ No bases fall in the 108 bp intron or Exon 2.
-→ Pseudo-aligns to cdna index ONLY.
-→ Annotated: SPLICED → counted in spliced.mtx
+Scenario i — boundary read:
+                                      [═══ 91 bp ═══]
+                                     113,891,500  113,891,590
+  → 50 bp in Exon 1, 41 bp in Intron 1 → spans boundary → UNSPLICED vote
+
+Scenario ii — purely intronic read:
+              [═══ 91 bp ═══]
+             113,850,000  113,850,090
+  → Entirely within Intron 1 (54,455 bp gap) → UNSPLICED vote
+  → Arises from secondary priming at intronic polyT sequences
+
+All 18 molecules fall into scenario i or ii → molecule = UNSPLICED
 ```
 
-**Biological interpretation:** This is a **mature, fully processed mRNA** for Becn2. The intron has already been spliced out. The cell has this gene's protein being translated right now.
+*Nascent pre-mRNA. Introns present. Gene is being actively transcribed.*
 
 ---
 
-### Example B: *9330185C12Rik* — UNSPLICED (Rule 2)
+### Example C: *Pcmtd1* — BOTH (different molecules, same gene)
 
-**Observed:** 0 spliced UMIs, 18 unspliced UMIs
+**Counts:** 13 spliced UMIs, 8 unspliced UMIs → both matrices, row 1, col 18
+
+These are 21 distinct molecules (distinct UMIs). Each is classified independently.
 
 ```
-Gene structure (chr1, − strand, transcription flows right→left):
+Pcmtd1-201, chr1 (+ strand), 6 exons:
 
-[Exon 3]          [Exon 2]     [====== Exon 1 ======]
-113,819,115       113,837,065  113,891,549    113,891,864
-         └─── Intron 2 ───┘└──────── Intron 1 (54,455 bp) ─────────┘
+[Exon 1]      ←── Intron 1 (30,977 bp) ───→      [Exon 2] ... [Exon 6]
+7,159,144-7,159,440                              7,190,418-7,190,839
 
-Scenario i — read spans exon–intron boundary:
-                              [=====READ (91bp)=====]
-                             113,891,500         113,891,590
-→ Read starts in Exon 1 (≥113,891,549) but 50 bp of it falls into 
-  Intron 1 (≤113,891,548). Spans the exon-intron boundary.
-→ Matches intron index (ENSMUST00000180837.2-I.1), NOT cdna index.
+The 13 SPLICED molecules — reads hit joined exon sequence:
+  CIGAR 60M30977N31M: 60 bp in Exon 1, skip 30,977 bp, 31 bp in Exon 2
+  Genome gap matches annotated intron → exon-exon junction → SPLICED
 
-Scenario ii — read maps entirely in intron:
-              [=====READ (91bp)=====]
-             113,850,000         113,850,090
-→ Entirely within intron 1 (113,837,094–113,891,548).
-→ This arises from secondary priming at intronic polyT sequences (common 
-  in 10x Chromium, as described in La Manno et al. Fig. 1, Extended Data).
-→ Matches intron index only.
-
-All 18 molecules fall into scenario i or ii.
-→ For the single compatible transcript (9330185C12Rik-201), every molecule 
-  has at least one intronic read.
-→ Annotated: UNSPLICED → counted in unspliced.mtx (count = 18)
+The 8 UNSPLICED molecules — reads hit Intron 1:
+  Reads land in chr1:7,159,441–7,190,417 or span Exon1→Intron1 boundary
+  → UNSPLICED
 ```
 
-**Biological interpretation:** This is **nascent pre-mRNA** — the gene is being actively transcribed but the introns have not been removed yet. High intronic read counts indicate active transcription.
+*Mid-production: some copies are mature and translating (spliced), new copies are still being transcribed (unspliced). Ratio 13:8 ≈ 1.6 — near steady state.*
 
 ---
 
-### Example C: *Pcmtd1* — BOTH (Rule 1 and Rule 2 for different molecules)
+### Example D: *Sntg1* — actively upregulating
 
-**Observed:** 13 spliced UMIs, 8 unspliced UMIs
-
-These are **21 distinct molecules** (different UMIs) for the same gene in the same cell. Each molecule is classified independently.
+**Counts:** 1 spliced UMI, 47 unspliced UMIs → `spliced.mtx` value 1, `unspliced.mtx` value 47
 
 ```
-The 13 SPLICED molecules:
-  Each had supporting reads landing exclusively on the joined exon sequence:
-  [Exon1]--[Exon2]--[Exon3]--[Exon4]--[Exon5]--[Exon6]
-  e.g., a read spanning the Exon1-Exon2 junction:
-  
-  Genomic:  ...7,159,300]  GAP (30,977 bp intron1)  [7,190,418...
-  mRNA:     ...7,159,300]──────────────────────────── [7,190,418...
-                         ↑ intron is ABSENT in mRNA ↑
-  
-  A read that aligns with a CIGAR like 60M30977N31M crossed the splice
-  junction → genome gap matches annotated intron length → exon-exon 
-  junction read → SPLICED.
+Sntg1, chr1 (− strand), 9 isoforms, gene body ~938 kb
 
-The 8 UNSPLICED molecules:
-  Supporting reads land within the 30,977 bp intron 1 
-  (chr1:7,159,441–7,190,417), OR span the Exon1→Intron1 boundary.
-  → UNSPLICED.
+47 molecules: reads in intronic regions → UNSPLICED
+ 1 molecule:  reads fully exonic        → SPLICED
+
+Phase portrait for this cell:
+
+  u │    * (u=47, s=1) ← far above steady-state line
+    │   /
+    │  / slope = γ/β
+    │ /
+    │/──────────────── s
+
+u >> γ·s  →  ds/dt > 0  →  spliced mRNA is INCREASING
 ```
 
-**Biological interpretation:** This gene is in **mid-production**. Some copies of Pcmtd1 mRNA have been fully spliced (contributing to translation), while new copies are still being transcribed (unspliced pre-mRNA). The ratio 13:8 ≈ 1.6 is close to steady state, meaning transcription rate ≈ splicing/degradation rate for this gene in this cell.
+*This gene is being rapidly upregulated in this cell right now.*
 
 ---
 
-### Example D: *Sntg1* — Actively Upregulating (high unspliced:spliced ratio)
+### MTX output summary for cell `CTGTGGGAGGTCACCC`
 
-**Observed:** 1 spliced UMI, 47 unspliced UMIs (ratio = 47:1)
-
-```
-Sntg1 has 9 transcript isoforms (Sntg1-201 through Sntg1-209).
-The gene body spans chr1:8,431,699–9,370,103 (minus strand) — nearly 1 Mb.
-
-47 molecules had reads in intronic regions across this gene body.
-Only 1 molecule produced a fully exonic read set.
-
-In RNA velocity terms (La Manno et al. Fig. 1c-d):
-
-  unspliced (u)                    
-       ↑                           
-       │    * this cell (u=47, s=1)← far above equilibrium line
-       │   /
-       │  / slope γ = steady-state u/s ratio
-       │ /
-       │/_________________________ spliced (s)
-
-When u >> γ·s, the cell is ABOVE the equilibrium line.
-→ RNA velocity predicts spliced mRNA for Sntg1 is INCREASING.
-→ This cell is actively upregulating Sntg1 expression.
-```
-
----
-
-## 7. From Classification to the MTX Files
-
-The `.mtx` files use **Matrix Market format** (sparse matrix). After running kb count, the entries for our demo cell look like:
+The `.mtx` files store only nonzero entries as `barcode_index gene_index count`. This cell is index 1 in `spliced.barcodes.txt`:
 
 ```
-# spliced.mtx (row=barcode_index, col=gene_index, value=UMI_count)
-# Cell CTGTGGGAGGTCACCC is barcode index 1 (first row in spliced.barcodes.txt)
-
-row   col    value   → gene
-...
-1     38     1       → Becn2      (ENSMUSG00000104158.3) — SPLICED only
-1     18     13      → Pcmtd1     (ENSMUSG00000051285.18) — spliced molecules
-1     81     1       → Sntg1      (ENSMUSG00000025909.17) — spliced molecules
-...
-
-# unspliced.mtx
-...
-1     66     18      → 9330185C12Rik (ENSMUSG00000097648.2) — UNSPLICED only
-1     18     8       → Pcmtd1        — unspliced molecules
-1     81     47      → Sntg1         — unspliced molecules
-...
+spliced.mtx                          unspliced.mtx
+─────────────────────────────────    ─────────────────────────────────────
+row  col  val  gene                  row  col  val  gene
+1    38   1    Becn2     (spliced    1    66   18   9330185C12Rik (unspliced
+                          only)                          only)
+1    18   13   Pcmtd1               1    18   8    Pcmtd1
+1    81   1    Sntg1                1    81   47   Sntg1
 ```
 
 ---
@@ -400,7 +294,7 @@ row   col    value   → gene
 ║                                                                      ║
 ║  SRA Download: fasterq-dump SRR_ID --split-files                     ║
 ║                                                                      ║
-║  SRR_ID_2.fastq (R1, 28bp)      SRR_ID_3.fastq (R2, 91bp)           ║
+║  SRR_ID_2.fastq (R1, 28bp)      SRR_ID_3.fastq (R2, 91bp)            ║
 ║  ┌──────────────────┬──────────┐  ┌───────────────────────────────┐  ║
 ║  │ cell barcode     │  UMI     │  │ cDNA sequence (91 bp)         │  ║
 ║  │ CTGTGGGAGGTCACCC │GATTACAGT │  │ GCAGCAGTGACTGGAGAAGCCAT...    │  ║
@@ -419,14 +313,14 @@ row   col    value   → gene
 ║                                                                      ║
 ║  GTF defines exon boundaries — introns are inferred gaps:            ║
 ║                                                                      ║
-║    Becn2 chr1:  [═══ Exon1 ═══]──intron──[═Exon2═]                  ║
+║    Becn2 chr1:  [═══ Exon1 ═══]──intron──[═Exon2═]                   ║
 ║                  175,747,895                       175,749,791       ║
 ║                                                                      ║
 ║  kb ref builds two indices:                                          ║
 ║    cdna.fa    → exon sequences joined (spliced transcripts)          ║
 ║    intron.fa  → full gene body incl. introns (pre-mRNA)              ║
 ║                                                                      ║
-║  Output: index.idx  t2g.txt  cdna_t2c.txt  intron_t2c.txt           ║
+║  Output: index.idx  t2g.txt  cdna_t2c.txt  intron_t2c.txt            ║
 ╚══════════════════════════════════════════════════════════════════════╝
                               │
                               ▼
@@ -491,7 +385,7 @@ row   col    value   → gene
 ║                                                                      ║
 ║  Instead, γ is INFERRED from the steady-state constraint:            ║
 ║    At steady state:  du/dt = 0  and  ds/dt = 0                       ║
-║    → β·u = γ·s   →   u = (γ/β)·s                                    ║
+║    → β·u = γ·s   →   u = (γ/β)·s                                     ║
 ║    → u vs s across cells forms a LINE with slope γ/β                 ║
 ║                                                                      ║
 ║    u │          · ·                                                  ║
@@ -515,10 +409,10 @@ row   col    value   → gene
 ║  Interpretation — where is each cell relative to steady-state line?  ║
 ║                                                                      ║
 ║    u │    ·  ← ABOVE line: u too high for current s                  ║
-║      │   /     β·u > γ·s  →  ds/dt > 0  →  s is INCREASING          ║
+║      │   /     β·u > γ·s  →  ds/dt > 0  →  s is INCREASING           ║
 ║      │  /── steady-state line                                        ║
 ║      │ /   ·  ← BELOW line: u too low for current s                  ║
-║      │/      β·u < γ·s  →  ds/dt < 0  →  s is DECREASING            ║
+║      │/      β·u < γ·s  →  ds/dt < 0  →  s is DECREASING             ║
 ║      │──────────────── s                                             ║
 ║                                                                      ║
 ║  Real examples from cell CTGTGGGAGGTCACCC:                           ║
@@ -545,22 +439,10 @@ row   col    value   → gene
 ║                                                                      ║
 ║  OPC ──────────────────────────────────────────────────────────      ║
 ║   ·  → → →                                                           ║
-║   · · → → → →   ← velocity arrows pointing toward COP fate          ║
+║   · · → → → →   ← velocity arrows pointing toward COP fate           ║
 ║   · · · → → → →                                                      ║
 ║  TAP          COP ──→ OL                                             ║
 ║   ·  ·  ·                                                            ║
 ║   · · · (no arrows = cells not actively transitioning)               ║
 ╚══════════════════════════════════════════════════════════════════════╝
 ```
-
----
-
-## 9. Why the Distinction Matters
-
-| If you only had spliced counts | If you add unspliced counts |
-|---|---|
-| Static snapshot of current mRNA levels | Reveals the **direction** mRNA is heading |
-| Cannot distinguish actively-transcribing from steady-state cells | Cells with high u relative to s are **upregulating** the gene |
-| No sense of developmental time | RNA velocity arrows point toward future cell state |
-
-The key insight of La Manno et al. 2018 is that the unspliced reads — which were previously treated as noise or artifact — are actually a **real-time signal of transcriptional activity**. By reading both the current mRNA level (spliced) and the rate of new production (unspliced), you can estimate the derivative of gene expression and predict where a cell is going, not just where it is.
