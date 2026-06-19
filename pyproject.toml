@@ -19,14 +19,14 @@ dependencies = [
     "ruff>=0.15.15",
     "scanpy>=1.12.1",
     "scikit-learn>=1.8.0",
-    "scipy>=1.13,<1.17",
     "scrublet>=0.2.3",
     "scvelo>=0.3.4",
     "shap>=0.51.0",
     "tqdm>=4.67.3",
     "umap-learn>=0.5.12",
     "xgboost>=3.2.0",
-    "cellrank>=2.3.1",
+    "scipy>=1.17.1",
+    "cellrank>=2.0.7",
 ]
 
 
