@@ -18,7 +18,7 @@ import cellrank as cr
 import pandas as pd
 import scanpy as sc
 import scvelo as scv
-from cellrank.kernels import ConnectivityKernel, VelocityKernel
+from cellrank.kernels import ConnectivityKernel, PrecomputedKernel
 from scipy.stats import pearsonr, spearmanr
 
 ROOT = Path(__file__).parent
@@ -36,8 +36,13 @@ def run_compare_fate_methods():
         scv.tl.velocity_graph(adata, show_progress_bar=False, n_jobs=1)
 
     # ── CellRank fate probabilities ───────────────────────────────────────────
+    # Build velocity transition matrix via scvelo, then wrap in PrecomputedKernel.
+    # This avoids cellrank 2.0.7's VelocityKernel.__init__ shape-check that calls
+    # np.testing.assert_array_equal(x=, y=) — kwargs renamed to actual/desired in
+    # numpy 2 (fixed in cellrank >=2.1.0, which conflicts with scipy>=1.17).
     print("\n[CellRank] building transition matrix from velocity ...")
-    vk = VelocityKernel(adata).compute_transition_matrix(n_jobs=1)
+    T_vel = scv.utils.get_transition_matrix(adata)
+    vk = PrecomputedKernel(T_vel, adata=adata)
     ck = ConnectivityKernel(adata).compute_transition_matrix()
     combined_kernel = 0.8 * vk + 0.2 * ck
 
@@ -53,7 +58,10 @@ def run_compare_fate_methods():
     g.set_terminal_states({"OL": ol_cells, "Neuroblast": nb_cells})
 
     print("[CellRank] computing fate probabilities ...")
-    g.compute_fate_probabilities(check_sum_tol=1e-2)
+    # cellrank 2.0.7's row-sum tolerance is hardcoded at rtol=1e-3 (the
+    # `check_sum_tol` kwarg only exists in >=2.1.0). Tighten the solver tol
+    # so probabilities converge closely enough to satisfy that check.
+    g.compute_fate_probabilities(tol=1e-10)
 
     adata.obs["cellrank_P_OL"] = g.fate_probabilities[:, "OL"].X.squeeze()
     print("  CellRank P(OL) computed.")

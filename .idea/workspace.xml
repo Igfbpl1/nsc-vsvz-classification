@@ -6,10 +6,15 @@
   <component name="ChangeListManager">
     <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="update versions">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/umapleiden.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/umapleiden.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/umapleiden_cell_type.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/umapleiden_cell_type.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uv.lock" beforeDir="false" afterPath="$PROJECT_DIR$/uv.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/compare_tap_fate_methods.py" beforeDir="false" afterPath="$PROJECT_DIR$/compare_tap_fate_methods.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CD1_Cntl.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CD1_Cntl.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CD1_Cntl_3wks.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CD1_Cntl_3wks.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CD1_CupRap.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CD1_CupRap.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CD1_CupRap_0wks_Rep2.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CD1_CupRap_0wks_Rep2.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_Cntl.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_Cntl.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CupRap_Rep1.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CupRap_Rep1.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CupRap_Rep2.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CupRap_Rep2.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_all.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_all.png" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -153,14 +158,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1779721552530</updated>
-    </task>
-    <task id="LOCAL-00012" summary="fixed the mapping issue (like a true programmer)">
-      <option name="closed" value="true" />
-      <created>1779733665219</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1779733665219</updated>
     </task>
     <task id="LOCAL-00013" summary="fixed the mapping issue">
       <option name="closed" value="true" />
@@ -546,7 +543,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781836767053</updated>
     </task>
-    <option name="localTasksCounter" value="61" />
+    <task id="LOCAL-00061" summary="update versions">
+      <option name="closed" value="true" />
+      <created>1781838630363</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1781838630368</updated>
+    </task>
+    <option name="localTasksCounter" value="62" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
