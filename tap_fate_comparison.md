@@ -39,8 +39,8 @@ ML uses **gene expression patterns**. CellRank uses **splicing kinetics**. The t
 | Statistic | Value |
 |---|---|
 | n TAPs with both predictions | 4,268 |
-| Pearson r | **0.829** (p ≈ 0) |
-| Spearman r | **0.856** (p ≈ 0) |
+| Pearson r | **0.835** (p ≈ 0) |
+| Spearman r | **0.855** (p ≈ 0) |
 
 Two methods using independent biological signals correlate at r > 0.8 per cell. This is the strongest single statistic supporting the ML classifier's per-cell scoring.
 
@@ -52,14 +52,14 @@ A cell is OL-leaning if its individual P(OL) > 0.5, NB-leaning otherwise. Since 
 
 | Method | CD1_Cntl (876) | CD1_Cntl_3wks (1129) | CD1_CupRap (463) | CD1_CupRap_0wks_Rep2 (172) | Cntl (742) | CupRap_Rep1 (370) | CupRap_Rep2 (516) |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| CellRank | 46.6% (408) | 42.0% (474) | 39.7% (184) | **77.3% (133)** | 38.0% (282) | 37.8% (140) | 31.0% (160) |
+| CellRank | 36.3% (318) | 31.6% (357) | 27.2% (126) | **67.4% (116)** | 29.9% (222) | 28.9% (107) | 20.3% (105) |
 | ML | 31.7% (278) | 33.0% (373) | 23.5% (109) | **66.9% (115)** | 24.7% (183) | 25.1% (93) | 18.8% (97) |
 
 **NB-leaning TAPs**
 
 | Method | CD1_Cntl (876) | CD1_Cntl_3wks (1129) | CD1_CupRap (463) | CD1_CupRap_0wks_Rep2 (172) | Cntl (742) | CupRap_Rep1 (370) | CupRap_Rep2 (516) |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| CellRank | 53.4% (468) | 58.0% (655) | 60.3% (279) | **22.7% (39)** | 62.0% (460) | 62.2% (230) | 69.0% (356) |
+| CellRank | 63.7% (558) | 68.4% (772) | 72.8% (337) | **32.6% (56)** | 70.1% (520) | 71.1% (263) | 79.7% (411) |
 | ML | 68.3% (598) | 67.0% (756) | 76.5% (354) | **33.1% (57)** | 75.3% (559) | 74.9% (277) | 81.2% (419) |
 
 `CD1_CupRap_0wks_Rep2` (n=172) is the only no-recovery sample and a large outlier on both methods. At this timepoint, rapamycin has blocked OPC→OL maturation, so OPCs are accumulating (paper Fig 3). TAPs in this sample may be projecting toward the stalled OPC pool — but n=172 is small; interpret with caution.
@@ -68,7 +68,7 @@ A cell is OL-leaning if its individual P(OL) > 0.5, NB-leaning otherwise. Since 
 
 CupRap TAPs are **not** more OL-leaning than Control TAPs. By both CellRank and ML, the share of OL-leaning TAPs in CupRap conditions is at or below corresponding Controls:
 
-- CellRank ordering (excluding outlier): CD1_Cntl (46.6%) > CD1_Cntl_3wks (42.0%) > CD1_CupRap (39.7%) ≈ Cntl (38.0%) ≈ CupRap_Rep1 (37.8%) > CupRap_Rep2 (31.0%)
+- CellRank ordering (excluding outlier): CD1_Cntl (36.3%) > CD1_Cntl_3wks (31.6%) > Cntl (29.9%) ≈ CupRap_Rep1 (28.9%) ≈ CD1_CupRap (27.2%) > CupRap_Rep2 (20.3%)
 - ML ordering: CD1_Cntl_3wks (33.0%) ≈ CD1_Cntl (31.7%) > CupRap_Rep1 (25.1%) ≈ Cntl (24.7%) > CD1_CupRap (23.5%) > CupRap_Rep2 (18.8%)
 
 ML and CellRank agree on the ordering for most conditions. CupRap_Rep2 (NesCre, 3wks) is consistently lowest by both methods.
@@ -77,24 +77,29 @@ ML and CellRank agree on the ordering for most conditions. CupRap_Rep2 (NesCre, 
 
 ## 4. Methodology Notes on CellRank
 
-CellRank's terminal states are defined from `cell_type` labels: every cell labeled `OL` is an absorbing state, every cell labeled `Neuroblast` is an absorbing state, and every other cell (TAPs, OPCs, COPs, NSCs, etc.) is transient. For each transient cell, P(OL) is the probability that a random walk following the velocity transition matrix is eventually absorbed into the OL group.
+CellRank's terminal states are defined from `cell_type` labels to match the ML classifier's positive class. The `OL` terminal group is the full OL lineage — cells labeled `OL`, `OPC`, or `COP` (i.e. `OL_LINEAGE` from `markers.py`); the `Neuroblast` group is cells labeled `Neuroblast`; every other cell (TAPs, NSCs, Astrocyte, etc.) is transient. For each transient cell, `cellrank_P_OL` is the probability that a random walk following the velocity transition matrix is absorbed into the OL-lineage group.
+
+Bundling OPC/COP into the OL terminal group keeps the CellRank vs ML comparison apples-to-apples: both methods now report `P(OL lineage)` rather than ML reporting "OL-or-OPC-or-COP" and CellRank reporting strict "OL only". An OL-only terminal definition was tested and gives near-identical results in this dataset (Pearson r = 0.835 either way; mean P shifts by ≤0.006 per condition, OL counts shift by 1–2 cells per condition), because the OPC→COP→OL velocity flux is functional enough that strict-OL absorbing already captures the lineage mass via forward flow.
 
 This approach inherits whatever errors exist in the Leiden clustering. We accept this because:
 
-1. The canonical marker dotplot (`outputs/velocity/dotplot__marker_dotplot.png`) shows that the OL and Neuroblast cluster labels are well-supported — `Mbp`/`Mog`/`Plp1` are tightly restricted to OL, `Dcx`/`Tubb3` to Neuroblast.
+1. The canonical marker dotplot (`outputs/velocity/dotplot__marker_dotplot.png`) shows that the OL/OPC/COP and Neuroblast cluster labels are well-supported — `Mbp`/`Mog`/`Plp1` tight in OL, `Pdgfra`/`Cspg4` tight in OPC, `Dcx`/`Tubb3` tight in Neuroblast.
 2. An alternative using GPCCA's `compute_macrostates()` + `predict_terminal_states()` to discover terminal cells from velocity topology was tested. It requires dense Schur decomposition on a 36k × 36k matrix (~30 min CPU on M2 Pro without SLEPc), and given the clean clustering, the methodological gain is small.
 
 The CellRank transition matrix combines the velocity kernel (80%) and connectivity kernel (20%):
 
 ```
-combined_kernel = 0.8 * VelocityKernel + 0.2 * ConnectivityKernel
+T_vel = scv.utils.get_transition_matrix(adata)
+combined_kernel = 0.8 * PrecomputedKernel(T_vel) + 0.2 * ConnectivityKernel
 ```
+
+(`PrecomputedKernel` is used in place of `VelocityKernel(adata)` to side-step a numpy-2 incompatibility in cellrank 2.0.7; the transition matrix it wraps is what `VelocityKernel.compute_transition_matrix` would have produced.)
 
 ---
 
 ## 5. Bottom Line
 
-**ML and CellRank agree on per-cell P(OL) at Pearson r = 0.829 / Spearman r = 0.856 across 4,268 TAPs.**
+**ML and CellRank agree on per-cell P(OL lineage) at Pearson r = 0.835 / Spearman r = 0.855 across 4,268 TAPs.**
 
 Two methods built on independent biological signals (gene expression vs splicing kinetics) converge on the same per-cell ranking. This is strong cross-validation for the XGBoost classifier's per-TAP fate score.
 

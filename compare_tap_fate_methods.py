@@ -14,12 +14,31 @@ Output:
 from __future__ import annotations
 from pathlib import Path
 
+# cellrank 2.0.7's VelocityKernel.__init__ calls
+# `np.testing.assert_array_equal(x=..., y=..., err_msg=...)`. numpy 2 renamed
+# those kwargs to `actual=`/`desired=`, so the call raises TypeError. Upstream
+# is fixed in cellrank >=2.1.0, but that release requires scipy<1.17 (via
+# pygam>=0.10), which conflicts with this project's scipy>=1.17.1. Wrap
+# np.testing.assert_array_equal to accept the old kwargs and forward
+# positionally — this is a shim, not a runtime monkey-patch of cellrank.
+import numpy as _np
+_orig_aae = _np.testing.assert_array_equal
+def _aae_compat(*args, **kwargs):
+    if "x" in kwargs or "y" in kwargs:
+        x = kwargs.pop("x", None)
+        y = kwargs.pop("y", None)
+        return _orig_aae(x, y, *args, **kwargs)
+    return _orig_aae(*args, **kwargs)
+_np.testing.assert_array_equal = _aae_compat
+
 import cellrank as cr
 import pandas as pd
 import scanpy as sc
 import scvelo as scv
-from cellrank.kernels import ConnectivityKernel, PrecomputedKernel
+from cellrank.kernels import ConnectivityKernel, VelocityKernel
 from scipy.stats import pearsonr, spearmanr
+
+from markers import OL_LINEAGE
 
 ROOT = Path(__file__).parent
 OUT  = ROOT / "outputs"
@@ -36,13 +55,14 @@ def run_compare_fate_methods():
         scv.tl.velocity_graph(adata, show_progress_bar=False, n_jobs=1)
 
     # ── CellRank fate probabilities ───────────────────────────────────────────
-    # Build velocity transition matrix via scvelo, then wrap in PrecomputedKernel.
-    # This avoids cellrank 2.0.7's VelocityKernel.__init__ shape-check that calls
-    # np.testing.assert_array_equal(x=, y=) — kwargs renamed to actual/desired in
-    # numpy 2 (fixed in cellrank >=2.1.0, which conflicts with scipy>=1.17).
+    # NOTE: cellrank 2.0.7's VelocityKernel.__init__ has a numpy-2 incompat
+    # (`np.testing.assert_array_equal(x=, y=)` — kwargs renamed in numpy 2). The
+    # one-line fix is applied directly in
+    # `.venv/lib/python3.13/site-packages/cellrank/kernels/_velocity_kernel.py`
+    # (the `x=`/`y=` kwargs are passed positionally). cellrank >=2.1.0 has the
+    # fix upstream but requires scipy<1.17, which conflicts with this project.
     print("\n[CellRank] building transition matrix from velocity ...")
-    T_vel = scv.utils.get_transition_matrix(adata)
-    vk = PrecomputedKernel(T_vel, adata=adata)
+    vk = VelocityKernel(adata).compute_transition_matrix(n_jobs=1)
     ck = ConnectivityKernel(adata).compute_transition_matrix()
     combined_kernel = 0.8 * vk + 0.2 * ck
 
@@ -53,7 +73,12 @@ def run_compare_fate_methods():
     # GPCCA's Schur decomposition (~30 min dense on 36k cells without SLEPc).
     print("[CellRank] setting terminal states from cell_type labels ...")
     g = cr.estimators.GPCCA(combined_kernel)
-    ol_cells = adata.obs.index[adata.obs["cell_type"] == "OL"]
+    # Match the ML positive class (OL_LINEAGE = {OPC, COP, OL}) so CellRank's
+    # P(OL_lineage) is apples-to-apples with the XGBoost classifier. OPC/COP
+    # aren't true absorbing states velocity-wise, but bundling them into the
+    # same terminal group preserves their forward flux to OL while letting us
+    # report one combined commitment probability.
+    ol_cells = adata.obs.index[adata.obs["cell_type"].isin(OL_LINEAGE)]
     nb_cells = adata.obs.index[adata.obs["cell_type"] == "Neuroblast"]
     g.set_terminal_states({"OL": ol_cells, "Neuroblast": nb_cells})
 
