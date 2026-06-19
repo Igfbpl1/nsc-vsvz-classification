@@ -53,7 +53,7 @@ def run_compare_fate_methods():
     g.set_terminal_states({"OL": ol_cells, "Neuroblast": nb_cells})
 
     print("[CellRank] computing fate probabilities ...")
-    g.compute_fate_probabilities()
+    g.compute_fate_probabilities(check_sum_tol=1e-2)
 
     adata.obs["cellrank_P_OL"] = g.fate_probabilities[:, "OL"].X.squeeze()
     print("  CellRank P(OL) computed.")

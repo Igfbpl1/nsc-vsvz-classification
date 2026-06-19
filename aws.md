@@ -24,7 +24,7 @@ uv run kb info           # verify kb is available
 > kallisto + compile bustools separately with the cmake policy flag.
 >
 > Compiled bustools lands at:
-> `.venv/lib/python3.12/site-packages/kb_python/bins/compiled/bustools/bustools`
+> `.venv/lib/python3.13/site-packages/kb_python/bins/compiled/bustools/bustools`
 > Pass this full path with `--bustools` on every `kb ref` and `kb count` call.
 > kallisto is at `/opt/homebrew/bin/kallisto` on Apple Silicon (`/usr/local/bin/` on Intel).
 
@@ -60,7 +60,7 @@ uv run kb ref \
   -c1 sra_runs/cdna_t2c.txt -c2 sra_runs/intron_t2c.txt \
   --workflow lamanno \
   --kallisto /opt/homebrew/bin/kallisto \
-  --bustools /Users/viv/development/nsc-vsvz-classification/.venv/lib/python3.12/site-packages/kb_python/bins/compiled/bustools/bustools \
+  --bustools /Users/viv/development/nsc-vsvz-classification/.venv/lib/python3.13/site-packages/kb_python/bins/compiled/bustools/bustools \
   sra_runs/Mus_musculus.GRCm39.dna.primary_assembly.fa.gz \
   sra_runs/Mus_musculus.GRCm39.110.gtf.gz
 ```
@@ -102,7 +102,7 @@ uv run kb count \
   -g sra_runs/t2g.txt \
   -x 10xv3 --workflow lamanno \
   --kallisto /opt/homebrew/bin/kallisto \
-  --bustools /Users/viv/development/nsc-vsvz-classification/.venv/lib/python3.12/site-packages/kb_python/bins/compiled/bustools/bustools \
+  --bustools /Users/viv/development/nsc-vsvz-classification/.venv/lib/python3.13/site-packages/kb_python/bins/compiled/bustools/bustools \
   -c1 sra_runs/cdna_t2c.txt \
   -c2 sra_runs/intron_t2c.txt \
   -o sra_runs/kb_output_<GSM> \

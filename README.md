@@ -47,7 +47,7 @@ This analysis is complementary, not duplicative. The paper sets up the upstream 
 | Identify microglial ligands (IGF1, OSM) | ✓ Main finding | — |
 | Spatial map of dorsal vs lateral V-SVZ | ✓ | — |
 | Functional validation in culture/in vivo | ✓ | — |
-| RNA velocity of TAP→OL/NB transitions | — | ✓ |
+| RNA velocity of TAP→OL/NB transitions (8 samples) | — | ✓ |
 | XGBoost+SHAP classifier for TAP fate prediction | — | ✓ |
 | Early NB-fate TAP drivers (Bcl11a, Nfib, Meis2) | — | ✓ |
 | Positive non-canonical OL markers (Pllp, Gjc3, Fa2h, Tspan2, Cnp, Cryab, Dock10) | — | ✓ |

@@ -136,20 +136,21 @@ A gene qualifies as an early marker if it satisfies:
 
 ---
 
-## 7. Results — 7-Sample Run
+## 7. Results — 8-Sample Run
 
-Velocity computed on 7 samples:
+Velocity computed on 8 samples:
 - **GSM8253792** — CD1, Cntl, 0wks
 - **GSM8253793** — CD1, Cntl, 3wks
 - **GSM8253794** — CD1, CupRap, 3wks
-- **GSM8253796** — NesCre, Cntl, 3wks
+- **GSM8253796** — NesCre, Cntl, 3wks, Rep1
+- **GSM8253797** — NesCre, Cntl, 3wks, Rep2 *(newly added)*
 - **GSM8253798** — NesCre, CupRap, 3wks, Rep1
 - **GSM8253799** — NesCre, CupRap, 3wks, Rep2
 - **GSM8647353** — CD1, CupRap, 0wks, Rep2
 
 ### Stream Plot
 
-The 7-sample stream plot shows the same trajectory topology as the 4-sample run:
+The 8-sample stream plot shows the same trajectory topology as the 7-sample run:
 - **NSC → TAP**: clear flow
 - **TAP → Neuroblast**: strong dominant arm
 - **TAP bifurcation**: rightward arm toward OPC → COP → OL visible alongside dominant Neuroblast arm
@@ -258,7 +259,7 @@ Top 10 SHAP genes (SHAP computed on held-out NesCre test set): Stmn2, Igfbpl1, P
 | GSM8253799                           | NesCre | CupRap | 3wks | ✓ included |
 | GSM8647353                           | CD1 | CupRap | 0wks | ✓ included |
 | GSM8253795 (SRR28912877)             | CD1 | CupRap | 3wks | pending |
-| GSM8253797 (SRR28912867 SRR28912868) | NesCre | Cntl | 3wks | pending |
+| GSM8253797 (SRR28912867 SRR28912868) | NesCre | Cntl | 3wks | ✓ included |
 | GSM8647352  (SRR31443698 SRR31443699)                       | CD1 | CupRap | 0wks | pending |
 
 ---
