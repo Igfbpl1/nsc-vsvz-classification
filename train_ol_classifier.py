@@ -3,9 +3,16 @@
 Goal: given a cell's expression, score how committed it looks toward
 the oligodendrocyte repair lineage. The features of the model are the candidate trigger genes.
 
-The model is trained on HVGs **minus the 29 known lineage markers** (Pdgfra, Cspg4,
-Olig1, Olig2, Sox10, Cnp, Lhfpl3, Mbp, Mog, Plp1, Mobp, …). Forcing the model to find
-non-marker signal makes the SHAP importance list a useful trigger-gene candidate set.
+The model is trained on HVGs **minus the lineage markers**. The exclusion set is
+built from two sources in markers.py:
+  * MARKERS[POS_TYPES + NEG_TYPES] — subtype-specific markers (Pdgfra, Cspg4,
+    Mog, Mag, Opalin, Mbp, Plp1, Dlx1, Dlx2, …)
+  * LINEAGE_GENES (OL_lineage + Neuroblast_lineage) — pan-lineage TFs and
+    structural genes that identify lineage commitment but not subtype
+    (Olig1, Olig2, Sox10, Cnp, Lhfpl3, Mobp, Tubb3, Cd24a).
+Forcing the model to find non-marker signal makes the SHAP importance list a
+useful trigger-gene candidate set rather than a re-discovery of canonical
+oligodendrocyte / neuroblast genes.
 
 Train on cells with confident terminal labels:
   positive class: OPC + COP + OL
@@ -27,7 +34,7 @@ from scipy.stats import spearmanr
 from sklearn.metrics import average_precision_score, roc_auc_score
 from sklearn.model_selection import train_test_split
 
-from markers import MARKERS, OL_LINEAGE
+from markers import MARKERS, OL_LINEAGE, LINEAGE_GENES
 
 ROOT = Path(__file__).parent
 OUT = ROOT / "outputs"
@@ -46,7 +53,11 @@ POS_TYPES = list(OL_LINEAGE)  # OPC, COP, OL
 NEG_TYPES = ["Neuroblast"]
 TAP_TYPE = "TAP"
 
-EXCLUDED_MARKERS = sorted({g for ct in POS_TYPES + NEG_TYPES for g in MARKERS[ct]})
+EXCLUDED_MARKERS = sorted(
+    {g for ct in POS_TYPES + NEG_TYPES for g in MARKERS[ct]}
+    | set(LINEAGE_GENES["OL_lineage"])
+    | set(LINEAGE_GENES["Neuroblast_lineage"])
+)
 
 
 def _to_dense(X) -> np.ndarray:

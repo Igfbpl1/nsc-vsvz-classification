@@ -52,9 +52,27 @@ def build_processed() -> None:
 
     score_cols = [f"score_{n}" for n in MARKERS if f"score_{n}" in adata.obs.columns]
     means = adata.obs.groupby("leiden", observed=True)[score_cols].mean()
-    cluster_to_type = {
-        c: row.idxmax().replace("score_", "") for c, row in means.iterrows()
-    }
+    # Pure idxmax fails when panels have unequal absolute scales (mature
+    # OL out-scores COP just because Mbp/Plp1 are highly expressed). Pure
+    # z-score over-corrects (Cd52/Cd69 are weakly expressed in many
+    # microglia clusters → Other_Immune wrongly wins). Hybrid: use abs
+    # idxmax when the margin is clear; use z-score tie-break only between
+    # the top two panels when the abs margin is small.
+    z = (means - means.mean(axis=0)) / means.std(axis=0)
+    MARGIN = 0.4       # max abs gap that counts as a close call
+    RUNNER_FLOOR = 0.5 # runner-up must have this much abs signal to be eligible
+    cluster_to_type = {}
+    for c in means.index:
+        row_abs = means.loc[c].sort_values(ascending=False)
+        winner, runner_up = row_abs.index[0], row_abs.index[1]
+        margin = row_abs.iloc[0] - row_abs.iloc[1]
+        runner_abs = row_abs.iloc[1]
+        if margin < MARGIN and runner_abs >= RUNNER_FLOOR:
+            # close call AND runner-up has real signal — pick more distinctive
+            chosen = z.loc[c, [winner, runner_up]].idxmax()
+        else:
+            chosen = winner
+        cluster_to_type[c] = chosen.replace("score_", "")
     adata.obs["cell_type"] = adata.obs["leiden"].map(cluster_to_type).astype("category")
     adata.uns["cluster_to_type"] = cluster_to_type
     adata.obs["fate_OL_lineage"] = adata.obs["cell_type"].isin(OL_LINEAGE).astype(int)

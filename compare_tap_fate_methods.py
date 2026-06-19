@@ -62,7 +62,7 @@ def run_compare_fate_methods():
     # (the `x=`/`y=` kwargs are passed positionally). cellrank >=2.1.0 has the
     # fix upstream but requires scipy<1.17, which conflicts with this project.
     print("\n[CellRank] building transition matrix from velocity ...")
-    vk = VelocityKernel(adata).compute_transition_matrix(n_jobs=1)
+    vk = VelocityKernel(adata).compute_transition_matrix(n_jobs=4)
     ck = ConnectivityKernel(adata).compute_transition_matrix()
     combined_kernel = 0.8 * vk + 0.2 * ck
 

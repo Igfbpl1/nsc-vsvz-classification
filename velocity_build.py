@@ -25,7 +25,7 @@ SAMPLE_CONFIGS = [
     {"h5ad_sample_id": "GSM8253793", "velocity_label": "CD1_Cntl_3wks",      "kb_dir": "sra_runs/kb_output_GSM8253793/counts_unfiltered"},
     {"h5ad_sample_id": "GSM8253794", "velocity_label": "CD1_CupRap",         "kb_dir": "sra_runs/kb_output_GSM8253794/counts_unfiltered"},
     {"h5ad_sample_id": "GSM8253796", "velocity_label": "Cntl",               "kb_dir": "sra_runs/kb_output_GSM8253796/counts_unfiltered"},
-    {"h5ad_sample_id": "GSM8253797", "velocity_label": "Cntl_Rep2",          "kb_dir": "sra_runs/kb_output_GSM8253797/counts_unfiltered"},
+    # {"h5ad_sample_id": "GSM8253797", "velocity_label": "Cntl_Rep2",          "kb_dir": "sra_runs/kb_output_GSM8253797/counts_unfiltered"},
     {"h5ad_sample_id": "GSM8253798", "velocity_label": "CupRap_Rep1",        "kb_dir": "sra_runs/kb_output_GSM8253798/counts_unfiltered"},
     {"h5ad_sample_id": "GSM8253799", "velocity_label": "CupRap_Rep2",        "kb_dir": "sra_runs/kb_output_GSM8253799/counts_unfiltered"},
     {"h5ad_sample_id": "GSM8647353", "velocity_label": "CD1_CupRap_0wks_Rep2", "kb_dir": "sra_runs/kb_output_GSM8647353/counts_unfiltered"},
@@ -133,7 +133,7 @@ def build_velocity() -> None:
     scv.pp.moments(combined, n_pcs=None, n_neighbors=None)
 
     print("[scVelo] Recovering dynamics (dynamical model — ~30 min) ...")
-    scv.tl.recover_dynamics(combined, n_jobs=4, show_progress_bar=False)
+    scv.tl.recover_dynamics(combined, n_jobs=8, show_progress_bar=False)
 
     print("[scVelo] Computing velocity ...")
     scv.tl.velocity(combined, mode="dynamical")
