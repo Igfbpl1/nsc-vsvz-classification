@@ -13,7 +13,7 @@ The project's central deliverable is a per-TAP fate prediction: "is this TAP hea
 | **ML model (XGBoost)** | Supervised classifier trained on terminal cells | ~1,970 non-canonical HVGs (2000 HVGs − 31 excluded lineage genes from `MARKERS[POS+NEG]` ∪ `LINEAGE_GENES`) |
 | **CellRank** | Velocity-based fate probability | RNA velocity transition matrix + terminal states |
 
-CellRank is methodologically principled for intermediate cells because it uses each cell's actual velocity vector to compute drift toward terminal states. It provides an independent validation reference for the XGBoost classifier.
+CellRank is methodologically principled for intermediate cells because it uses each cell's actual velocity vector to compute drift toward terminal states. It serves as a corroborating reference for the XGBoost classifier — but the two methods are **not** fully independent (see Section 4 on structural sharing).
 
 The bias score (canonical marker panel score for OL vs NB) is available in `outputs/ol_commitment.csv` but is not compared here — it is conservative by design and just confirms obvious cases.
 
@@ -21,14 +21,14 @@ The bias score (canonical marker panel score for OL vs NB) is available in `outp
 
 ## 2. The Question Each Method Answers
 
-These methods are not just two implementations of the same idea — they answer **different biological questions** with different signals:
+These methods are different in the *signal* they read from the data:
 
 | Method | What it asks | What it captures |
 |---|---|---|
-| **ML model** | "Does this TAP's overall pattern look like cells that become OL?" | Trajectory — learned boundary from real terminal cells, uses positive + negative signals + non-linear gene interactions across 1,965 HVGs |
+| **ML model** | "Does this TAP's overall pattern look like cells that become OL?" | Trajectory — learned boundary from real terminal cells, uses positive + negative signals + non-linear gene interactions across ~1,970 HVGs |
 | **CellRank** | "Where is this TAP's velocity vector pointing?" | Motion — splicing dynamics indicate direction of cell-state change |
 
-ML uses **gene expression patterns**. CellRank uses **splicing kinetics**. The two signals are biologically independent — agreement between them is therefore non-trivial.
+ML uses **steady-state gene expression**. CellRank uses **splicing kinetics**. The signals themselves are biologically distinct, so the methods *can* disagree on individual cells. However, both methods anchor on the same `cell_type` labels and the same neighbor graph upstream (see Section 4), so they are not statistically independent in the strict sense — they share enough structure that some baseline correlation is built in by construction.
 
 ---
 
@@ -42,7 +42,11 @@ ML uses **gene expression patterns**. CellRank uses **splicing kinetics**. The t
 | Pearson r | **0.828** (p ≈ 0) |
 | Spearman r | **0.838** (p ≈ 0) |
 
-Two methods using independent biological signals correlate at r > 0.8 per cell. This is the strongest single statistic supporting the ML classifier's per-cell scoring.
+⚠ **Don't over-interpret the magnitude of `r`.** The Pearson value is partially inflated by structural sharing between the two methods (Section 4) — both anchor on the same `cell_type` labels and the same neighbor graph, so a baseline correlation exists by construction. A genuinely independent cross-validation (the ML model applied to a separately-annotated dataset, for example) would likely give a substantially lower `r`, in the 0.4–0.6 range typical for cross-method scRNA comparisons.
+
+What *is* informative:
+- **The two methods rank cells in similar order** (Spearman 0.838) — useful even under the structural caveat, because rank order is less sensitive to how the underlying labels were drawn than absolute probability.
+- **The agreement breaks the right way under condition shifts** (next section): both methods independently elevate the same condition (`CD1_CupRap_0wks_Rep2`) as the OL-fate outlier. That convergence is biology, not labeling artifact.
 
 ### Per-condition counts (per-cell threshold P > 0.5)
 
@@ -75,7 +79,24 @@ The conditions are essentially indistinguishable at the TAP stage, which is the 
 
 ---
 
-## 4. Methodology Notes on CellRank
+## 4. Methodology Notes — Structural Sharing Between the Two Methods
+
+Before reading the CellRank numbers as "independent validation" of the ML model, it's worth being explicit about what the two methods share upstream — because that shared structure is what inflates the per-cell Pearson agreement above the level you'd expect from a clean independent test.
+
+**What's shared:**
+
+1. **The `cell_type` labels themselves.** ML trains on POS = OL_LINEAGE (OPC+COP+OL) vs NEG = Neuroblast — those classes come from `cell_type`. CellRank's terminal absorbing states use the same `cell_type` column for the OL-lineage group and the Neuroblast group. Both methods are answering "how similar is this TAP to cells we labeled X?" using the **same definition of X**.
+2. **The expression matrix and HVG selection.** ML features are HVGs from the normalized matrix; CellRank's transition matrix is built on the neighbor graph of the same matrix. Same QC, same Harmony batch correction, same upstream filters.
+3. **The marker-panel definitions in `markers.py`.** Those panels determine which clusters get the `OL_LINEAGE` and `Neuroblast` labels in the first place.
+
+**What's not shared:**
+
+- **The signal each method reads.** ML uses steady-state expression intensity; CellRank uses spliced/unspliced ratios encoding splicing kinetics. These are biologically distinct mRNA properties.
+- **The decision rule.** ML is a learned non-linear boundary (XGBoost); CellRank is a random-walk absorption probability on a Markov chain.
+
+**Practical implication.** The Section 3 Pearson r = 0.828 is partly *cross-method validation* (good) and partly *both methods inheriting the same upstream labels* (structural). The most defensible reading is to use CellRank for **directional corroboration** — does the per-cell ordering agree? does the condition-level outlier replicate? — not as a quantitative validation of the absolute ML probability calibration.
+
+### CellRank terminal-state definition
 
 CellRank's terminal states are defined from `cell_type` labels to match the ML classifier's positive class. The `OL` terminal group is the full OL lineage — cells labeled `OL`, `OPC`, or `COP` (i.e. `OL_LINEAGE` from `markers.py`); the `Neuroblast` group is cells labeled `Neuroblast`; every other cell (TAPs, **dNSCs, aNSCs**, Astrocyte, etc.) is transient. For each transient cell, `cellrank_P_OL` is the probability that a random walk following the velocity transition matrix is absorbed into the OL-lineage group.
 
@@ -100,9 +121,10 @@ combined_kernel = 0.8 * vk + 0.2 * ck
 
 ## 5. Bottom Line
 
-**ML and CellRank agree on per-cell P(OL lineage) at Pearson r = 0.828 / Spearman r = 0.838 across 2,944 TAPs.**
+**ML and CellRank agree on per-cell P(OL lineage) at Pearson r = 0.828 / Spearman r = 0.838 across 2,944 TAPs.** The magnitude of this correlation is partly inflated by the two methods sharing the same `cell_type` anchor labels and neighbor graph (Section 4), so it should be read as *directional corroboration*, not as a clean independent validation of absolute probability calibration. The robust signals — those not manufactured by the structural sharing — are:
 
-Two methods built on independent biological signals (gene expression vs splicing kinetics) converge on the same per-cell ranking. This is strong cross-validation for the XGBoost classifier's per-TAP fate score.
+1. **The relative ordering of TAPs across conditions** is preserved by both methods.
+2. **`CD1_CupRap_0wks_Rep2` is independently flagged by both as the OL-fate outlier**, with mean P(OL) ~2× higher than any other condition. The direction and magnitude of a condition-level shift is biology, not labeling artifact, so this is the strongest non-circular finding in the comparison.
 
 By both methods, **CupRap does not enrich OL fate at the TAP stage**. The share of OL-leaning TAPs in CupRap conditions is at or below corresponding Controls. This is consistent with the published claim (Willis et al. Figure 2I, r = 0.995 for *average* TAP transcriptome Cntl vs CupRap): TAP steady-state expression identity does not shift toward OL under CupRap.
 
