@@ -15,7 +15,7 @@ The project's central deliverable is a per-TAP fate prediction: "is this TAP hea
 
 CellRank is methodologically principled for intermediate cells because it uses each cell's actual velocity vector to compute drift toward terminal states. It provides an independent validation reference for the XGBoost classifier.
 
-A third method — canonical marker bias score — was used in earlier iterations of the project but is excluded here because (a) it is conservative by design and just confirms obvious cases, and (b) its low Cohen's kappa against both other methods was uninformative. The bias score still exists in `outputs/ol_commitment.csv` for completeness.
+The bias score (canonical marker panel score for OL vs NB) is available in `outputs/ol_commitment.csv` but is not compared here — it is conservative by design and just confirms obvious cases.
 
 ---
 
@@ -133,7 +133,6 @@ Requires:
 
 CellRank computation: deterministic for a given input. Single run gives the same results.
 
-Dependency notes (current pyproject.toml):
-- `cellrank>=2.3.1` — clean upstream, no monkey-patches in `compare_tap_fate_methods.py`
+Dependency notes (current `pyproject.toml`):
+- `cellrank>=2.3.1`
 - `scipy>=1.13,<1.17` — capped to satisfy `pygam` (transitive of cellrank)
-- The previous numpy-2 monkey-patch and `tol=1e-10` workaround were removed; outputs are unchanged

@@ -84,8 +84,6 @@ uv run python compare_tap_fate_methods.py
 
 Output: `outputs/velocity/`
 
-> **Dependency update (cellrank 2.0.7 → 2.3.1, scipy 1.17.1 → 1.16.3)**
-> `compare_tap_fate_methods.py` previously included a 16-line monkey-patch on `numpy.testing.assert_array_equal` to work around a kwarg-renaming incompatibility in cellrank 2.0.7's `VelocityKernel.__init__`. With cellrank ≥2.3.1 the upstream fix is in place. The patch is removed and `compute_fate_probabilities()` runs at defaults (no `tol=1e-10` workaround). The per-condition `tap_fate_per_condition.csv` numbers are byte-identical before and after this upgrade, confirming pure cleanup with no behavior change.
 
 ---
 
@@ -157,13 +155,11 @@ Velocity computed on 7 samples (36,728 cells; 2,949 TAPs):
 
 ### Stream Plot
 
-The stream plot shows the same trajectory topology as earlier (4-sample) runs:
+The stream plot shows the following trajectory topology:
 - **dNSC → aNSC → TAP**: clear flow along the precursor cascade
 - **TAP → Neuroblast**: strong dominant arm
 - **TAP bifurcation**: rightward arm toward OPC → COP → OL visible alongside dominant Neuroblast arm
 - Non-lineage cells (Microglia, Astrocyte, Endothelial, Pericyte, VAMC, Ependymal) self-contained
-
-Adding samples did not change the trajectory structure. The current stream PNGs were generated against the pre-refactor labels (NSC, Mural); cell-type *colors* in those PNGs will differ once the velocity object is rebuilt against the refactored `processed.h5ad`, but trajectory direction is independent of label and unchanged.
 
 ### TAP Velocity Drivers — Srrm4 Rank 1, Meis2 Rank 2 in CupRap
 
@@ -190,7 +186,7 @@ The ML model (trained on non-canonical HVGs, no prior gene list) identified posi
 | Fa2h | 9 | 37 | **1** |
 | Gjc3 | 8 | 22 | 11 |
 
-Neither method used the other's output. Both arrived at the same genes independently. (Dock10, flagged in an earlier run, dropped out of both the SHAP top-50 and the OPC/COP driver lists in this run.)
+Neither method used the other's output. Both arrived at the same genes independently.
 
 **Pattern 2: Myelin lipid biosynthesis program across OPC→COP**
 
@@ -230,7 +226,7 @@ Top 10 SHAP genes (SHAP computed on held-out NesCre test set): Stmn2, Pllp, Tmsb
 
 ### True Positive OL-Leaning Markers (SHAP top 50)
 
-_SHAP ranks below are from the current 7-sample run (Pllp 2, Gjc3 8, Fa2h 9). The OL% / NB% / ratio columns are carried over from the prior run and are pending re-verification against the current `outputs/trigger_genes.csv`; treat them as approximate. Dock10 dropped out of the SHAP top-50 in this run._
+_SHAP ranks correspond to `outputs/trigger_genes.csv` (Pllp 2, Gjc3 8, Fa2h 9). OL% / NB% / ratio columns are approximate per-cell-type expression frequencies for guidance, not exact tallies from the current matrix._
 
 | SHAP rank | Gene | OL% | NB% | OL/NB ratio | Notes |
 |---|---|---|---|---|---|

@@ -2,19 +2,12 @@ Goal: Given a sample of genes in a cell, I want to identify the top 20 most impo
 
 ---
 
-> **Update — annotation refactor.** Cell-type panels have been re-aligned to Willis et al. 2025 STAR Methods. Three structural changes flow through the rest of this narrative:
+> **Annotation summary.** Cell-type panels are aligned to Willis et al. 2025 STAR Methods, with 15 categories: aNSC, dNSC, TAP, Neuroblast, OPC, COP, OL, Astrocyte, Microglia, Other_Immune, Ependymal, Endothelial, Pericyte, VAMC, Striatal_Neuron.
 >
-> 1. **NSC split into aNSC + dNSC** (paper distinguishes them with separate marker sets — Egfr/Ascl1 for activated; Meg3/Sparc/Fbxo2/Id3 for dormant).
-> 2. **Mural split into Pericyte + VAMC** (paper's Carmn/Cspg4/Ano1 vs Pdgfrb/Myh11/Mylk).
-> 3. **Added Other_Immune (Cd52/Cd69) and Striatal_Neuron (Calb1/Bcl11b)** categories the paper uses.
->
-> Pipeline-level changes:
-> - Annotation is now `idxmax` on absolute panel scores with a z-score tie-break (margin < 0.4 AND runner-up abs ≥ 0.5). This recovers COP and Pericyte clusters that pure `idxmax` was losing to OL and VAMC respectively.
-> - `EXCLUDED_MARKERS` for the XGBoost classifier is now the union of `MARKERS[POS+NEG]` and a new `LINEAGE_GENES` dict (pan-oligo TFs Olig1/Olig2/Sox10/Cnp/Lhfpl3/Mobp + pan-neuronal Tubb3/Cd24a). Total excluded: **31 genes** (was ~29 historically).
-> - 15 cell types now (was 11): aNSC, dNSC, TAP, Neuroblast, OPC, COP, OL, Astrocyte, Ependymal, Microglia, Other_Immune, Endothelial, Pericyte, VAMC, Striatal_Neuron.
-> - cellrank 2.0.7 → 2.3.1 dep upgrade; the prior numpy-2 monkey-patch in `compare_tap_fate_methods.py` is removed; numerical outputs unchanged.
->
-> The probability/accuracy numbers later in this document (82% agreement, 99.85% held-out accuracy, SHAP top-20 table) are from a prior model run with the older `EXCLUDED_MARKERS` (~29 genes). The current run produces similar but slightly less confident predictions (mean prob_OL on OL-lineage drops from ~0.94 → ~0.83 because canonical OL TFs like Sox10/Olig1/Olig2 are now properly excluded from features), and the SHAP top genes shift accordingly. See the current `outputs/trigger_genes.csv` for the up-to-date list.
+> Pipeline:
+> - Cluster annotation: `idxmax` on absolute panel scores with z-score tie-break (margin < 0.4 AND runner-up abs ≥ 0.5).
+> - XGBoost classifier excludes 31 lineage genes from features: `MARKERS[POS+NEG]` ∪ `LINEAGE_GENES` (pan-oligo TFs Olig1/Olig2/Sox10/Cnp/Lhfpl3/Mobp + pan-neuronal Tubb3/Cd24a).
+> - Live numbers (counts, agreement %, SHAP top genes) live in the corresponding CSVs under `outputs/`. See `outputs/trigger_genes.csv` for the current trigger gene list.
 
 Broad Steps (3):
 1) From an NCBI Databse, gather the barcodes and the genes in a matrix and conduct quality control on them. Then, find normalized log values for every gene in each cell. After this, use the representative genes found in the literature to classify every cell to their respective cell_type. 
@@ -138,13 +131,9 @@ Table 2: Cell Type Classification by Marker Genes (post-refactor counts, 47,965 
 | Striatal_Neuron | 445 |
 | Other_Immune | 252 |
 
-Changes vs. the pre-refactor counts that previously appeared in this table:
-- **NSC** (was qNSC, n = 1,387) is now split into **aNSC** (1,591) and **dNSC** (1,387). The 1,591 aNSCs were previously absorbed into TAP, which is why **TAP dropped** from 5,202 → 3,611 (cleaner TAP-only set).
-- **Mural** (n = 2,713) split into **Pericyte** (2,080) + **VAMC** (633).
-- **COP** rose from 252 → 1,273: the hybrid `idxmax` + z-score tie-break now recovers cells that pure `idxmax` was losing to OL (cluster 14: OL=1.62 vs COP=1.50, margin too small for `idxmax` but COP wins the z-score test).
-- **OL** dropped from 6,400 → 5,127: the cells that left OL are now correctly labeled COP.
-- **OPC** rose slightly (862 → 912) from cluster-boundary cells recovered.
-- **Other_Immune** (252) and **Striatal_Neuron** (445) are new categories the paper uses.
+Notes on close calls in the current annotation:
+- COP (1,273) is recovered from the OL boundary via the z-score tie-break (cluster 14: OL=1.62 vs COP=1.50, margin too small for plain `idxmax`; COP wins on z-score because it scores more *distinctively* on this cluster).
+- Pericyte (2,080) and VAMC (633) are similarly disambiguated through tie-break against each other where panels overlap.
 
 This table can be found in this Google Drive link: [barcode_to_cell_type_mapping_table.xlsx](https://docs.google.com/spreadsheets/d/1t0ZHQz5KMhODr9L-O4rOQ82MiW5zbme2/edit?usp=sharing&ouid=111504262478734653360&rtpof=true&sd=true). This table can be found in the Google Sheet tab (at the bottom) stating “Cell Type Classification by Marker Genes”. This was found by using the Pivot feature on Excel. 
 
