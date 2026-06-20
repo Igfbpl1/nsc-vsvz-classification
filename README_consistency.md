@@ -48,20 +48,20 @@ The paper states:
 * *"...a decrease in total NSCs during remyelination with no change in TAPs and neuroblasts (Figure 1K)."* (Page 6)
 
 ### Proportions relative to Total Neural Cells:
-| Cell Type | Control Mean (%) | Cup-Rap Mean (%) | Codebase Trend | Matches Paper? |
-|---|---|---|---|---|
-| **NSCs** | 12.33% | 8.74% | Decreased | Yes (NSCs decrease) |
-| **TAPs** | 15.19% | 14.25% | Stable (overlapping) | Yes (no change) |
-| **OPCs** | 2.22% | 2.83% | Stable (overlapping) | Yes (no change) |
-| **Imm. OLGs (COPs / Newly Formed OLs)** | 1.06% | 6.01% | Increased | Yes (increased) |
-| **Mat. OLGs (OL)** | 13.37% | 22.12% | Increased | Yes (increased) |
-| **Neuroblasts** | 41.43% | 39.86% | Stable (overlapping) | Yes (no change) |
+| Cell Type       | Control Mean (%) | Cup-Rap Mean (%) | Codebase Trend       | Matches Paper?      |
+|-----------------|------------------|------------------|----------------------|---------------------|
+| **NSCs**        | 12.33%           | 8.74%            | Decreased            | Yes (NSCs decrease) |
+| **TAPs**        | 15.19%           | 14.25%           | Stable (overlapping) | Yes (no change)     |
+| **OPCs**        | 2.22%            | 2.83%            | Stable (overlapping) | Yes (no change)     |
+| **COPs**        | 1.06%            | 6.01%            | Increased            | Yes (increased)     |
+| **OL**          | 13.37%           | 22.12%           | Increased            | Yes (increased)     |
+| **Neuroblasts** | 41.43%           | 39.86%           | Stable (overlapping) | Yes (no change)     |
 
 *Reproduction Plot saved to:* [outputs/consistency_fig1k_proportions.png](file:///Users/chandra/development/nsc-vsvz-classification/outputs/consistency_fig1k_proportions.png)
 
 ---
 
-## 4. Precursor Subtypes relative to NPCs (Figure 2H)
+## 4. Precursor Subtypes relative to NPCs/TAPs (Figure 2H)
 
 The paper states:
 * *"...dNSCs, aNSCs, and TAPs comprised 22%, 17%, and 63% of total NPCs, respectively. In remyelinating datasets, dNSCs and aNSCs were both relatively decreased and TAPs were increased."* (Page 6)

@@ -265,10 +265,10 @@ tail -f ref.log
 cd ~/project/sra_runs
 
 # run in parallel for speed
-nohup fasterq-dump --split-files --include-technical SRR_ID1 --outdir . > SRR_ID1.log 2>&1 &
-nohup fasterq-dump --split-files --include-technical SRR_ID2 --outdir . > SRR_ID2.log 2>&1 &
+nohup fasterq-dump --split-files --include-technical SRR31443698 --outdir . > SRR31443698.log 2>&1 &
+nohup fasterq-dump --split-files --include-technical SRR31443699 --outdir . > SRR31443699.log 2>&1 &
 
-tail -f SRR_ID1.log SRR_ID2.log
+tail -f SRR31443698.log SRR31443699.log
 ps aux | grep fasterq   # confirm running
 ```
 
