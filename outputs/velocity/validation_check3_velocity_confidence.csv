@@ -1,0 +1,7 @@
+metric,mean,median,std,min,max
+velocity_self_transition,0.32475,0.344645,0.138364,0.0,0.628897
+self_transition_Neuroblast,0.43263,0.437519,0.069314,0.010413,0.628897
+self_transition_TAP,0.325244,0.326819,0.084506,0.0,0.592106
+self_transition_OPC,0.42873,0.442779,0.085997,0.0,0.628897
+self_transition_COP,0.439817,0.455527,0.083922,0.097378,0.62453
+self_transition_OL,0.273978,0.283646,0.11824,0.0,0.623682

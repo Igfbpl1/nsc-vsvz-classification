@@ -63,7 +63,22 @@ def run_compare_fate_methods():
     g.compute_fate_probabilities()
 
     adata.obs["cellrank_P_OL"] = g.fate_probabilities[:, "OL"].X.squeeze()
+    adata.obs["cellrank_P_NB"] = g.fate_probabilities[:, "Neuroblast"].X.squeeze()
     print("  CellRank P(OL) computed.")
+
+    # ── Persist CellRank results ──────────────────────────────────────────────
+    # Write fate probs back into the h5ad so downstream scripts can load them
+    # without recomputing the transition matrix (~35s).
+    vk.write_to_adata()
+    adata.write(OUT / "velocity" / "velocity_combined.h5ad", compression="gzip")
+    print(f"  → wrote cellrank_P_OL/P_NB + transition matrix to {OUT}/velocity/velocity_combined.h5ad")
+
+    # Also save a lightweight per-cell CSV for all cells (not just TAPs)
+    cellrank_all = adata.obs[["sample_id", "cell_type", "velocity_label",
+                              "cellrank_P_OL", "cellrank_P_NB"]].copy()
+    cellrank_all.index.name = "barcode"
+    cellrank_all.to_csv(OUT / "cellrank_fate_probabilities.csv")
+    print(f"  → wrote {OUT}/cellrank_fate_probabilities.csv ({len(cellrank_all):,} cells)")
 
     # ── Align TAPs with ML predictions ───────────────────────────────────────
     print("\n[ML] loading XGBoost predictions ...")

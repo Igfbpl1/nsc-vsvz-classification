@@ -1,0 +1,6 @@
+cell_type,mean_P_OL,median_P_OL,is_monotonic
+Neuroblast,0.0,0.0,True
+TAP,0.440213,0.352669,True
+OPC,1.0,1.0,True
+COP,1.0,1.0,True
+OL,1.0,1.0,True

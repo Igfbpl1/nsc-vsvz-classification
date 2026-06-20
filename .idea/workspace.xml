@@ -5,8 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="fix">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/tap_fate_per_condition.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/tap_fate_per_condition.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/velocity/validation_check1_terminal_states.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/velocity/validation_check2_lineage_gradient.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/velocity/validation_check3_velocity_confidence.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/velocity/validation_check4_marker_correlation.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/velocity/validation_check5_fate_prob_sums.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/validate_cellrank.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/compare_tap_fate_methods.py" beforeDir="false" afterPath="$PROJECT_DIR$/compare_tap_fate_methods.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rna_velocity_trajectory.md" beforeDir="false" afterPath="$PROJECT_DIR$/rna_velocity_trajectory.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

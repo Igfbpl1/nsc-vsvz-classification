@@ -142,13 +142,15 @@ A gene qualifies as an early marker if it satisfies:
 
 ---
 
-## 7. Results — 7-Sample Run
+## 7. Results — 9-Sample Run
 
-Velocity computed on 7 samples (36,728 cells; 2,949 TAPs):
+Velocity computed on 9 samples (43,831 cells; 3,507 TAPs):
 - **GSM8253792** — CD1, Cntl, 0wks
 - **GSM8253793** — CD1, Cntl, 3wks
 - **GSM8253794** — CD1, CupRap, 3wks
+- **GSM8253795** — CD1, CupRap, 3wks, Rep2
 - **GSM8253796** — NesCre, Cntl, 3wks
+- **GSM8253797** — NesCre, Cntl, 3wks, Rep2
 - **GSM8253798** — NesCre, CupRap, 3wks, Rep1
 - **GSM8253799** — NesCre, CupRap, 3wks, Rep2
 - **GSM8647353** — CD1, CupRap, 0wks, Rep2
@@ -252,18 +254,18 @@ _SHAP ranks correspond to `outputs/trigger_genes.csv` (Pllp 2, Gjc3 8, Fa2h 9). 
 
 ## 9. Current Sample Status
 
-| GSM                                  | Strain | Treatment | Timepoint | Velocity status |
-|--------------------------------------|---|---|---|-----------------|
-| GSM8253792                           | CD1 | Cntl | 0wks | ✓ included      |
-| GSM8253793                           | CD1 | Cntl | 3wks | ✓ included      |
-| GSM8253794                           | CD1 | CupRap | 3wks | ✓ included      |
-| GSM8253796                           | NesCre | Cntl | 3wks | ✓ included      |
-| GSM8253798                           | NesCre | CupRap | 3wks | ✓ included      |
-| GSM8253799                           | NesCre | CupRap | 3wks | ✓ included      |
-| GSM8647353                           | CD1 | CupRap | 0wks | ✓ included      |
-| GSM8253795 (SRR28912877)             | CD1 | CupRap | 3wks | x discluded (counted, not in current velocity build) |
-| GSM8253797 (SRR28912867 SRR28912868) | NesCre | Cntl | 3wks | x discluded     |
-| GSM8647352  (SRR31443698 SRR31443699)                       | CD1 | CupRap | 0wks | pending         |
+| GSM | Strain | Treatment | Timepoint | Velocity status |
+|---|---|---|---|---|
+| GSM8253792 | CD1 | Cntl | 0wks | ✓ included |
+| GSM8253793 | CD1 | Cntl | 3wks | ✓ included |
+| GSM8253794 | CD1 | CupRap | 3wks | ✓ included |
+| GSM8253795 | CD1 | CupRap | 3wks | ✓ included |
+| GSM8253796 | NesCre | Cntl | 3wks | ✓ included |
+| GSM8253797 | NesCre | Cntl | 3wks | ✓ included |
+| GSM8253798 | NesCre | CupRap | 3wks | ✓ included |
+| GSM8253799 | NesCre | CupRap | 3wks | ✓ included |
+| GSM8647353 | CD1 | CupRap | 0wks | ✓ included |
+| GSM8647352 (SRR31443698 SRR31443699) | CD1 | CupRap | 0wks | pending |
 
 ---
 
@@ -307,3 +309,85 @@ After the markers.py refactor (split NSC → aNSC/dNSC), the per-cell `bias` sco
 Mann-Whitney U test, aNSC bias Control vs CupRap_NoRecov: **p = 2.9 × 10⁻¹⁴**. The 3-week recovery aNSCs are statistically indistinguishable from controls (p = 0.77), so the OL-commitment push is **transient** — acute demyelination tilts the activated stem cell pool toward oligodendrogenesis, and by 3 weeks the distribution returns to baseline. This matches the paper's central claim about injury-driven NSC activation toward repair and is recovered here without telling the model the conditions.
 
 Caveat: the ML model's `prob_OL` on aNSCs is unreliable (~0.45 across conditions) because aNSCs are not in the training set (POS = OL+COP+OPC, NEG = Neuroblast). For aNSC inference, use the `bias` score, not `prob_OL`. See `ol_commitment.csv` and `train_ol_classifier.py:56-61`.
+
+---
+
+## 11. CellRank Fate Probability Validation
+
+CellRank fate probabilities are validated via 5 automated checks (`validate_cellrank.py`). Raw results are saved as CSV files in `outputs/velocity/`.
+
+### Check 1: Terminal State Sanity
+
+Cells defined as terminal (OL-lineage, Neuroblast) should have P(OL) at the expected extremes.
+
+| Cell Type | n | Mean P(OL) | Expected | Status |
+|---|---:|---:|---|---|
+| **OL** | 4,914 | **1.0000** | ≈ 1.0 | ✅ PASS |
+| **COP** | 1,144 | **1.0000** | ≈ 1.0 | ✅ PASS |
+| **OPC** | 804 | **1.0000** | ≈ 1.0 | ✅ PASS |
+| **Neuroblast** | 9,869 | **0.0000** | ≈ 0.0 | ✅ PASS |
+| TAP | 3,519 | 0.4402 | Intermediate | — |
+| aNSC | 1,553 | 0.8351 | — | Leans OL |
+| dNSC | 1,364 | 0.9292 | — | Strongly OL |
+| Astrocyte | 1,754 | 0.9568 | — | Strongly OL |
+| Microglia | 12,975 | 0.4765 | — | Near 0.5 (non-lineage) |
+
+*CSV: `outputs/velocity/validation_check1_terminal_states.csv`*
+
+### Check 2: Lineage Gradient
+
+Mean P(OL) should increase monotonically along the known OL differentiation trajectory.
+
+| Position | Cell Type | Mean P(OL) |
+|---:|---|---:|
+| 1 | Neuroblast | 0.0000 |
+| 2 | TAP | 0.4402 |
+| 3 | OPC | 1.0000 |
+| 4 | COP | 1.0000 |
+| 5 | OL | 1.0000 |
+
+**Monotonically increasing? ✅ YES**
+
+*CSV: `outputs/velocity/validation_check2_lineage_gradient.csv`*
+
+### Check 3: Velocity Confidence
+
+| Metric | Mean | Median | Std | Range |
+|---|---:|---:|---:|---|
+| `velocity_self_transition` | 0.3247 | 0.3446 | 0.1384 | [0.0000, 0.6289] |
+
+Velocity mode: `dynamical`. A self-transition of 32.5% is typical — not too high (which would indicate no directional signal).
+
+*CSV: `outputs/velocity/validation_check3_velocity_confidence.csv`*
+
+### Check 4: Marker Score Correlation
+
+CellRank P(OL) should positively correlate with OL marker scores and negatively correlate with Neuroblast marker scores.
+
+| Marker Score | Spearman ρ | Expected Direction | Status |
+|---|---:|---|---|
+| `score_Neuroblast` | **-0.715** | Negative | ✅ PASS |
+| `score_OL` | **+0.451** | Positive | ✅ PASS |
+| `score_COP` | **+0.375** | Positive | ✅ PASS |
+| `score_OPC` | **+0.070** | Positive | ✅ PASS |
+| `score_TAP` | **-0.306** | — | ✅ (proliferation markers anti-correlate with committed fate) |
+
+*CSV: `outputs/velocity/validation_check4_marker_correlation.csv`*
+
+### Check 5: Fate Probability Sums
+
+P(OL) + P(NB) should sum to 1.0 for every cell (two-state absorbing system).
+
+| Metric | Mean | Std | Range | Status |
+|---|---:|---:|---|---|
+| Row sum | 0.99992860 | 9.57e-05 | [0.99977, 1.00000] | ✅ PASS (< 0.03% deviation, GMRES solver precision) |
+
+*CSV: `outputs/velocity/validation_check5_fate_prob_sums.csv`*
+
+### Validation Script
+
+```bash
+uv run python validate_cellrank.py
+```
+
+If `cellrank_P_OL` is already persisted in the h5ad (from `compare_tap_fate_methods.py`), the script loads it directly (~3s). Otherwise it recomputes the transition matrix inline (~35s).

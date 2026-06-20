@@ -115,6 +115,41 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/outputs/velocity/validation_check1_terminal_states.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/outputs/velocity/validation_check2_lineage_gradient.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/outputs/velocity/validation_check3_velocity_confidence.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/outputs/velocity/validation_check4_marker_correlation.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/outputs/velocity/validation_check5_fate_prob_sums.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/outputs/velocity/velocity_drivers_COP.csv">
           <value>
             <Attribute>
