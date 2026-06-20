@@ -222,13 +222,14 @@ Top 10 SHAP genes (SHAP computed on held-out NesCre test set): Stmn2, Pllp, Tmsb
 
 ### True Positive OL-Leaning Markers (SHAP top 50)
 
+_SHAP ranks below are from the current 7-sample run (Pllp 2, Gjc3 8, Fa2h 9). The OL% / NB% / ratio columns are carried over from the prior run and are pending re-verification against the current `outputs/trigger_genes.csv`; treat them as approximate. Dock10 dropped out of the SHAP top-50 in this run._
+
 | SHAP rank | Gene | OL% | NB% | OL/NB ratio | Notes |
 |---|---|---|---|---|---|
-| 3 | Pllp | 90% | 2% | 114× | Plasmolipin — myelin lipid raft |
-| 10 | Gjc3 | 89% | 1% | 137× | Connexin 30.2 — gap junction |
-| 12 | Dock10 | 79% | 3% | 53× | Cytoskeletal regulator |
+| 2 | Pllp | 90% | 2% | 114× | Plasmolipin — myelin lipid raft |
+| 8 | Gjc3 | 89% | 1% | 137× | Connexin 30.2 — gap junction |
+| 9 | Fa2h | 75% | 1% | 116× | Myelin sphingolipid synthesis — top COP velocity driver |
 | 13 | Cryab | 90% | 9% | 30× | αB-crystallin — myelin maintenance |
-| 15 | Fa2h | 75% | 1% | 116× | Myelin sphingolipid synthesis — top COP velocity driver |
 | 17 | Tspan2 | 86% | 4% | 57× | Early OL surface marker |
 | 18 | Cnp | 94% | 18% | 17× | 2',3'-CNPase — myelin marker |
 | 29 | Myrf | 72% | 1% | 244× | Master myelin TF |
@@ -241,7 +242,7 @@ Top 10 SHAP genes (SHAP computed on held-out NesCre test set): Stmn2, Pllp, Tmsb
 | 44 | Car2 | 69% | 9% | 23× | Carbonic anhydrase II — myelin |
 | 45 | S100a1 | 65% | 3% | 34× | S100 calcium-binding protein |
 
-**Fa2h** is cross-validated: SHAP rank 15 (POSITIVE_OL) AND top COP velocity driver in both conditions.
+**Fa2h** is cross-validated: SHAP rank 9 (POSITIVE_OL) AND top COP velocity driver (rank 1) in both conditions.
 
 ---
 
