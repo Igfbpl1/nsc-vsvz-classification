@@ -77,8 +77,9 @@ def build_processed() -> None:
     adata.uns["cluster_to_type"] = cluster_to_type
     adata.obs["fate_OL_lineage"] = adata.obs["cell_type"].isin(OL_LINEAGE).astype(int)
     sc.settings.figdir = str(OUT)
-    sc.settings.dpi_save = 300
-    sc.pl.umap(adata, color="cell_type", size=40, alpha=1.0,
+    sc.settings.set_figure_params(figsize=(12, 9), dpi_save=300)
+    sc.pl.umap(adata, color="cell_type", size=20, alpha=0.9,
+               legend_fontsize=11,
                save="leiden_cell_type.png", show=False)
 
     OUT.mkdir(exist_ok=True)
