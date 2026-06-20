@@ -250,17 +250,17 @@ Top 10 SHAP genes (SHAP computed on held-out NesCre test set): Stmn2, Igfbpl1, P
 ## 9. Current Sample Status
 
 | GSM                                  | Strain | Treatment | Timepoint | Velocity status |
-|--------------------------------------|---|---|---|---|
-| GSM8253792                           | CD1 | Cntl | 0wks | ✓ included |
-| GSM8253793                           | CD1 | Cntl | 3wks | ✓ included |
-| GSM8253794                           | CD1 | CupRap | 3wks | ✓ included |
-| GSM8253796                           | NesCre | Cntl | 3wks | ✓ included |
-| GSM8253798                           | NesCre | CupRap | 3wks | ✓ included |
-| GSM8253799                           | NesCre | CupRap | 3wks | ✓ included |
-| GSM8647353                           | CD1 | CupRap | 0wks | ✓ included |
-| GSM8253795 (SRR28912877)             | CD1 | CupRap | 3wks | pending |
-| GSM8253797 (SRR28912867 SRR28912868) | NesCre | Cntl | 3wks | ✓ included |
-| GSM8647352  (SRR31443698 SRR31443699)                       | CD1 | CupRap | 0wks | pending |
+|--------------------------------------|---|---|---|-----------------|
+| GSM8253792                           | CD1 | Cntl | 0wks | ✓ included      |
+| GSM8253793                           | CD1 | Cntl | 3wks | ✓ included      |
+| GSM8253794                           | CD1 | CupRap | 3wks | ✓ included      |
+| GSM8253796                           | NesCre | Cntl | 3wks | ✓ included      |
+| GSM8253798                           | NesCre | CupRap | 3wks | ✓ included      |
+| GSM8253799                           | NesCre | CupRap | 3wks | ✓ included      |
+| GSM8647353                           | CD1 | CupRap | 0wks | ✓ included      |
+| GSM8253795 (SRR28912877)             | CD1 | CupRap | 3wks | ✓ included      |
+| GSM8253797 (SRR28912867 SRR28912868) | NesCre | Cntl | 3wks | x discluded     |
+| GSM8647352  (SRR31443698 SRR31443699)                       | CD1 | CupRap | 0wks | pending         |
 
 ---
 

@@ -20,6 +20,34 @@ Uses scRNA-seq (10x Genomics) + single-cell spatial transcriptomics (Xenium + ME
 
 ---
 
+## Experimental Design — Why These 10 Samples
+
+The 10 samples vary along **three axes**: strain (CD1 vs NesCre) × treatment (Cntl vs CupRap) × timepoint (0wks vs 3wks). The design is deliberately unbalanced — each axis answers a different question.
+
+**CD1 block (wild-type) — a clean 2×2:**
+
+| | 0wks | 3wks |
+|---|---|---|
+| **Cntl** | GSM8253792 | GSM8253793 |
+| **CupRap** | GSM8647352, GSM8647353 | GSM8253794, GSM8253795 |
+
+**NesCre block (NesCreERT2-Eyfp lineage tracing) — 3wks only:**
+
+| | 3wks |
+|---|---|
+| **Cntl** | GSM8253796, GSM8253797 |
+| **CupRap** | GSM8253798, GSM8253799 |
+
+**What each axis proves:**
+
+- **Treatment (Cntl vs CupRap)** — the core perturbation: does demyelination push the V-SVZ toward making oligodendrocytes, and where in the lineage? CupRap is replicated (×2) because it is the condition of interest. *Proves:* OPC proportion roughly doubles, but TAP identity is unchanged (r = 0.995) → the response is downstream of TAPs.
+- **Timepoint (0wks vs 3wks, CD1 only)** — the kinetics: acute injury (0wks, harvested at the end of the 6-week treatment = peak generation) vs recovery window (3wks). Studied in wild-type because counting cell-type proportions needs no genetic label. *Proves:* OL-precursor generation peaks acutely and recedes by 3wks.
+- **Strain (CD1 vs NesCre)** — characterization vs causal attribution. CD1 gives clean reference biology (atlas, composition, velocity); NesCre adds lineage tracing to prove new OLs are NSC-derived. Only needed at 3wks (the remyelination window). *Proves:* EYFP+ labeling jumps 3–6× at the OPC/OL stage → new oligodendroglia genuinely come from V-SVZ stem cells.
+
+**Important — the growth factors (IGF1, OSM) are NOT in these sequenced samples.** Every GSM sample is one cell of the {strain × treatment × timepoint} grid; none received recombinant IGF1 or OSM. Those ligands were (1) *identified computationally* from this atlas via cell-cell communication analysis, then (2) *validated in separate functional experiments* (cultured NPCs + lateral-ventricle infusion) that are not part of the sequencing dataset. The 10 samples are the characterization + lineage-attribution engine; the growth-factor mechanism is a downstream chapter built on what they localized.
+
+---
+
 ## CupRap Model
 
 Cuprizone is fed for 6 weeks to demyelinate the corpus callosum. Rapamycin is co-administered to inhibit mTOR and block natural remyelination. Mice are then given 0 or 3 weeks of recovery. This creates a controlled window to observe the OL-lineage response without confounding recovery.
@@ -27,6 +55,19 @@ Cuprizone is fed for 6 weeks to demyelinate the corpus callosum. Rapamycin is co
 - **Cuprizone**: kills mature oligodendrocytes → demyelination signal
 - **Rapamycin**: inhibits mTOR → blocks OPC→mature OL maturation
 - Together: traps cells at the OPC stage (committed but unable to fully mature)
+
+**Why "remyelination blocked" but OPCs still form — the lineage is a pipeline, and rapamycin only blocks the end:**
+
+```
+NSC → TAP → OPC → COP → immature OL → mature myelinating OL → wraps axon (REMYELINATION)
+            └──────── generation ────────┘   └──── maturation + myelination ────┘
+                   (still happens —                (this is what rapamycin blocks;
+                    driven harder by injury)        mTOR is required for myelin synthesis)
+```
+
+mTOR is required for the terminal maturation/myelination step, not for generating or proliferating OPCs upstream. So under CupRap, cuprizone (upstream) drives the niche to *generate* OPCs while rapamycin (terminal) prevents them maturing — they accumulate as a **traffic jam**. "OL-lineage cells forming" (generation) and "remyelination" (functional myelin wrapping) are different events; only the latter is blocked.
+
+> **Reading the proportions correctly:** cell-type fractions in the scRNA-seq are *compositional* (they sum to 100%), so one population's share moving does not mean its absolute count changed — when microglia crash and neuroblasts surge at 3wks, every other fraction is mechanically diluted. Also, the mature OLs that cuprizone kills live in the **corpus callosum (white matter)**, a different location from the **V-SVZ niche** being sequenced; the OL-lineage cells captured here are mostly newly-generated OPCs/COPs, not the dying white-matter OLs.
 
 ---
 
@@ -55,6 +96,19 @@ This >2-fold OPC expansion is:
 > — p. 5
 
 Eyfp+ labeling marks NPC-derived cells. The jump is at the OPC/immature OL stage specifically. Cells accumulate as OPCs downstream of commitment, not upstream in TAPs.
+
+**What EYFP-positive means (NesCreERT2-Eyfp system).** EYFP is a genetic lineage label, not a natural gene — present only in the NesCre strain (CD1 is wild-type, unlabeled). The strain name decodes the mechanism:
+
+- **Nes** (Nestin promoter) — active in neural stem cells → controls *where* the label can switch on.
+- **CreERT2** — a tamoxifen-inducible Cre recombinase → controls *when* (only fires when tamoxifen is given).
+- **Eyfp** — a reporter behind a "stop" cassette; once Cre fires it is permanently deleted and EYFP turns on.
+
+```
+give tamoxifen → Cre activates only in Nestin+ NSCs → permanently deletes the stop
+              → EYFP on, and inherited by ALL descendants (it is a DNA edit)
+```
+
+So **EYFP+ = a cell that was an NSC at tamoxifen time, or any of its progeny** — a permanent stamp on the entire V-SVZ NSC lineage. It decouples "was generated from a stem cell" (the label) from "completed myelination" (the function), which is exactly why it can show new OL-lineage cells are being *generated* even while rapamycin blocks their maturation. Without it you could not tell whether the OPC expansion was newly-made cells or rearrangement of pre-existing ones.
 
 ### Evidence 4 — No-recovery timepoint: OPCs expand, mature OLs are depleted
 

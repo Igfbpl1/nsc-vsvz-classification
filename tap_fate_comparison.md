@@ -95,6 +95,15 @@ combined_kernel = 0.8 * PrecomputedKernel(T_vel) + 0.2 * ConnectivityKernel
 
 (`PrecomputedKernel` is used in place of `VelocityKernel(adata)` to side-step a numpy-2 incompatibility in cellrank 2.0.7; the transition matrix it wraps is what `VelocityKernel.compute_transition_matrix` would have produced.)
 
+### Composition sensitivity: the ML model is composition-proof, CellRank is not
+
+The two methods respond very differently to **adding or removing samples** (which changes cell-type proportions in the pooled dataset):
+
+- **CellRank is composition-sensitive.** scVelo's dynamical model fits one global steady-state line across all pooled cells, so adding one sample refits the velocity field for *every* cell. Observed directly: swapping a single sample moved CellRank's CD1_Cntl P(OL) from 47% → 79% → 40% across runs. A kernel decomposition confirmed the **velocity kernel** (not connectivity) was the unstable component, and at one composition it produced a biologically impossible result (~79% OL-fated control TAPs, when homeostatic V-SVZ is overwhelmingly neurogenic). CellRank fate probabilities are therefore *directional corroboration at a fixed composition*, not composition-independent ground truth.
+- **The ML model is composition-proof.** It is a per-cell identity classifier on ~1,965 non-marker HVGs — timepoint, sample, strain, and composition are never features. Across the same sample swaps, ML's CD1_Cntl stayed locked at 31.7% OL. Composition enters only via (a) training class balance, handled by `scale_pos_weight`, and (b) the per-condition *summary* aggregation (denominator effects) — never the per-cell score. The cross-strain held-out test (train CD1, test NesCre, AUC ≈ 1.0) confirms the OL-lineage vs NB distinction generalizes across composition and strain rather than riding a batch/condition signal.
+
+This is why the ML classifier is the primary per-TAP fate estimate and CellRank is the validation reference, not the reverse.
+
 ---
 
 ## 5. Bottom Line
