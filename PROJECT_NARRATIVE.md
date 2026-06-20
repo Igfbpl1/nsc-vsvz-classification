@@ -1,4 +1,20 @@
-Goal: Given a sample of genes in a cell, I want to identify the top 20 most important representative non-canonical marker genes by building a model that can identify whether this cell is more OL-leaning or NB-leaning. To achieve that, this model uses all Highly Variable non-canonical, background markers (1,965 genes) as features and predicts the probability of the cell being an OL or an NB. In other words, it distinguishes a cell’s identity as OL leaning or NB leaning. As an application, I want to apply this model to an out-of-sample dataset and observe the accuracy of the model in the identification of OL or NB. Finally, I want to apply this model to a TAP dataset, which is completely excluded from the training. Here, I can compare the Marker Panel Scoring (using relative expression of OPC/COP/OL compared to the expression of NB) to the Machine Learning Classifier score.
+Goal: Given a sample of genes in a cell, I want to identify the top 20 most important representative non-canonical marker genes by building a model that can identify whether this cell is more OL-leaning or NB-leaning. To achieve that, this model uses all Highly Variable non-canonical, background markers (~1,970 genes) as features and predicts the probability of the cell being an OL or an NB. In other words, it distinguishes a cell's identity as OL leaning or NB leaning. As an application, I want to apply this model to an out-of-sample dataset and observe the accuracy of the model in the identification of OL or NB. Finally, I want to apply this model to a TAP dataset, which is completely excluded from the training. Here, I can compare the Marker Panel Scoring (using relative expression of OPC/COP/OL compared to the expression of NB) to the Machine Learning Classifier score.
+
+---
+
+> **Update — annotation refactor.** Cell-type panels have been re-aligned to Willis et al. 2025 STAR Methods. Three structural changes flow through the rest of this narrative:
+>
+> 1. **NSC split into aNSC + dNSC** (paper distinguishes them with separate marker sets — Egfr/Ascl1 for activated; Meg3/Sparc/Fbxo2/Id3 for dormant).
+> 2. **Mural split into Pericyte + VAMC** (paper's Carmn/Cspg4/Ano1 vs Pdgfrb/Myh11/Mylk).
+> 3. **Added Other_Immune (Cd52/Cd69) and Striatal_Neuron (Calb1/Bcl11b)** categories the paper uses.
+>
+> Pipeline-level changes:
+> - Annotation is now `idxmax` on absolute panel scores with a z-score tie-break (margin < 0.4 AND runner-up abs ≥ 0.5). This recovers COP and Pericyte clusters that pure `idxmax` was losing to OL and VAMC respectively.
+> - `EXCLUDED_MARKERS` for the XGBoost classifier is now the union of `MARKERS[POS+NEG]` and a new `LINEAGE_GENES` dict (pan-oligo TFs Olig1/Olig2/Sox10/Cnp/Lhfpl3/Mobp + pan-neuronal Tubb3/Cd24a). Total excluded: **31 genes** (was ~29 historically).
+> - 15 cell types now (was 11): aNSC, dNSC, TAP, Neuroblast, OPC, COP, OL, Astrocyte, Ependymal, Microglia, Other_Immune, Endothelial, Pericyte, VAMC, Striatal_Neuron.
+> - cellrank 2.0.7 → 2.3.1 dep upgrade; the prior numpy-2 monkey-patch in `compare_tap_fate_methods.py` is removed; numerical outputs unchanged.
+>
+> The probability/accuracy numbers later in this document (82% agreement, 99.85% held-out accuracy, SHAP top-20 table) are from a prior model run with the older `EXCLUDED_MARKERS` (~29 genes). The current run produces similar but slightly less confident predictions (mean prob_OL on OL-lineage drops from ~0.94 → ~0.83 because canonical OL TFs like Sox10/Olig1/Olig2 are now properly excluded from features), and the SHAP top genes shift accordingly. See the current `outputs/trigger_genes.csv` for the up-to-date list.
 
 Broad Steps (3):
 1) From an NCBI Databse, gather the barcodes and the genes in a matrix and conduct quality control on them. Then, find normalized log values for every gene in each cell. After this, use the representative genes found in the literature to classify every cell to their respective cell_type. 
@@ -58,9 +74,9 @@ SCANPY · normalize → embed → cluster → annotate
         directed=False,
     )
 ``
-* score_genes (sc.tl.score_genes) (Reference #4) per marker panel (12 cell types) →  
-  {qNSC, aNSC, TAP, Neuroblast, OPC, COP, OL,  
-  Astrocyte, Microglia, Ependymal, Endothelial, Mural}  ``sc.tl.score_genes(
+* score_genes (sc.tl.score_genes) (Reference #4) per marker panel (15 cell types) →  
+  {dNSC, aNSC, TAP, Neuroblast, OPC, COP, OL,  
+  Astrocyte, Microglia, Other_Immune, Ependymal, Endothelial, Pericyte, VAMC, Striatal_Neuron}  ``sc.tl.score_genes(
             adata,
             gene_list=present,
             score_name=f"score_{name}",
@@ -77,43 +93,58 @@ SCANPY · normalize → embed → cluster → annotate
 
 
 - Since any combo of genes that are part of any of the twelve panels can be found in these cells, a concept called Leiden clustering (Reference 4) needs to be performed in order to find the relative expression of every gene to the other.  
-- After this was completed, I had to look at the literature to find the canonical markers. There are 12 (technically 11, because aNSC - active NSC - folds into TAP/qNSC) types of V-SVZ cells in this niche (a few of which we don’t care about - specifically, we only care about 5). I first needed to figure out what the canonical, well-known, representative genes of each of these cells are (organized in Table 1), which was found in the actual literature. After this is determined, each cell type is classified by the canonical representative genes, and finally, a data table results (organized in Table 2):  
+- After this was completed, I had to look at the literature to find the canonical markers. There are 15 V-SVZ cell types in the current pipeline (post-refactor: dNSC, aNSC, TAP, Neuroblast, OPC, COP, OL, Astrocyte, Microglia, Other_Immune, Ependymal, Endothelial, Pericyte, VAMC, Striatal_Neuron). The 5 lineage-relevant ones for this project are TAP, OPC, COP, OL, and Neuroblast. I first needed to figure out what the canonical, well-known, representative genes of each of these cells are (organized in Table 1), which was found in the actual literature. After this is determined, each cell type is classified by the canonical representative genes, and finally, a data table results (organized in Table 2):  
 - This is all saved to barcode_to_cell_type_mapping.csv. This can be found here: [barcode_to_cell_type_mapping_table.xlsx](https://docs.google.com/spreadsheets/d/1t0ZHQz5KMhODr9L-O4rOQ82MiW5zbme2/edit?usp=sharing&ouid=111504262478734653360&rtpof=true&sd=true). This is a Google Drive sheet that has everything worth mentioning.  
 
-Table 1: Canonical Marker Genes
+Table 1: Canonical Marker Genes (current `markers.py`, paper-aligned)
 
 | Cell Type | Marker Genes   |
 | :---- | :---- |
-| **qNSC** | Gfap, Slc1a3, Aldh1l1, Vim, Sox2, Sox9, Hes5, Aldoc, Apoe, Id3 |
-| **aNSC** | Egfr, Ascl1, Mki67, Top2a, Sox2, Hes5, Nes |
-| **TAP** | Egfr, Mki67, Ccnd2, Dlx1, Dlx2, Ascl1, Top2a |
-| **Neuroblast** | Dcx, Sox4, Sox11, Stmn2, Stmn3, Nrxn3, Tubb3, Dlx1, Dlx2 |
-| **OPC** | Pdgfra, Cspg4, Olig1, Olig2, Sox10, Cnp, Lhfpl3 |
-| **COP** | Gpr17, Sox10, Olig2, Itpr2, Bmp4, Bcas1, Tcf7l2 |
-| **OL** | Mbp, Mog, Mag, Plp1, Mobp, Cldn11, Mal, Trf, Cnp |
-| **Astrocyte** | Aqp4, Slc1a2, Aldh1l1, S100b, Mfge8, Ntsr2, Slc1a3 |
-| **Microglia** | Cx3cr1, Tmem119, P2ry12, C1qa, Csf1r, Trem2, Hexb, Aif1 |
-| **Ependymal** | Foxj1, Ccdc153, Tmem212, Rsph1, Sox2 |
-| **Endothelial** | Cldn5, Pecam1, Flt1, Cdh5 |
-| **Mural** | Pdgfrb, Acta2, Rgs5 |
+| **dNSC** | Meg3, Sparc, Fbxo2, Id3 |
+| **aNSC** | Egfr, Ascl1 |
+| **TAP** | Mki67, Rrm2, Hells, Gsx2 |
+| **Neuroblast** | Dlx1, Dlx2, Sp8, Sp9, Gad1, Gad2, Dcx |
+| **OPC** | Pdgfra, Cspg4 |
+| **COP** | Enpp4, Gpr17, Fyn, Nkx2-2, Bcas1, Tcf7l2, Bmp4 |
+| **OL** | Mog, Mag, Opalin, Mbp, Plp1, Cldn11, Ermn |
+| **Astrocyte** | Aqp4, Agt, Hsd11b1, Lcat |
+| **Microglia** | Aif1, Trem2, Cx3cr1, Tmem119 |
+| **Other_Immune** | Cd52, Cd69 |
+| **Ependymal** | Foxj1, Pvalb |
+| **Endothelial** | Pecam1, Esam, Plvap |
+| **Pericyte** | Carmn, Cspg4, Ano1 |
+| **VAMC** | Pdgfrb, Myh11, Mylk |
+| **Striatal_Neuron** | Calb1, Gad1, Gad2, Bcl11b |
 
-References 6-17 (This is from [markers.py](http://markers.py) - what the canonical markers are)
+Source: Willis et al. 2025 STAR Methods (p. 23). See `markers.py` for the live list. Pan-lineage genes that identify *which lineage* but not the subtype — `Olig1, Olig2, Sox10, Cnp, Lhfpl3, Mobp` (OL lineage) and `Tubb3, Cd24a` (Neuroblast lineage) — are stored separately in `LINEAGE_GENES` so they don't cause `idxmax` ties between OPC/COP/OL or Neuroblast/Striatal_Neuron, but they *are* excluded from the XGBoost feature set.
 
-Table 2: Cell Type Classification by Marker Genes
+Table 2: Cell Type Classification by Marker Genes (post-refactor counts, 47,965 cells total)
 
 | Cell type | N amount of cells |
 | :---- | :---- |
-| Microglia | 16270 |
-| Neuroblast | 10205 |
-| OL | 6400 |
-| TAP | 5202 |
-| Mural | 2713 |
-| Astrocyte | 1784 |
-| Ependymal | 1586 |
-| qNSC | 1387 |
-| Endothelial | 1304 |
-| OPC | 862 |
-| COP | 252 |
+| Microglia | 15,923 |
+| Neuroblast | 10,057 |
+| OL | 5,127 |
+| TAP | 3,611 |
+| Pericyte | 2,080 |
+| Astrocyte | 1,784 |
+| aNSC | 1,591 |
+| Ependymal | 1,586 |
+| dNSC | 1,387 |
+| Endothelial | 1,304 |
+| COP | 1,273 |
+| OPC | 912 |
+| VAMC | 633 |
+| Striatal_Neuron | 445 |
+| Other_Immune | 252 |
+
+Changes vs. the pre-refactor counts that previously appeared in this table:
+- **NSC** (was qNSC, n = 1,387) is now split into **aNSC** (1,591) and **dNSC** (1,387). The 1,591 aNSCs were previously absorbed into TAP, which is why **TAP dropped** from 5,202 → 3,611 (cleaner TAP-only set).
+- **Mural** (n = 2,713) split into **Pericyte** (2,080) + **VAMC** (633).
+- **COP** rose from 252 → 1,273: the hybrid `idxmax` + z-score tie-break now recovers cells that pure `idxmax` was losing to OL (cluster 14: OL=1.62 vs COP=1.50, margin too small for `idxmax` but COP wins the z-score test).
+- **OL** dropped from 6,400 → 5,127: the cells that left OL are now correctly labeled COP.
+- **OPC** rose slightly (862 → 912) from cluster-boundary cells recovered.
+- **Other_Immune** (252) and **Striatal_Neuron** (445) are new categories the paper uses.
 
 This table can be found in this Google Drive link: [barcode_to_cell_type_mapping_table.xlsx](https://docs.google.com/spreadsheets/d/1t0ZHQz5KMhODr9L-O4rOQ82MiW5zbme2/edit?usp=sharing&ouid=111504262478734653360&rtpof=true&sd=true). This table can be found in the Google Sheet tab (at the bottom) stating “Cell Type Classification by Marker Genes”. This was found by using the Pivot feature on Excel. 
 

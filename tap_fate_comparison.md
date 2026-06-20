@@ -10,7 +10,7 @@ The project's central deliverable is a per-TAP fate prediction: "is this TAP hea
 
 | Method | Approach | Input |
 |---|---|---|
-| **ML model (XGBoost)** | Supervised classifier trained on terminal cells | 1,965 non-canonical HVGs |
+| **ML model (XGBoost)** | Supervised classifier trained on terminal cells | ~1,970 non-canonical HVGs (2000 HVGs − 31 excluded lineage genes from `MARKERS[POS+NEG]` ∪ `LINEAGE_GENES`) |
 | **CellRank** | Velocity-based fate probability | RNA velocity transition matrix + terminal states |
 
 CellRank is methodologically principled for intermediate cells because it uses each cell's actual velocity vector to compute drift toward terminal states. It provides an independent validation reference for the XGBoost classifier.
@@ -77,7 +77,9 @@ The conditions are essentially indistinguishable at the TAP stage, which is the 
 
 ## 4. Methodology Notes on CellRank
 
-CellRank's terminal states are defined from `cell_type` labels to match the ML classifier's positive class. The `OL` terminal group is the full OL lineage — cells labeled `OL`, `OPC`, or `COP` (i.e. `OL_LINEAGE` from `markers.py`); the `Neuroblast` group is cells labeled `Neuroblast`; every other cell (TAPs, NSCs, Astrocyte, etc.) is transient. For each transient cell, `cellrank_P_OL` is the probability that a random walk following the velocity transition matrix is absorbed into the OL-lineage group.
+CellRank's terminal states are defined from `cell_type` labels to match the ML classifier's positive class. The `OL` terminal group is the full OL lineage — cells labeled `OL`, `OPC`, or `COP` (i.e. `OL_LINEAGE` from `markers.py`); the `Neuroblast` group is cells labeled `Neuroblast`; every other cell (TAPs, **dNSCs, aNSCs**, Astrocyte, etc.) is transient. For each transient cell, `cellrank_P_OL` is the probability that a random walk following the velocity transition matrix is absorbed into the OL-lineage group.
+
+> **Note on the velocity object's cell-type labels.** The `velocity_combined.h5ad` consumed by this script still carries the pre-refactor labels (`NSC`, `Mural`) rather than the post-refactor split (`aNSC`/`dNSC`, `Pericyte`/`VAMC`). The terminal-state bundle (`OL`, `OPC`, `COP`, `Neuroblast`) is unaffected because those keys exist in both vocabularies. Aggregate per-condition numbers are therefore unchanged. To get aNSC/dNSC-level transient-state interpretation, rebuild the velocity object: `python velocity_build.py`.
 
 Bundling OPC/COP into the OL terminal group keeps the CellRank vs ML comparison apples-to-apples: both methods now report `P(OL lineage)` rather than ML reporting "OL-or-OPC-or-COP" and CellRank reporting strict "OL only". An OL-only terminal definition was tested and gives near-identical results in this dataset (Pearson r = 0.835 either way; mean P shifts by ≤0.006 per condition, OL counts shift by 1–2 cells per condition), because the OPC→COP→OL velocity flux is functional enough that strict-OL absorbing already captures the lineage mass via forward flow.
 
@@ -88,21 +90,11 @@ This approach inherits whatever errors exist in the Leiden clustering. We accept
 
 The CellRank transition matrix combines the velocity kernel (80%) and connectivity kernel (20%):
 
+```python
+vk = VelocityKernel(adata).compute_transition_matrix(n_jobs=4)
+ck = ConnectivityKernel(adata).compute_transition_matrix()
+combined_kernel = 0.8 * vk + 0.2 * ck
 ```
-T_vel = scv.utils.get_transition_matrix(adata)
-combined_kernel = 0.8 * PrecomputedKernel(T_vel) + 0.2 * ConnectivityKernel
-```
-
-(`PrecomputedKernel` is used in place of `VelocityKernel(adata)` to side-step a numpy-2 incompatibility in cellrank 2.0.7; the transition matrix it wraps is what `VelocityKernel.compute_transition_matrix` would have produced.)
-
-### Composition sensitivity: the ML model is composition-proof, CellRank is not
-
-The two methods respond very differently to **adding or removing samples** (which changes cell-type proportions in the pooled dataset):
-
-- **CellRank is composition-sensitive.** scVelo's dynamical model fits one global steady-state line across all pooled cells, so adding one sample refits the velocity field for *every* cell. Observed directly: swapping a single sample moved CellRank's CD1_Cntl P(OL) from 47% → 79% → 40% across runs. A kernel decomposition confirmed the **velocity kernel** (not connectivity) was the unstable component, and at one composition it produced a biologically impossible result (~79% OL-fated control TAPs, when homeostatic V-SVZ is overwhelmingly neurogenic). CellRank fate probabilities are therefore *directional corroboration at a fixed composition*, not composition-independent ground truth.
-- **The ML model is composition-proof.** It is a per-cell identity classifier on ~1,965 non-marker HVGs — timepoint, sample, strain, and composition are never features. Across sample swaps, ML's per-condition predictions stayed stable while CellRank's swung. Composition enters only via (a) training class balance, handled by `scale_pos_weight`, and (b) the per-condition *summary* aggregation (denominator effects) — never the per-cell score. The cross-strain held-out test (train CD1, test NesCre, AUC ≈ 1.0) confirms the OL-lineage vs NB distinction generalizes across composition and strain rather than riding a batch/condition signal. (Note: absolute per-condition percentages do shift between full pipeline reruns when the upstream cell-typing changes — e.g. a clustering/QC change altered TAP counts — but that is a cell-typing effect, not velocity composition sensitivity.)
-
-This is why the ML classifier is the primary per-TAP fate estimate and CellRank is the validation reference, not the reverse.
 
 ---
 
@@ -112,9 +104,11 @@ This is why the ML classifier is the primary per-TAP fate estimate and CellRank 
 
 Two methods built on independent biological signals (gene expression vs splicing kinetics) converge on the same per-cell ranking. This is strong cross-validation for the XGBoost classifier's per-TAP fate score.
 
-By both methods, **CupRap does not enrich OL fate at the TAP stage**. The share of OL-leaning TAPs in CupRap conditions is at or below corresponding Controls. This is consistent with the published claim (Willis et al. Figure 2I, r = 0.995 for TAP transcriptome Cntl vs CupRap) that TAP transcriptional identity is unchanged under CupRap, and adds a velocity-based confirmation that the velocity vectors at the TAP stage are not pushing toward OL fate either.
+By both methods, **CupRap does not enrich OL fate at the TAP stage**. The share of OL-leaning TAPs in CupRap conditions is at or below corresponding Controls. This is consistent with the published claim (Willis et al. Figure 2I, r = 0.995 for *average* TAP transcriptome Cntl vs CupRap): TAP steady-state expression identity does not shift toward OL under CupRap.
 
-The OL commitment signal — both transcriptionally and via velocity dynamics — appears post-TAP, at the OPC/COP transition (see velocity driver rankings in `outputs/velocity/velocity_drivers_*.csv`).
+Velocity adds a finer-grained observation that is **not** in tension with the r = 0.995 result. Velocity measures **splicing kinetics**, not average expression — two TAP populations can have identical average expression vectors (r = 0.995) while differing in how quickly specific genes are being upregulated. At the TAP stage, the only condition-dependent velocity signal we detect points *away from* OL: Meis2 climbs from rank 10 (Cntl) to rank 2 (CupRap) in TAP velocity drivers (corr 71.99, likelihood 0.79, Spearman 0.93) and is independently SHAP rank 4 NEGATIVE_OL — the model uses its *absence* as an OL signal. Its velocity-driven rise in CupRap TAPs is consistent with TAPs being more NB-committed under CupRap, not less. No positive OL-leaning gene appears in the top 100 TAP velocity drivers in either condition. Net: CupRap leaves TAP average identity unchanged (paper's r = 0.995) and reinforces, rather than reverses, the NB-default trajectory in velocity.
+
+The OL-positive commitment signal — both transcriptionally and via velocity dynamics — first appears **post-TAP**, at the OPC/COP transition. Fa2h is rank 1 in the COP velocity drivers (corr 138.32) AND SHAP rank 9 POSITIVE_OL; Gjc3 is rank 11 in COP velocity drivers AND SHAP rank 8 POSITIVE_OL — same cross-method convergence that's absent at TAP. Driver tables: `outputs/velocity/velocity_drivers_*.csv`.
 
 ---
 
@@ -129,7 +123,7 @@ The OL commitment signal — both transcriptionally and via velocity dynamics �
 ## 7. Reproducibility
 
 ```bash
-uv pip install cellrank
+uv sync  # picks up cellrank>=2.3.1, scipy<1.17, numpy>=2
 uv run python compare_tap_fate_methods.py
 ```
 
@@ -138,3 +132,8 @@ Requires:
 - `outputs/ol_commitment.csv` (from `train_ol_classifier.py`)
 
 CellRank computation: deterministic for a given input. Single run gives the same results.
+
+Dependency notes (current pyproject.toml):
+- `cellrank>=2.3.1` — clean upstream, no monkey-patches in `compare_tap_fate_methods.py`
+- `scipy>=1.13,<1.17` — capped to satisfy `pygam` (transitive of cellrank)
+- The previous numpy-2 monkey-patch and `tol=1e-10` workaround were removed; outputs are unchanged

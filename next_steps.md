@@ -10,13 +10,14 @@ The current project has:
 - A binary fate classifier (XGBoost + SHAP explainability) → `ol_commitment.csv`, `trigger_genes.csv`
 - RNA velocity on spliced/unspliced counts built from raw FASTQs via kb-python → per-condition stream plots, velocity driver gene rankings per cell type and condition
 - CellRank fate probability analysis (velocity-based P(OL) per TAP cell) → `tap_fate_comparison.csv`
-- Three-method TAP fate comparison (XGBoost, CellRank, bias score) with pairwise Pearson/Spearman/Cohen's kappa statistics → `tap_fate_method_summary.csv`, `tap_fate_per_condition.csv`
-- Canonical marker dotplot validating cell type labels across all 11 cell types → `dotplot__marker_dotplot.png`
-- Three positive computational findings that are not in the published paper:
-  1. **Trigger gene list** — SHAP identified Fa2h, Gjc3, Dock10, Pllp, Tspan2 as the genes most discriminating of OL fate, derived independently from gene expression alone
-  2. **Fa2h is the #1 COP velocity driver in both conditions** — the strongest transcriptional momentum signal toward OL maturation localizes to a single gene at a specific lineage stage
-  3. **Meis2 is the rank-1 CupRap TAP velocity driver** (corr 79.77, Spearman 0.93) — a neuroblast gene, meaning CupRap TAPs are being pushed toward NB fate, not OL; this is unexpected and not reported by Willis et al.
-  - Context: CellRank P(OL) and XGBoost P(OL) are both lower in CupRap TAPs than control TAPs across all conditions, consistent with the Meis2 finding
+- Two-method TAP fate comparison (XGBoost vs CellRank) with Pearson/Spearman statistics → `tap_fate_per_condition.csv`
+- Paper-aligned cell-type annotation (Willis et al. 2025 STAR Methods markers) across **15 cell types** (`markers.py`): dNSC, aNSC, TAP, Neuroblast, OPC, COP, OL, Astrocyte, Microglia, Other_Immune, Ependymal, Endothelial, Pericyte, VAMC, Striatal_Neuron. Annotation rule: `idxmax` with z-score tie-break (margin < 0.4 AND runner-up abs ≥ 0.5), which recovers the COP and Pericyte clusters pure `idxmax` was losing.
+- Canonical marker dotplot validating cell type labels → `dotplot__marker_dotplot.png`
+- Positive computational findings not in the published paper:
+  1. **Trigger gene list** (current `outputs/trigger_genes.csv`, top SHAP POSITIVE_OL): Pllp (rank 2), Gjc3 (rank 8), Fa2h (rank 9), Cryab (rank 14), Tspan2 (rank 17), Cnp (rank 18), Myrf (rank 29) — discriminating OL fate from gene expression alone, with canonical OL TFs (Olig1/2, Sox10, Mbp, Plp1) excluded from features via `LINEAGE_GENES`.
+  2. **Fa2h is the #1 COP velocity driver in both conditions** (corr 138.32) — strongest transcriptional momentum signal toward OL maturation localizes to one gene at one lineage stage. Fa2h is also SHAP rank 9 POSITIVE_OL: two independent methods converge.
+  3. **Meis2 climbs from TAP velocity rank 10 (Cntl) to rank 2 (CupRap)** (corr 71.99, Spearman 0.93) — a neuroblast gene whose velocity signal *rises* in CupRap TAPs. Meis2 is SHAP rank 4 NEGATIVE_OL, so this is CupRap TAPs being pushed toward NB fate, not OL — unexpected and not reported by Willis et al.
+  4. **aNSC fate-bias signal under acute injury** — aNSC `bias` median shifts from -0.07 (Control) to +0.15 (CupRap NoRecov), Mann-Whitney p = 2.9 × 10⁻¹⁴, with full return to baseline by 3 weeks (p = 0.77 vs Control). Recovered after the markers.py refactor split NSC → aNSC/dNSC; the underlying activation→OL-tilt signal had been masked by the prior combined NSC label.
 - A complete scientific narrative (PROJECT_NARRATIVE.md, rna_velocity_trajectory.md, GSE266687_summary.md, tap_fate_comparison.md)
 
 ---

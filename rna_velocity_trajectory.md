@@ -6,6 +6,8 @@
 
 The project uses a static snapshot of gene expression to classify cell types and an XGBoost model (with SHAP scores) to identify trigger genes that predict whether a TAP will commit to the Neuroblast or OL lineage.
 
+> Cell-type annotation now uses paper-aligned marker panels (Willis et al. 2025 STAR Methods) with NSC split into **aNSC** (Egfr, Ascl1) and **dNSC** (Meg3, Sparc, Fbxo2, Id3), and Mural split into **Pericyte** and **VAMC**. Cluster assignment is `idxmax` over absolute panel scores with a z-score tie-break when the top two panels are within margin 0.4 and the runner-up has absolute signal ≥ 0.5. See `markers.py` and `run_pipeline.py:41-69`.
+
 While SHAP scores tell us *which* genes distinguish the lineages, static data cannot tell us *when* those genes act — are they early drivers or late consequence markers?
 
 **RNA velocity answers this.** By modeling the ratio of unspliced (newly transcribed) to spliced (mature) mRNA, scVelo acts as a molecular clock. It infers directional flow, allowing genes to be ranked by how tightly their splicing dynamics align with cell movement along the trajectory — separating early drivers from late state markers.
@@ -82,6 +84,9 @@ uv run python compare_tap_fate_methods.py
 
 Output: `outputs/velocity/`
 
+> **Dependency update (cellrank 2.0.7 → 2.3.1, scipy 1.17.1 → 1.16.3)**
+> `compare_tap_fate_methods.py` previously included a 16-line monkey-patch on `numpy.testing.assert_array_equal` to work around a kwarg-renaming incompatibility in cellrank 2.0.7's `VelocityKernel.__init__`. With cellrank ≥2.3.1 the upstream fix is in place. The patch is removed and `compute_fate_probabilities()` runs at defaults (no `tol=1e-10` workaround). The per-condition `tap_fate_per_condition.csv` numbers are byte-identical before and after this upgrade, confirming pure cleanup with no behavior change.
+
 ---
 
 ## 5. Output Files
@@ -106,21 +111,24 @@ Each driver CSV contains: `rank`, `ensembl_id`, `gene_name`, `corr`, `likelihood
 Each driver CSV corresponds to **where in the trajectory the gene's velocity is active**:
 
 ```
-NSC → TAP → Neuroblast
-          ↘ OPC → COP → OL
+dNSC → aNSC → TAP → Neuroblast
+                  ↘ OPC → COP → OL
 
-Early ←————————————————————→ Late
-(NSC/TAP)                  (OL/NB)
+Early ←——————————————————————————→ Late
+(dNSC/aNSC/TAP)                 (OL/NB)
 ```
 
 | Column | When the gene is active | What it means |
 |---|---|---|
-| **NSC** | In NSCs, upstream of TAPs | May mark cells about to become TAPs |
+| **dNSC** | In dormant NSCs (Meg3/Sparc/Fbxo2/Id3 high) | Quiescent stem cell state; pre-activation |
+| **aNSC** | In activated NSCs (Egfr/Ascl1 high) | Stem cell that just entered cycle; fate-uncommitted |
 | **TAP** | In TAPs, before commitment | **Early fate-decision gene** — most valuable for this project |
 | **OPC** | After OL commitment, driving OPC→COP | Mid-lineage marker |
 | **COP** | Late, driving COP→OL maturation | Late commitment marker |
 | **OL** | In mature OLs | Terminal differentiation marker |
 | **Neuroblast** | In NB arm after commitment | NB terminal marker |
+
+> **Note on the velocity driver CSVs**: `velocity_drivers_TAP.csv`, `velocity_drivers_OPC.csv`, etc. were generated *before* the markers.py refactor that split NSC → {dNSC, aNSC}. The current `outputs/velocity/` therefore has no `velocity_drivers_aNSC.csv` / `velocity_drivers_dNSC.csv`, and TAP velocity drivers include ~1591 cells that are now correctly classified as aNSC (not TAP). Rebuilding `velocity_combined.h5ad` from the refactored `processed.h5ad` (via `python velocity_build.py`) will produce per-aNSC/dNSC driver CSVs and a cleaner TAP-only driver list.
 
 ### How to Identify a True Early Marker
 
@@ -150,12 +158,12 @@ Velocity computed on 7 samples (36,728 cells; 2,949 TAPs):
 ### Stream Plot
 
 The stream plot shows the same trajectory topology as earlier (4-sample) runs:
-- **NSC → TAP**: clear flow
+- **dNSC → aNSC → TAP**: clear flow along the precursor cascade
 - **TAP → Neuroblast**: strong dominant arm
 - **TAP bifurcation**: rightward arm toward OPC → COP → OL visible alongside dominant Neuroblast arm
-- Non-lineage cells (Microglia, Astrocyte, Endothelial, Mural, Ependymal) self-contained
+- Non-lineage cells (Microglia, Astrocyte, Endothelial, Pericyte, VAMC, Ependymal) self-contained
 
-Adding samples did not change the trajectory structure.
+Adding samples did not change the trajectory structure. The current stream PNGs were generated against the pre-refactor labels (NSC, Mural); cell-type *colors* in those PNGs will differ once the velocity object is rebuilt against the refactored `processed.h5ad`, but trajectory direction is independent of label and unchanged.
 
 ### TAP Velocity Drivers — Srrm4 Rank 1, Meis2 Rank 2 in CupRap
 
@@ -289,3 +297,17 @@ The CD1_Cntl 0wks stream plot showing the quietest OL lineage flow is consistent
 The OL-lineage proportion (OPC+COP+OL) is much higher at 0wks (37.8%) than 3wks (17.9%). OPC and COP fractions collapse by 3wks (OPC 6.0%→1.5%, COP 11.4%→3.0%), while Neuroblast surges (1.9%→28.7%) and TAP rises (2.0%→9.0%). This is the acute-injury → recovery transition: at 0wks the niche is at peak OL-precursor generation with neurogenesis suppressed; by 3wks the OL-precursor wave has receded and the neurogenic program has rebounded. (These are *proportions* of a fixed pie — a population's share moving does not by itself prove its absolute count changed.)
 
 The current velocity analysis includes GSM8647353 (CD1_CupRap_0wks_Rep2). GSM8647352 (CD1_CupRap_0wks_Rep1) is still pending.
+
+### aNSC fate-bias observation (independent of velocity)
+
+After the markers.py refactor (split NSC → aNSC/dNSC), the per-cell `bias` score (`(score_OPC + score_COP + score_OL)/3 − score_Neuroblast`) reveals a clean acute-injury signal at the aNSC stage. Using all CD1 samples:
+
+| Condition | n aNSCs | bias median | fraction OL-leaning (bias > 0) |
+|---|---|---|---|
+| Control (0+3wks) | 1029 | -0.07 | 43% |
+| CupRap 3wkRecov | 428 | -0.12 | 41% |
+| CupRap **NoRecov** | 134 | **+0.15** | **67%** |
+
+Mann-Whitney U test, aNSC bias Control vs CupRap_NoRecov: **p = 2.9 × 10⁻¹⁴**. The 3-week recovery aNSCs are statistically indistinguishable from controls (p = 0.77), so the OL-commitment push is **transient** — acute demyelination tilts the activated stem cell pool toward oligodendrogenesis, and by 3 weeks the distribution returns to baseline. This matches the paper's central claim about injury-driven NSC activation toward repair and is recovered here without telling the model the conditions.
+
+Caveat: the ML model's `prob_OL` on aNSCs is unreliable (~0.45 across conditions) because aNSCs are not in the training set (POS = OL+COP+OPC, NEG = Neuroblast). For aNSC inference, use the `bias` score, not `prob_OL`. See `ol_commitment.csv` and `train_ol_classifier.py:56-61`.

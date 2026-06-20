@@ -2,13 +2,20 @@
 
 This project utilizes ML to give a similarity score to every undecided TAP and to surface a list of the top 20 non-canonical genes indicative of differentiation into either OL or NB.
 
+### Pipeline at a glance
+
+- **Cell-type annotation** (`run_pipeline.py`, `markers.py`): paper-aligned marker panels from Willis et al. 2025 STAR Methods. NSC is split into **aNSC** (Egfr, Ascl1) and **dNSC** (Meg3, Sparc, Fbxo2, Id3); Mural is split into **Pericyte** (Carmn, Cspg4, Ano1) and **VAMC** (Pdgfrb, Myh11, Mylk); separate **Other_Immune** (Cd52, Cd69) and **Striatal_Neuron** (Calb1, Bcl11b) categories. Cluster labels are assigned by `idxmax` on per-panel scores with a z-score tie-break when the top two panels are within margin 0.4 and the runner-up has absolute signal ≥ 0.5 — this recovers COP and Pericyte clusters that pure `idxmax` would lose to OL and VAMC respectively.
+- **Lineage-gene exclusion** (`markers.py:LINEAGE_GENES`): pan-oligo TFs (Olig1, Olig2, Sox10, Cnp, Lhfpl3, Mobp) and pan-neuronal genes (Tubb3, Cd24a) are kept out of `MARKERS` (they would cause idxmax ties) but excluded from the XGBoost feature set so SHAP surfaces non-canonical trigger candidates rather than re-discovering canonical lineage genes.
+- **Comparison method**: per-TAP P(OL_lineage) from XGBoost (gene expression) vs cellrank (RNA velocity). Pearson r = 0.828 across 2,944 TAPs.
+- **Dep stack**: cellrank ≥ 2.3.1, scipy < 1.17 (pygam constraint), numpy 2. Earlier monkey-patches around cellrank 2.0.7's numpy-2 incompatibility are removed; outputs are unchanged byte-for-byte by the upgrade.
+
 ---
 
 ## Literature Review — Source Paper Comparison
 
 The primary dataset (GSE266687) was published in:
 
-**Wegleiter et al., "Single cell approaches define neural stem cell niches and identify microglial ligands that can enhance precursor-mediated oligodendrogenesis"**
+**Willis et al., "Single cell approaches define neural stem cell niches and identify microglial ligands that can enhance precursor-mediated oligodendrogenesis"**
 Cell Reports, January 2025. doi:10.1016/j.celrep.2024.115194
 PubMed: [39823226](https://pubmed.ncbi.nlm.nih.gov/39823226/)
 bioRxiv preprint: [2024.03.22.586277](https://www.biorxiv.org/content/10.1101/2024.03.22.586277v1)
@@ -54,7 +61,8 @@ This analysis is complementary, not duplicative. The paper sets up the upstream 
 | Gjc3 as the top OL-lineage velocity driver (OL rank 1, corr 224.75) | — | ✓ |
 | Fa2h as the top COP velocity driver (COP rank 1, corr 138.32) | — | ✓ |
 | Hypothesis: OL commitment lacks an early transcriptional switch | — | ✓ |
+| aNSC fate-bias signal: acute Cup-Rap (NoRecov) shifts aNSC `bias` median from -0.07 to +0.15 (p = 2.9 × 10⁻¹⁴), recovered to baseline by 3 wks | — | ✓ |
 
 ### Defensible framing for the project
 
-> Wegleiter et al. (Cell Reports 2025) identified IGF1 and OSM as microglial ligands that enhance V-SVZ oligodendrogenesis. We extended this work by performing RNA velocity and SHAP-based classifier analysis on the same dataset (GSE266687) to characterize the downstream transcriptional response in TAPs. Our analysis reveals (1) clear early NB-fate drivers (Bcl11a, Nfib, Meis2) detectable at the TAP stage, (2) absence of a comparable early OL-fate transcriptional switch in TAPs, suggesting OL commitment may be defined by failure to engage the NB program rather than active induction of an OL program, and (3) Gjc3 as a CupRap-responsive OL maturation marker whose velocity signal scales with CupRap sample inclusion, providing direct molecular evidence linking microglial IGF1/OSM signaling to a specific downstream transcriptional event in committing OL precursors.
+> Willis et al. (Cell Reports 2025) identified IGF1 and OSM as microglial ligands that enhance V-SVZ oligodendrogenesis. We extended this work by performing RNA velocity and SHAP-based classifier analysis on the same dataset (GSE266687) to characterize the downstream transcriptional response in TAPs. Our analysis reveals (1) clear early NB-fate drivers (Bcl11a, Nfib, Meis2) detectable at the TAP stage, (2) absence of a comparable early OL-fate transcriptional switch in TAPs, suggesting OL commitment may be defined by failure to engage the NB program rather than active induction of an OL program, and (3) Gjc3 as a CupRap-responsive OL maturation marker whose velocity signal scales with CupRap sample inclusion, providing direct molecular evidence linking microglial IGF1/OSM signaling to a specific downstream transcriptional event in committing OL precursors.
