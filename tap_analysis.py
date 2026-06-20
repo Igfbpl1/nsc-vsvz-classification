@@ -12,6 +12,58 @@ OUT = ROOT / "outputs"
 
 ALL_MARKER_GENES = {g for genes in MARKERS.values() for g in genes}
 
+# GSM accession -> condition label (matches velocity_build.py velocity_label naming)
+CONDITION = {
+    "GSM8253792": "CD1_Cntl",
+    "GSM8253793": "CD1_Cntl_3wks",
+    "GSM8253794": "CD1_CupRap",
+    "GSM8253795": "CD1_CupRap_Rep2",
+    "GSM8253796": "Cntl",
+    "GSM8253797": "Cntl_Rep2",
+    "GSM8253798": "CupRap_Rep1",
+    "GSM8253799": "CupRap_Rep2",
+    "GSM8647352": "CD1_CupRap_0wks_Rep1",
+    "GSM8647353": "CD1_CupRap_0wks_Rep2",
+}
+
+# Order conditions appear in the per-condition agreement view.
+CONDITION_ORDER = [
+    "CD1_Cntl", "CD1_Cntl_3wks", "CD1_CupRap", "CD1_CupRap_0wks_Rep1",
+    "CD1_CupRap_0wks_Rep2", "CD1_CupRap_Rep2", "Cntl", "Cntl_Rep2",
+    "CupRap_Rep1", "CupRap_Rep2",
+]
+
+
+def write_agreement_view(tap_frame: pd.DataFrame) -> None:
+    """Per-condition bias-vs-prediction agreement breakdown (2x2 quadrants)."""
+    b, p = tap_frame["bias_is_ol"], tap_frame["prediction_is_ol"]
+    df = tap_frame.assign(
+        _nn=(b == 0) & (p == 0),   # both NB
+        _oo=(b == 1) & (p == 1),   # both OL
+        _bo=(b == 1) & (p == 0),   # bias-OL only
+        _po=(b == 0) & (p == 1),   # pred-OL only
+    )
+    g = df.groupby("condition", observed=True)
+    view = pd.DataFrame({
+        "n": g.size(),
+        "both NB (0/0)": g["_nn"].sum(),
+        "both OL (1/1)": g["_oo"].sum(),
+        "bias-OL only (1/0)": g["_bo"].sum(),
+        "pred-OL only (0/1)": g["_po"].sum(),
+    }).reindex([c for c in CONDITION_ORDER if c in g.groups])
+    view["agree %"] = (
+        (view["both NB (0/0)"] + view["both OL (1/1)"]) / view["n"] * 100
+    ).round(1)
+
+    total = view.drop(columns="agree %").sum()
+    total["agree %"] = round(
+        (view["both NB (0/0)"].sum() + view["both OL (1/1)"].sum())
+        / view["n"].sum() * 100, 1
+    )
+    view = pd.concat([view, pd.DataFrame([total], index=["Grand Total"])])
+    view.index.name = "condition"
+    view.to_csv(f"{OUT}/test2_agreement_view.csv")
+
 
 def run_analysis() -> None:
     print("loading data")
@@ -23,8 +75,10 @@ def run_analysis() -> None:
     tap = adata[adata.obs["cell_type"] == "TAP"].copy()
     print(f"TAPs: {tap.n_obs}")
     tap_frame = tap.obs[["sample_id", "pred_p_OL", "bias"]].copy()
+    tap_frame.insert(1, "condition", tap_frame["sample_id"].map(CONDITION))
     tap_frame["bias_is_ol"] = tap_frame["bias"].apply(lambda p: 1 if p > 0 else 0)
     tap_frame["prediction_is_ol"] = tap_frame["pred_p_OL"].apply(
         lambda p: 1 if p > 0.5 else 0
     )
     tap_frame.to_csv(f"{OUT}/out_of_sample_tap_comparison_test2.csv")
+    write_agreement_view(tap_frame)
