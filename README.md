@@ -47,12 +47,12 @@ This analysis is complementary, not duplicative. The paper sets up the upstream 
 | Identify microglial ligands (IGF1, OSM) | ✓ Main finding | — |
 | Spatial map of dorsal vs lateral V-SVZ | ✓ | — |
 | Functional validation in culture/in vivo | ✓ | — |
-| RNA velocity of TAP→OL/NB transitions (8 samples) | — | ✓ |
+| RNA velocity of TAP→OL/NB transitions (7 samples) | — | ✓ |
 | XGBoost+SHAP classifier for TAP fate prediction | — | ✓ |
 | Early NB-fate TAP drivers (Bcl11a, Nfib, Meis2) | — | ✓ |
 | Positive non-canonical OL markers (Pllp, Gjc3, Fa2h, Tspan2, Cnp, Cryab, Dock10) | — | ✓ |
-| Gjc3 as CupRap-responsive OL marker (velocity rank 22→1 with added CupRap) | — | ✓ |
-| Igf1 as a COP velocity driver (cell-intrinsic IGF1 dynamics) | — | ✓ |
+| Gjc3 as the top OL-lineage velocity driver (OL rank 1, corr 224.75) | — | ✓ |
+| Fa2h as the top COP velocity driver (COP rank 1, corr 138.32) | — | ✓ |
 | Hypothesis: OL commitment lacks an early transcriptional switch | — | ✓ |
 
 ### Defensible framing for the project

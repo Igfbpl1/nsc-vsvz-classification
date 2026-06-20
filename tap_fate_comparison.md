@@ -32,15 +32,15 @@ ML uses **gene expression patterns**. CellRank uses **splicing kinetics**. The t
 
 ---
 
-## 3. Results — 7-Sample Run (4,268 TAPs)
+## 3. Results — 7-Sample Run (2,944 TAPs)
 
 ### Per-cell agreement
 
 | Statistic | Value |
 |---|---|
-| n TAPs with both predictions | 4,268 |
-| Pearson r | **0.835** (p ≈ 0) |
-| Spearman r | **0.855** (p ≈ 0) |
+| n TAPs with both predictions | 2,944 |
+| Pearson r | **0.828** (p ≈ 0) |
+| Spearman r | **0.838** (p ≈ 0) |
 
 Two methods using independent biological signals correlate at r > 0.8 per cell. This is the strongest single statistic supporting the ML classifier's per-cell scoring.
 
@@ -50,28 +50,28 @@ A cell is OL-leaning if its individual P(OL) > 0.5, NB-leaning otherwise. Since 
 
 **OL-leaning TAPs**
 
-| Method | CD1_Cntl (876) | CD1_Cntl_3wks (1129) | CD1_CupRap (463) | CD1_CupRap_0wks_Rep2 (172) | Cntl (742) | CupRap_Rep1 (370) | CupRap_Rep2 (516) |
+| Method | CD1_Cntl (568) | CD1_Cntl_3wks (746) | CD1_CupRap (320) | CD1_CupRap_0wks_Rep2 (77) | Cntl (542) | CupRap_Rep1 (302) | CupRap_Rep2 (389) |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| CellRank | 36.3% (318) | 31.6% (357) | 27.2% (126) | **67.4% (116)** | 29.9% (222) | 28.9% (107) | 20.3% (105) |
-| ML | 31.7% (278) | 33.0% (373) | 23.5% (109) | **66.9% (115)** | 24.7% (183) | 25.1% (93) | 18.8% (97) |
+| CellRank | 22.7% (129) | 18.1% (135) | 21.3% (68) | **53.2% (41)** | 18.6% (101) | 24.5% (74) | 16.5% (64) |
+| ML | 10.2% (58) | 10.5% (78) | 11.3% (36) | **37.7% (29)** | 8.3% (45) | 10.3% (31) | 6.9% (27) |
 
 **NB-leaning TAPs**
 
-| Method | CD1_Cntl (876) | CD1_Cntl_3wks (1129) | CD1_CupRap (463) | CD1_CupRap_0wks_Rep2 (172) | Cntl (742) | CupRap_Rep1 (370) | CupRap_Rep2 (516) |
+| Method | CD1_Cntl (568) | CD1_Cntl_3wks (746) | CD1_CupRap (320) | CD1_CupRap_0wks_Rep2 (77) | Cntl (542) | CupRap_Rep1 (302) | CupRap_Rep2 (389) |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| CellRank | 63.7% (558) | 68.4% (772) | 72.8% (337) | **32.6% (56)** | 70.1% (520) | 71.1% (263) | 79.7% (411) |
-| ML | 68.3% (598) | 67.0% (756) | 76.5% (354) | **33.1% (57)** | 75.3% (559) | 74.9% (277) | 81.2% (419) |
+| CellRank | 77.3% (439) | 81.9% (611) | 78.8% (252) | **46.8% (36)** | 81.4% (441) | 75.5% (228) | 83.5% (325) |
+| ML | 89.8% (510) | 89.5% (668) | 88.8% (284) | **62.3% (48)** | 91.7% (497) | 89.7% (271) | 93.1% (362) |
 
-`CD1_CupRap_0wks_Rep2` (n=172) is the only no-recovery sample and a large outlier on both methods. At this timepoint, rapamycin has blocked OPC→OL maturation, so OPCs are accumulating (paper Fig 3). TAPs in this sample may be projecting toward the stalled OPC pool — but n=172 is small; interpret with caution.
+`CD1_CupRap_0wks_Rep2` (n=77) is the only no-recovery sample and a large outlier on both methods (the only condition where OL-leaning approaches ~50%). At this timepoint, rapamycin has blocked OPC→OL maturation, so OPCs are accumulating (paper Fig 3). TAPs in this sample may be projecting toward the stalled OPC pool — but n=77 is small; interpret with caution.
 
 ### Key direction
 
-CupRap TAPs are **not** more OL-leaning than Control TAPs. By both CellRank and ML, the share of OL-leaning TAPs in CupRap conditions is at or below corresponding Controls:
+CupRap TAPs are **not** more OL-leaning than Control TAPs. Across both methods, every 3wks condition (Control and CupRap alike) sits in a tight low band — CellRank ~16–25% OL, ML ~7–11% OL — with CupRap *not* above Control:
 
-- CellRank ordering (excluding outlier): CD1_Cntl (36.3%) > CD1_Cntl_3wks (31.6%) > Cntl (29.9%) ≈ CupRap_Rep1 (28.9%) ≈ CD1_CupRap (27.2%) > CupRap_Rep2 (20.3%)
-- ML ordering: CD1_Cntl_3wks (33.0%) ≈ CD1_Cntl (31.7%) > CupRap_Rep1 (25.1%) ≈ Cntl (24.7%) > CD1_CupRap (23.5%) > CupRap_Rep2 (18.8%)
+- CellRank OL-leaning (excluding outlier): CupRap_Rep1 (24.5%) ≈ CD1_Cntl (22.7%) ≈ CD1_CupRap (21.3%) ≈ Cntl (18.6%) ≈ CD1_Cntl_3wks (18.1%) ≈ CupRap_Rep2 (16.5%)
+- ML OL-leaning: CD1_CupRap (11.3%) ≈ CD1_Cntl_3wks (10.5%) ≈ CupRap_Rep1 (10.3%) ≈ CD1_Cntl (10.2%) ≈ Cntl (8.3%) ≈ CupRap_Rep2 (6.9%)
 
-ML and CellRank agree on the ordering for most conditions. CupRap_Rep2 (NesCre, 3wks) is consistently lowest by both methods.
+The conditions are essentially indistinguishable at the TAP stage, which is the point: CupRap does not shift TAP fate toward OL. This matches the paper's r = 0.995 TAP-transcriptome result. Only the acute no-recovery sample (`CD1_CupRap_0wks_Rep2`) stands apart, where committed OPCs are accumulating downstream.
 
 ---
 
@@ -100,7 +100,7 @@ combined_kernel = 0.8 * PrecomputedKernel(T_vel) + 0.2 * ConnectivityKernel
 The two methods respond very differently to **adding or removing samples** (which changes cell-type proportions in the pooled dataset):
 
 - **CellRank is composition-sensitive.** scVelo's dynamical model fits one global steady-state line across all pooled cells, so adding one sample refits the velocity field for *every* cell. Observed directly: swapping a single sample moved CellRank's CD1_Cntl P(OL) from 47% → 79% → 40% across runs. A kernel decomposition confirmed the **velocity kernel** (not connectivity) was the unstable component, and at one composition it produced a biologically impossible result (~79% OL-fated control TAPs, when homeostatic V-SVZ is overwhelmingly neurogenic). CellRank fate probabilities are therefore *directional corroboration at a fixed composition*, not composition-independent ground truth.
-- **The ML model is composition-proof.** It is a per-cell identity classifier on ~1,965 non-marker HVGs — timepoint, sample, strain, and composition are never features. Across the same sample swaps, ML's CD1_Cntl stayed locked at 31.7% OL. Composition enters only via (a) training class balance, handled by `scale_pos_weight`, and (b) the per-condition *summary* aggregation (denominator effects) — never the per-cell score. The cross-strain held-out test (train CD1, test NesCre, AUC ≈ 1.0) confirms the OL-lineage vs NB distinction generalizes across composition and strain rather than riding a batch/condition signal.
+- **The ML model is composition-proof.** It is a per-cell identity classifier on ~1,965 non-marker HVGs — timepoint, sample, strain, and composition are never features. Across sample swaps, ML's per-condition predictions stayed stable while CellRank's swung. Composition enters only via (a) training class balance, handled by `scale_pos_weight`, and (b) the per-condition *summary* aggregation (denominator effects) — never the per-cell score. The cross-strain held-out test (train CD1, test NesCre, AUC ≈ 1.0) confirms the OL-lineage vs NB distinction generalizes across composition and strain rather than riding a batch/condition signal. (Note: absolute per-condition percentages do shift between full pipeline reruns when the upstream cell-typing changes — e.g. a clustering/QC change altered TAP counts — but that is a cell-typing effect, not velocity composition sensitivity.)
 
 This is why the ML classifier is the primary per-TAP fate estimate and CellRank is the validation reference, not the reverse.
 
@@ -108,7 +108,7 @@ This is why the ML classifier is the primary per-TAP fate estimate and CellRank 
 
 ## 5. Bottom Line
 
-**ML and CellRank agree on per-cell P(OL lineage) at Pearson r = 0.835 / Spearman r = 0.855 across 4,268 TAPs.**
+**ML and CellRank agree on per-cell P(OL lineage) at Pearson r = 0.828 / Spearman r = 0.838 across 2,944 TAPs.**
 
 Two methods built on independent biological signals (gene expression vs splicing kinetics) converge on the same per-cell ranking. This is strong cross-validation for the XGBoost classifier's per-TAP fate score.
 
