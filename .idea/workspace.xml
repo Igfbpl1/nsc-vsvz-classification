@@ -4,17 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="cleanup">
+    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="update">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/compare_tap_fate_methods.py" beforeDir="false" afterPath="$PROJECT_DIR$/compare_tap_fate_methods.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/markers.py" beforeDir="false" afterPath="$PROJECT_DIR$/markers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/barcode_to_cell_type_mapping.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/barcode_to_cell_type_mapping.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/ol_commitment.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/ol_commitment.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/out_of_sample_comparison.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/out_of_sample_comparison.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/out_of_sample_tap_comparison_test2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/out_of_sample_tap_comparison_test2.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/outputs/tap_fate_comparison.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/tap_fate_comparison.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/tap_fate_per_condition.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/tap_fate_per_condition.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/trigger_genes.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/trigger_genes.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/umapleiden.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/umapleiden.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/outputs/umapleiden_cell_type.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/umapleiden_cell_type.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CD1_Cntl.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CD1_Cntl.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CD1_Cntl_3wks.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CD1_Cntl_3wks.png" afterDir="false" />
@@ -24,24 +18,8 @@
       <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CupRap_Rep1.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CupRap_Rep1.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CupRap_Rep2.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CupRap_Rep2.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_all.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_all.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_COP.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_COP.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_COP_Cntl.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_COP_Cntl.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_COP_CupRap.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_COP_CupRap.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_Neuroblast.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_Neuroblast.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_Neuroblast_Cntl.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_Neuroblast_Cntl.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_Neuroblast_CupRap.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_Neuroblast_CupRap.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_OL.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_OL.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_OL_Cntl.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_OL_Cntl.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_OL_CupRap.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_OL_CupRap.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_OPC.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_OPC.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_OPC_Cntl.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_OPC_Cntl.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_OPC_CupRap.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_OPC_CupRap.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_TAP.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_TAP.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_TAP_Cntl.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_TAP_Cntl.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_TAP_CupRap.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_TAP_CupRap.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run_pipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/run_pipeline.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train_ol_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_ol_classifier.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/velocity_build.py" beforeDir="false" afterPath="$PROJECT_DIR$/velocity_build.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uv.lock" beforeDir="false" afterPath="$PROJECT_DIR$/uv.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -185,14 +163,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1779721552530</updated>
-    </task>
-    <task id="LOCAL-00014" summary="renamed file">
-      <option name="closed" value="true" />
-      <created>1780240321053</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1780240321053</updated>
     </task>
     <task id="LOCAL-00015" summary="got rid of unnecessary comments">
       <option name="closed" value="true" />
@@ -578,7 +548,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781839605251</updated>
     </task>
-    <option name="localTasksCounter" value="63" />
+    <task id="LOCAL-00063" summary="update">
+      <option name="closed" value="true" />
+      <created>1781904284390</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1781904284390</updated>
+    </task>
+    <option name="localTasksCounter" value="64" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -624,7 +602,6 @@
     <MESSAGE value="add cd1 to comparison" />
     <MESSAGE value="add top 4 phases" />
     <MESSAGE value="run 7 samples" />
-    <MESSAGE value="update" />
     <MESSAGE value="rerun shap using out of sample" />
     <MESSAGE value="move" />
     <MESSAGE value="predecit NB too" />
@@ -634,6 +611,7 @@
     <MESSAGE value="add dotplot" />
     <MESSAGE value="update versions" />
     <MESSAGE value="cleanup" />
-    <option name="LAST_COMMIT_MESSAGE" value="cleanup" />
+    <MESSAGE value="update" />
+    <option name="LAST_COMMIT_MESSAGE" value="update" />
   </component>
 </project>

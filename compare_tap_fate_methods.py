@@ -14,23 +14,6 @@ Output:
 from __future__ import annotations
 from pathlib import Path
 
-# cellrank 2.0.7's VelocityKernel.__init__ calls
-# `np.testing.assert_array_equal(x=..., y=..., err_msg=...)`. numpy 2 renamed
-# those kwargs to `actual=`/`desired=`, so the call raises TypeError. Upstream
-# is fixed in cellrank >=2.1.0, but that release requires scipy<1.17 (via
-# pygam>=0.10), which conflicts with this project's scipy>=1.17.1. Wrap
-# np.testing.assert_array_equal to accept the old kwargs and forward
-# positionally — this is a shim, not a runtime monkey-patch of cellrank.
-import numpy as _np
-_orig_aae = _np.testing.assert_array_equal
-def _aae_compat(*args, **kwargs):
-    if "x" in kwargs or "y" in kwargs:
-        x = kwargs.pop("x", None)
-        y = kwargs.pop("y", None)
-        return _orig_aae(x, y, *args, **kwargs)
-    return _orig_aae(*args, **kwargs)
-_np.testing.assert_array_equal = _aae_compat
-
 import cellrank as cr
 import pandas as pd
 import scanpy as sc
@@ -55,12 +38,6 @@ def run_compare_fate_methods():
         scv.tl.velocity_graph(adata, show_progress_bar=False, n_jobs=1)
 
     # ── CellRank fate probabilities ───────────────────────────────────────────
-    # NOTE: cellrank 2.0.7's VelocityKernel.__init__ has a numpy-2 incompat
-    # (`np.testing.assert_array_equal(x=, y=)` — kwargs renamed in numpy 2). The
-    # one-line fix is applied directly in
-    # `.venv/lib/python3.13/site-packages/cellrank/kernels/_velocity_kernel.py`
-    # (the `x=`/`y=` kwargs are passed positionally). cellrank >=2.1.0 has the
-    # fix upstream but requires scipy<1.17, which conflicts with this project.
     print("\n[CellRank] building transition matrix from velocity ...")
     vk = VelocityKernel(adata).compute_transition_matrix(n_jobs=4)
     ck = ConnectivityKernel(adata).compute_transition_matrix()
@@ -83,10 +60,7 @@ def run_compare_fate_methods():
     g.set_terminal_states({"OL": ol_cells, "Neuroblast": nb_cells})
 
     print("[CellRank] computing fate probabilities ...")
-    # cellrank 2.0.7's row-sum tolerance is hardcoded at rtol=1e-3 (the
-    # `check_sum_tol` kwarg only exists in >=2.1.0). Tighten the solver tol
-    # so probabilities converge closely enough to satisfy that check.
-    g.compute_fate_probabilities(tol=1e-10)
+    g.compute_fate_probabilities()
 
     adata.obs["cellrank_P_OL"] = g.fate_probabilities[:, "OL"].X.squeeze()
     print("  CellRank P(OL) computed.")
