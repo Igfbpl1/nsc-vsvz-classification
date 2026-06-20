@@ -6,7 +6,7 @@ This project utilizes ML to give a similarity score to every undecided TAP and t
 
 - **Cell-type annotation** (`run_pipeline.py`, `markers.py`): paper-aligned marker panels from Willis et al. 2025 STAR Methods. NSC is split into **aNSC** (Egfr, Ascl1) and **dNSC** (Meg3, Sparc, Fbxo2, Id3); Mural is split into **Pericyte** (Carmn, Cspg4, Ano1) and **VAMC** (Pdgfrb, Myh11, Mylk); separate **Other_Immune** (Cd52, Cd69) and **Striatal_Neuron** (Calb1, Bcl11b) categories. Cluster labels are assigned by `idxmax` on per-panel scores with a z-score tie-break when the top two panels are within margin 0.4 and the runner-up has absolute signal ≥ 0.5 — this recovers COP and Pericyte clusters that pure `idxmax` would lose to OL and VAMC respectively.
 - **Lineage-gene exclusion** (`markers.py:LINEAGE_GENES`): pan-oligo TFs (Olig1, Olig2, Sox10, Cnp, Lhfpl3, Mobp) and pan-neuronal genes (Tubb3, Cd24a) are kept out of `MARKERS` (they would cause idxmax ties) but excluded from the XGBoost feature set so SHAP surfaces non-canonical trigger candidates rather than re-discovering canonical lineage genes.
-- **Comparison method**: per-TAP P(OL_lineage) from XGBoost (gene expression) vs cellrank (RNA velocity). Pearson r = 0.828 across 2,944 TAPs.
+- **Comparison method**: per-TAP P(OL_lineage) from XGBoost (gene expression) vs CellRank (RNA velocity) vs Hand-rolled Bias Score (Scanpy `score_genes`). Pearson r = 0.742 (ML vs CellRank), r = 0.734 (ML vs Bias) across 3,507 TAPs.
 - **Dep stack**: cellrank ≥ 2.3.1, scipy < 1.17 (pygam constraint), numpy 2.
 
 ---
@@ -54,7 +54,7 @@ This analysis is complementary, not duplicative. The paper sets up the upstream 
 | Identify microglial ligands (IGF1, OSM) | ✓ Main finding | — |
 | Spatial map of dorsal vs lateral V-SVZ | ✓ | — |
 | Functional validation in culture/in vivo | ✓ | — |
-| RNA velocity of TAP→OL/NB transitions (7 samples) | — | ✓ |
+| RNA velocity of TAP→OL/NB transitions (9 samples) | — | ✓ |
 | XGBoost+SHAP classifier for TAP fate prediction | — | ✓ |
 | Early NB-fate TAP drivers (Bcl11a, Nfib, Meis2) | — | ✓ |
 | Positive non-canonical OL markers (Pllp, Gjc3, Fa2h, Tspan2, Cnp, Cryab) | — | ✓ |

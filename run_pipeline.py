@@ -104,7 +104,7 @@ def main() -> None:
     h5 = OUT / "processed.h5ad"
 
     print("=== phase 0: build processed.h5ad ===")
-    if h5.exists() and not args.rebuild:
+    if h5.exists():
         print(f"  {h5} exists; skipping (use --rebuild to force)")
     else:
         t0 = time.time()

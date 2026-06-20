@@ -77,34 +77,51 @@ def run_compare_fate_methods():
         ["original_cell_id", "velocity_label", "cellrank_P_OL"]
     ].copy()
     tap_df["ml_P_OL"] = tap_df["original_cell_id"].map(ml["prob_OL"])
+    tap_df["bias"]    = tap_df["original_cell_id"].map(ml["bias"])
 
     before = len(tap_df)
-    tap_df = tap_df.dropna(subset=["cellrank_P_OL", "ml_P_OL"])
-    print(f"  TAPs with both predictions: {len(tap_df)}/{before}")
+    tap_df = tap_df.dropna(subset=["cellrank_P_OL", "ml_P_OL", "bias"])
+    print(f"  TAPs with both predictions + bias: {len(tap_df)}/{before}")
 
     # Binary calls — P(OL) > 0.5 is natural since OL + NB are the only
     # terminal states, so P(OL) + P(NB) = 1
     tap_df["cellrank_ol"] = (tap_df["cellrank_P_OL"] > 0.5).astype(int)
     tap_df["ml_ol"]       = (tap_df["ml_P_OL"] > 0.5).astype(int)
+    tap_df["bias_ol"]     = (tap_df["bias"] > 0).astype(int)
 
     tap_df.to_csv(OUT / "tap_fate_comparison.csv", index=False)
     print(f"  → {OUT}/tap_fate_comparison.csv")
 
-    # ── Correlation ───────────────────────────────────────────────────────────
+    # ── Correlation & Agreements ──────────────────────────────────────────────
     pearson_r, pearson_p   = pearsonr(tap_df["cellrank_P_OL"], tap_df["ml_P_OL"])
     spearman_r, spearman_p = spearmanr(tap_df["cellrank_P_OL"], tap_df["ml_P_OL"])
-    print(f"\nCellRank vs ML (n={len(tap_df)} TAPs):")
-    print(f"  Pearson r  = {pearson_r:.3f}  (p={pearson_p:.2e})")
-    print(f"  Spearman r = {spearman_r:.3f}  (p={spearman_p:.2e})")
+    pearson_rb, _          = pearsonr(tap_df["ml_P_OL"], tap_df["bias"])
+    spearman_rb, _         = spearmanr(tap_df["ml_P_OL"], tap_df["bias"])
+    pearson_rc, _          = pearsonr(tap_df["cellrank_P_OL"], tap_df["bias"])
+    spearman_rc, _         = spearmanr(tap_df["cellrank_P_OL"], tap_df["bias"])
+
+    print(f"\nMethod Comparison (n={len(tap_df)} TAPs):")
+    print(f"  CellRank vs ML:   Pearson r = {pearson_r:.3f} (p={pearson_p:.2e}), Spearman r = {spearman_r:.3f}")
+    print(f"  ML vs Bias:       Pearson r = {pearson_rb:.3f}, Spearman r = {spearman_rb:.3f}")
+    print(f"  CellRank vs Bias: Pearson r = {pearson_rc:.3f}, Spearman r = {spearman_rc:.3f}")
+
+    agree_ml_bias = (tap_df["bias_ol"] == tap_df["ml_ol"]).mean() * 100
+    agree_cr_bias = (tap_df["bias_ol"] == tap_df["cellrank_ol"]).mean() * 100
+    agree_ml_cr   = (tap_df["ml_ol"] == tap_df["cellrank_ol"]).mean() * 100
+    print(f"\nBinary Agreement (OL vs NB leaning):")
+    print(f"  ML vs Bias Agreement:       {agree_ml_bias:.2f}%")
+    print(f"  CellRank vs Bias Agreement: {agree_cr_bias:.2f}%")
+    print(f"  ML vs CellRank Agreement:   {agree_ml_cr:.2f}%")
 
     # ── Per-condition OL and NB counts and means ─────────────────────────────
-    # Since OL + NB are the only terminal states, P(NB) = 1 - P(OL)
     grp = tap_df.groupby("velocity_label")
     n_taps             = grp["ml_P_OL"].count()
     cellrank_n_ol      = grp["cellrank_ol"].sum()
     ml_n_ol            = grp["ml_ol"].sum()
+    bias_n_ol          = grp["bias_ol"].sum()
     cellrank_mean_p_ol = grp["cellrank_P_OL"].mean()
     ml_mean_p_ol       = grp["ml_P_OL"].mean()
+    bias_mean          = grp["bias"].mean()
 
     per_cond = pd.DataFrame({
         "n_TAPs":             n_taps,
@@ -116,9 +133,11 @@ def run_compare_fate_methods():
         "ml_mean_P_OL":       ml_mean_p_ol.round(3),
         "ml_n_NB":            n_taps - ml_n_ol,
         "ml_mean_P_NB":       (1 - ml_mean_p_ol).round(3),
+        "bias_n_OL":          bias_n_ol,
+        "bias_mean":          bias_mean.round(3),
     }).sort_index()
 
-    print("\nPer-condition OL/NB counts (threshold > 0.5) and mean P:")
+    print("\nPer-condition OL/NB counts (threshold > 0.5 for probs, > 0 for bias) and mean scores:")
     print(per_cond.to_string())
 
     per_cond.to_csv(OUT / "tap_fate_per_condition.csv")

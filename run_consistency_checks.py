@@ -285,8 +285,8 @@ The paper states:
 | **NSCs** | {means_neural.loc['NSCs', 'Control']:.2f}% | {means_neural.loc['NSCs', 'Cup-Rap']:.2f}% | Decreased | Yes (NSCs decrease) |
 | **TAPs** | {means_neural.loc['TAPs', 'Control']:.2f}% | {means_neural.loc['TAPs', 'Cup-Rap']:.2f}% | Stable (overlapping) | Yes (no change) |
 | **OPCs** | {means_neural.loc['OPCs', 'Control']:.2f}% | {means_neural.loc['OPCs', 'Cup-Rap']:.2f}% | Stable (overlapping) | Yes (no change) |
-| **Imm. OLGs** | {means_neural.loc['Imm. OLGs', 'Control']:.2f}% | {means_neural.loc['Imm. OLGs', 'Cup-Rap']:.2f}% | Increased | Yes (increased) |
-| **Mat. OLGs** | {means_neural.loc['Mat. OLGs', 'Control']:.2f}% | {means_neural.loc['Mat. OLGs', 'Cup-Rap']:.2f}% | Increased | Yes (increased) |
+| **Imm. OLGs (COPs / Newly Formed OLs)** | {means_neural.loc['Imm. OLGs', 'Control']:.2f}% | {means_neural.loc['Imm. OLGs', 'Cup-Rap']:.2f}% | Increased | Yes (increased) |
+| **Mat. OLGs (OL)** | {means_neural.loc['Mat. OLGs', 'Control']:.2f}% | {means_neural.loc['Mat. OLGs', 'Cup-Rap']:.2f}% | Increased | Yes (increased) |
 | **Neuroblasts** | {means_neural.loc['Neuroblasts', 'Control']:.2f}% | {means_neural.loc['Neuroblasts', 'Cup-Rap']:.2f}% | Stable (overlapping) | Yes (no change) |
 
 *Reproduction Plot saved to:* [outputs/consistency_fig1k_proportions.png](file:///Users/chandra/development/nsc-vsvz-classification/outputs/consistency_fig1k_proportions.png)

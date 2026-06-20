@@ -53,8 +53,8 @@ The paper states:
 | **NSCs** | 12.33% | 8.74% | Decreased | Yes (NSCs decrease) |
 | **TAPs** | 15.19% | 14.25% | Stable (overlapping) | Yes (no change) |
 | **OPCs** | 2.22% | 2.83% | Stable (overlapping) | Yes (no change) |
-| **Imm. OLGs** | 1.06% | 6.01% | Increased | Yes (increased) |
-| **Mat. OLGs** | 13.37% | 22.12% | Increased | Yes (increased) |
+| **Imm. OLGs (COPs / Newly Formed OLs)** | 1.06% | 6.01% | Increased | Yes (increased) |
+| **Mat. OLGs (OL)** | 13.37% | 22.12% | Increased | Yes (increased) |
 | **Neuroblasts** | 41.43% | 39.86% | Stable (overlapping) | Yes (no change) |
 
 *Reproduction Plot saved to:* [outputs/consistency_fig1k_proportions.png](file:///Users/chandra/development/nsc-vsvz-classification/outputs/consistency_fig1k_proportions.png)
