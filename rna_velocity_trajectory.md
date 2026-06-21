@@ -16,7 +16,7 @@ While SHAP scores tell us *which* genes distinguish the lineages, static data ca
 
 ## 2. Biological Questions
 
-By comparing CD1 Cntl (0wks baseline) + NesCre Cntl (3wks) vs NesCre CupRap (3wks × 2 replicates):
+By comparing Control vs CupRap conditions across both strains (CD1 and NesCre) and both timepoints (0wks and 3wks), spanning all 10 samples:
 
 1. **Directionality** — Does TAP→OL transit accelerate under CupRap treatment?
 2. **Early Gene Identification** — Which genes initiate the OL transcriptional cascade before the cell looks like an OL?
@@ -144,7 +144,7 @@ A gene qualifies as an early marker if it satisfies:
 
 ## 7. Results — 10-Sample Run
 
-Velocity computed on 10 samples (47,965 cells; 3,599 TAPs):
+Velocity computed on 10 samples (47,965 cells; 3,611 TAPs):
 - **GSM8253792** — CD1, Cntl, 0wks
 - **GSM8253793** — CD1, Cntl, 3wks
 - **GSM8253794** — CD1, CupRap, 3wks
@@ -164,17 +164,17 @@ The stream plot shows the following trajectory topology:
 - **TAP bifurcation**: rightward arm toward OPC → COP → OL visible alongside dominant Neuroblast arm
 - Non-lineage cells (Microglia, Astrocyte, Endothelial, Pericyte, VAMC, Ependymal) self-contained
 
-### TAP Velocity Drivers — Srrm4 Rank 1, Meis2 Rank 2 in CupRap
+### TAP Velocity Drivers — Srrm4 Rank 1, Meis2 Rank 3 in CupRap
 
 | Rank | Pooled | Cntl | CupRap |
 |---|---|---|---|
-| 1 | Srrm4 | Srrm4 | **Srrm4** |
-| 2 | Meis2 | Draxin | **Meis2** |
-| 3 | Plxna2 | Dpysl3 | Plxna2 |
-| 4 | Dpysl3 | Igfbpl1 | Negr1 |
-| 5 | Nfib | Nsg2 | Nfib |
+| 1 | Srrm4 | Dpysl3 | **Srrm4** |
+| 2 | Meis2 | Srrm4 | Plxna2 |
+| 3 | Plxna2 | Nsg2 | **Meis2** |
+| 4 | Nfib | Nfib | Nfib |
+| 5 | Myt1 | Meis2 | Myt1 |
 
-**Meis2** is rank 2 in CupRap TAPs (corr 71.99, likelihood 0.79, Spearman 0.93) and rank 10 in Cntl — it climbs specifically in the treatment condition. It is also **SHAP rank 4** — two independent methods converge on the same gene. However, Meis2 is **NB-leaning** (NEGATIVE_OL in the SHAP direction analysis); the model uses its *absence* as an OL signal.
+**Meis2** is rank 3 in CupRap TAPs (corr 72.47, likelihood 0.79, Spearman 0.93) and rank 5 in Cntl — it climbs in the treatment condition. It is also **SHAP rank 4** — two independent methods converge on the same gene. However, Meis2 is **NB-leaning** (NEGATIVE_OL in the SHAP direction analysis); the model uses its *absence* as an OL signal.
 
 **No positive OL-leaning signal exists at the TAP stage.** All 16 SHAP-confirmed positive OL markers are absent from the top 100 TAP drivers in both conditions. Olig2 and Ncam1 appear but at low ranks with weak correlations.
 
@@ -184,19 +184,19 @@ The stream plot shows the following trajectory topology:
 
 The ML model (trained on non-canonical HVGs, no prior gene list) identified positive OL markers. Velocity independently identifies two of these as strong COP drivers:
 
-| Gene | SHAP rank | OPC rank | COP rank |
-|---|---|---|---|
-| Fa2h | 9 | 37 | **1** |
-| Gjc3 | 8 | 22 | 11 |
+| Gene | SHAP rank | OPC rank | COP rank | OL rank |
+|---|---|---|---|---|
+| Fa2h | 9 | absent | 7 | 21 |
+| Gjc3 | 8 | 22 | 9 | **1** |
 
-Neither method used the other's output. Both arrived at the same genes independently.
+Neither method used the other's output. Both arrived at the same genes independently. Gjc3 is now the single top OL velocity driver (OL rank 1, corr 214.77), and Fa2h remains a top-10 COP driver (rank 7).
 
 **Pattern 2: Myelin lipid biosynthesis program across OPC→COP**
 
 ```
 OPC stage:
-  Ugt8a (rank 30) — galactosylceramide synthase
-  Fa2h  (rank 38) — fatty acid 2-hydroxylase
+  Ntn1  (rank  1) — netrin-1, top OPC driver (corr 94.52)
+  Fa2h  — dropped out of the top OPC list this run
 
 COP stage:
   Fa2h   (rank  7) — COP driver (corr 35.54)
@@ -207,9 +207,9 @@ COP stage:
 
 | Stage | Rank | Corr | Likelihood |
 |---|---|---|---|
-| OPC | 12 | 35.3 | 0.57 |
-| COP | 34 | 16.5 | 0.57 |
-| OL | 4 | 123.6 | 0.57 |
+| OPC | 10 | 38.8 | 0.57 |
+| COP | 35 | 18.9 | 0.57 |
+| OL | 6 | 138.1 | 0.57 |
 
 Active across all three stages. Likelihood 0.57 is among the highest in the OPC list.
 
@@ -281,21 +281,21 @@ The CD1_Cntl 0wks stream plot showing the quietest OL lineage flow is consistent
 
 ### Cell-Type Composition Shift (CD1 CupRap only, strain-controlled)
 
-| Cell type | CupRap 0wks (n=3,928) | CupRap 3wks (n=3,550) |
+| Cell type | CupRap 0wks (n=8,062) | CupRap 3wks (n=5,943) |
 |---|---|---|
-| TAP | 2.0% | 9.0% |
-| Neuroblast | 1.9% | 28.7% |
-| Microglia | 34.6% | 30.3% |
-| OPC | 6.0% | 1.5% |
-| COP | 11.4% | 3.0% |
-| OL | 20.4% | 13.4% |
-| **OL-lineage total** | **37.8%** | **17.9%** |
+| TAP | 2.1% | 10.0% |
+| Neuroblast | 3.3% | 29.8% |
+| Microglia | 53.4% | 28.8% |
+| OPC | 4.3% | 1.7% |
+| COP | 7.1% | 3.7% |
+| OL | 12.6% | 11.4% |
+| **OL-lineage total** | **24.0%** | **16.8%** |
 
-(CD1 CupRap only: 0wks = GSM8647353; 3wks = GSM8253794. Strain-matched so the timepoint effect is not confounded by strain.)
+(CD1 CupRap only, both replicates each: 0wks = GSM8647352 + GSM8647353; 3wks = GSM8253794 + GSM8253795. Strain-matched so the timepoint effect is not confounded by strain.)
 
-The OL-lineage proportion (OPC+COP+OL) is much higher at 0wks (37.8%) than 3wks (17.9%). OPC and COP fractions collapse by 3wks (OPC 6.0%→1.5%, COP 11.4%→3.0%), while Neuroblast surges (1.9%→28.7%) and TAP rises (2.0%→9.0%). This is the acute-injury → recovery transition: at 0wks the niche is at peak OL-precursor generation with neurogenesis suppressed; by 3wks the OL-precursor wave has receded and the neurogenic program has rebounded. (These are *proportions* of a fixed pie — a population's share moving does not by itself prove its absolute count changed.)
+The OL-lineage proportion (OPC+COP+OL) is higher at 0wks (24.0%) than 3wks (16.8%). OPC and COP fractions collapse by 3wks (OPC 4.3%→1.7%, COP 7.1%→3.7%), while Neuroblast surges (3.3%→29.8%) and TAP rises (2.1%→10.0%). This is the acute-injury → recovery transition: at 0wks the niche is microglia-dominated (53.4%) and at peak OL-precursor generation with neurogenesis suppressed; by 3wks microglia recede, the OL-precursor wave has receded, and the neurogenic program has rebounded. (These are *proportions* of a fixed pie — a population's share moving does not by itself prove its absolute count changed.)
 
-The current velocity analysis includes GSM8647353 (CD1_CupRap_0wks_Rep2). GSM8647352 (CD1_CupRap_0wks_Rep1) is still pending.
+The velocity analysis now includes both no-recovery 0wks replicates (GSM8647352 + GSM8647353), so all 10 samples are in the build.
 
 ### aNSC fate-bias observation (independent of velocity)
 

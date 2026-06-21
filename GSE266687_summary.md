@@ -123,7 +123,7 @@ From RNA velocity analysis on this dataset (rna_velocity_trajectory.md):
 
 > "No positive OL-leaning signal exists at the TAP stage. All 16 SHAP-confirmed positive OL markers are absent from the top 100 TAP drivers in both conditions."
 
-The top CupRap TAP velocity drivers are **Srrm4** (rank 1, corr 73.07) and **Meis2** (rank 2, corr 71.99, Spearman 0.93) — both neuroblast/neuronal genes, not OL genes. Meis2 climbs from rank 10 in Cntl to rank 2 in CupRap; the model uses its *absence* as an OL signal. CupRap TAPs are being driven toward the NB arm transcriptionally, not the OL arm. This further confirms there is no OL-fate commitment signal detectable at the TAP stage.
+The top CupRap TAP velocity drivers are **Srrm4** (rank 1, corr 82.22) and **Meis2** (rank 3, corr 72.47, Spearman 0.93) — both neuroblast/neuronal genes, not OL genes. Meis2 climbs from rank 5 in Cntl to rank 3 in CupRap; the model uses its *absence* as an OL signal. CupRap TAPs are being driven toward the NB arm transcriptionally, not the OL arm. This further confirms there is no OL-fate commitment signal detectable at the TAP stage.
 
 ### Evidence 6 — Positive OL velocity drivers only appear after commitment
 
@@ -131,8 +131,8 @@ The SHAP-confirmed positive OL-lineage genes only show up as velocity drivers do
 
 | Gene | TAP rank | OPC rank | COP rank | OL rank | SHAP direction |
 |---|---|---|---|---|---|
-| Fa2h | absent top 100 | 37 | **1** | — | POSITIVE_OL |
-| Gjc3 | absent top 100 | 22 | 11 | **1** | POSITIVE_OL |
+| Fa2h | absent top 100 | absent | 7 | 21 | POSITIVE_OL |
+| Gjc3 | absent top 100 | 22 | 9 | **1** | POSITIVE_OL |
 
 The OL transcriptional program is dynamically active at the OPC→COP transition, not in TAPs.
 
@@ -147,6 +147,6 @@ The OL transcriptional program is dynamically active at the OPC→COP transition
 | Eyfp lineage label 3–6× increase at OPC/OL | Post-commitment | Willis et al. Fig 2E |
 | Mature OLs depleted 5× at no-recovery timepoint | OPC→OL maturation blocked | Willis et al. Fig 4C–E |
 | Srrm4/Meis2 top CupRap TAP velocity drivers (NB genes) | No OL signal in TAPs | Velocity analysis |
-| Fa2h (COP rank 1), Gjc3 (OL rank 1) drive only post-TAP | Post-commitment | Velocity analysis |
+| Fa2h (COP rank 7), Gjc3 (OL rank 1) drive only post-TAP | Post-commitment | Velocity analysis |
 
 **Conclusion:** CupRap expands the committed OPC pool and blocks their maturation into oligodendrocytes via mTOR inhibition. TAP transcriptional identity is unchanged. The effect is real but acts downstream of commitment.
