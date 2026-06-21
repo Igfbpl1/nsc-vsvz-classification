@@ -224,3 +224,4 @@ __marimo__/
 /memory
 *.h5ad
 /scratch
+/.claude/
