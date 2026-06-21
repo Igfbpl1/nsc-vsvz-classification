@@ -36,6 +36,25 @@ from sklearn.model_selection import train_test_split
 
 from markers import MARKERS, OL_LINEAGE, LINEAGE_GENES
 
+CONDITION = {
+    "GSM8253792": "CD1_Cntl",
+    "GSM8253793": "CD1_Cntl_3wks",
+    "GSM8253794": "CD1_CupRap",
+    "GSM8253795": "CD1_CupRap_Rep2",
+    "GSM8253796": "Cntl",
+    "GSM8253797": "Cntl_Rep2",
+    "GSM8253798": "CupRap_Rep1",
+    "GSM8253799": "CupRap_Rep2",
+    "GSM8647352": "CD1_CupRap_0wks_Rep1",
+    "GSM8647353": "CD1_CupRap_0wks_Rep2",
+}
+
+CONDITION_ORDER = [
+    "CD1_Cntl", "CD1_Cntl_3wks", "CD1_CupRap", "CD1_CupRap_0wks_Rep1",
+    "CD1_CupRap_0wks_Rep2", "CD1_CupRap_Rep2", "Cntl", "Cntl_Rep2",
+    "CupRap_Rep1", "CupRap_Rep2",
+]
+
 ROOT = Path(__file__).parent
 OUT = ROOT / "outputs"
 MODELS = ROOT / "models"
@@ -161,15 +180,51 @@ def run_classifier() -> None:
     auc = roc_auc_score(y_test, p_test)
     ap = average_precision_score(y_test, p_test)
     print(f"  held-out ({', '.join(HOLDOUT_SAMPLES)}) AUC: {auc:.4f}, AP: {ap:.4f}")
-    y_test_frame = pd.DataFrame(y_test, columns=["fate_OL_lineage"])
-    p_test_frame = pd.DataFrame(p_test, columns=["p_ol_nb"])
-    out_of_sample_comparison = y_test_frame.join(
-        p_test_frame,
+    
+    test_sample_ids = adata.obs["sample_id"].values[test_mask]
+    
+    out_of_sample_comparison = pd.DataFrame({
+        "sample_id": test_sample_ids,
+        "fate_OL_lineage": y_test,
+        "p_ol_nb": p_test,
+    })
+    out_of_sample_comparison["condition"] = out_of_sample_comparison["sample_id"].map(CONDITION)
+    out_of_sample_comparison["prediction_is_ol"] = out_of_sample_comparison["p_ol_nb"].apply(lambda p: 1 if p > 0.5 else 0)
+    out_of_sample_comparison.to_csv(f"{OUT}/out_of_sample_comparison.csv", index=False)
+
+    # Breakdown by condition for Test 1
+    df_t1 = out_of_sample_comparison.copy()
+    df_t1["is_true_nb"] = df_t1["fate_OL_lineage"] == 0
+    df_t1["is_nb_correct"] = (df_t1["fate_OL_lineage"] == 0) & (df_t1["prediction_is_ol"] == 0)
+    df_t1["is_true_ol"] = df_t1["fate_OL_lineage"] == 1
+    df_t1["is_ol_correct"] = (df_t1["fate_OL_lineage"] == 1) & (df_t1["prediction_is_ol"] == 1)
+
+    g = df_t1.groupby("condition", observed=True)
+    v = pd.DataFrame({
+        "n": g.size(),
+        "True NB": g["is_true_nb"].sum().astype(int),
+        "NB correct": g["is_nb_correct"].sum().astype(int),
+        "True OL": g["is_true_ol"].sum().astype(int),
+        "OL correct": g["is_ol_correct"].sum().astype(int),
+    }).reindex([c for c in CONDITION_ORDER if c in g.groups])
+
+    total = v.sum()
+    total.name = "Grand Total"
+    v = pd.concat([v, total.to_frame().T])
+
+    v["NB correct (n / %)"] = v.apply(
+        lambda r: f"{int(r['NB correct'])} / {(r['NB correct'] / r['True NB'] * 100):.1f}%" if r['True NB'] > 0 else "0 / 0.0%", 
+        axis=1
     )
-    out_of_sample_comparison["prediction_is_ol"] = out_of_sample_comparison[
-        "p_ol_nb"
-    ].apply(lambda p: 1 if p > 0.5 else 0)
-    out_of_sample_comparison.to_csv(f"{OUT}/out_of_sample_comparison.csv")
+    v["OL correct (n / %)"] = v.apply(
+        lambda r: f"{int(r['OL correct'])} / {(r['OL correct'] / r['True OL'] * 100):.1f}%" if r['True OL'] > 0 else "0 / 0.0%", 
+        axis=1
+    )
+    
+    final_v = v[["n", "True NB", "NB correct (n / %)", "True OL", "OL correct (n / %)"]]
+    final_v.index.name = "condition"
+    final_v.to_csv(f"{OUT}/test1_accuracy_by_condition.csv")
+    print("  test 1 accuracy by condition -> test1_accuracy_by_condition.csv")
 
     # ------------------------------------------------------------------
     # SHAP feature importance
@@ -268,3 +323,5 @@ def run_classifier() -> None:
     print("\nclassifier summary:")
     print(summary.to_string(index=False))
     print("\ndone")
+if __name__ == "__main__":
+    run_classifier()
