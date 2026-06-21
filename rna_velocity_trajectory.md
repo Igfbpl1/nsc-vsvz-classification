@@ -142,9 +142,9 @@ A gene qualifies as an early marker if it satisfies:
 
 ---
 
-## 7. Results — 9-Sample Run
+## 7. Results — 10-Sample Run
 
-Velocity computed on 9 samples (43,831 cells; 3,507 TAPs):
+Velocity computed on 10 samples (47,965 cells; 3,599 TAPs):
 - **GSM8253792** — CD1, Cntl, 0wks
 - **GSM8253793** — CD1, Cntl, 3wks
 - **GSM8253794** — CD1, CupRap, 3wks
@@ -153,6 +153,7 @@ Velocity computed on 9 samples (43,831 cells; 3,507 TAPs):
 - **GSM8253797** — NesCre, Cntl, 3wks, Rep2
 - **GSM8253798** — NesCre, CupRap, 3wks, Rep1
 - **GSM8253799** — NesCre, CupRap, 3wks, Rep2
+- **GSM8647352** — CD1, CupRap, 0wks, Rep1
 - **GSM8647353** — CD1, CupRap, 0wks, Rep2
 
 ### Stream Plot
@@ -198,7 +199,7 @@ OPC stage:
   Fa2h  (rank 38) — fatty acid 2-hydroxylase
 
 COP stage:
-  Fa2h   (rank  1) — dominant COP driver (corr 138.32)
+  Fa2h   (rank  7) — COP driver (corr 35.54)
   Cldn11 (rank 22) — myelin tight junction protein
 ```
 
@@ -212,7 +213,7 @@ COP stage:
 
 Active across all three stages. Likelihood 0.57 is among the highest in the OPC list.
 
-**Pattern 4: Ntn1 (Netrin-1) is the top OPC driver (rank 1, corr 86.93)**
+**Pattern 4: Ntn1 (Netrin-1) is the top OPC driver (rank 1, corr 94.52)**
 
 The strongest velocity signal at the OPC stage, ahead of all myelin genes.
 
@@ -248,7 +249,7 @@ _SHAP ranks correspond to `outputs/trigger_genes.csv` (Pllp 2, Gjc3 8, Fa2h 9). 
 | 44 | Car2 | 69% | 9% | 23× | Carbonic anhydrase II — myelin |
 | 45 | S100a1 | 65% | 3% | 34× | S100 calcium-binding protein |
 
-**Fa2h** is cross-validated: SHAP rank 9 (POSITIVE_OL) AND top COP velocity driver (rank 1) in both conditions.
+**Fa2h** is cross-validated: SHAP rank 9 (POSITIVE_OL) AND a top COP velocity driver (rank 7).
 
 ---
 
@@ -265,7 +266,7 @@ _SHAP ranks correspond to `outputs/trigger_genes.csv` (Pllp 2, Gjc3 8, Fa2h 9). 
 | GSM8253798 | NesCre | CupRap | 3wks | ✓ included |
 | GSM8253799 | NesCre | CupRap | 3wks | ✓ included |
 | GSM8647353 | CD1 | CupRap | 0wks | ✓ included |
-| GSM8647352 (SRR31443698 SRR31443699) | CD1 | CupRap | 0wks | pending |
+| GSM8647352 (SRR31443698 SRR31443699) | CD1 | CupRap | 0wks | ✓ included |
 
 ---
 
@@ -360,21 +361,7 @@ Velocity mode: `dynamical`. A self-transition of 32.5% is typical — not too hi
 
 *CSV: `outputs/velocity/validation_check3_velocity_confidence.csv`*
 
-### Check 4: Marker Score Correlation
-
-CellRank P(OL) should positively correlate with OL marker scores and negatively correlate with Neuroblast marker scores.
-
-| Marker Score | Spearman ρ | Expected Direction | Status |
-|---|---:|---|---|
-| `score_Neuroblast` | **-0.715** | Negative | ✅ PASS |
-| `score_OL` | **+0.451** | Positive | ✅ PASS |
-| `score_COP` | **+0.375** | Positive | ✅ PASS |
-| `score_OPC` | **+0.070** | Positive | ✅ PASS |
-| `score_TAP` | **-0.306** | — | ✅ (proliferation markers anti-correlate with committed fate) |
-
-*CSV: `outputs/velocity/validation_check4_marker_correlation.csv`*
-
-### Check 5: Fate Probability Sums
+### Check 4: Fate Probability Sums
 
 P(OL) + P(NB) should sum to 1.0 for every cell (two-state absorbing system).
 

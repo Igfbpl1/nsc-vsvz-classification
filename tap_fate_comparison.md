@@ -32,21 +32,15 @@ ML uses **steady-state gene expression**. CellRank uses **splicing kinetics**. T
 
 ---
 
-## 3. Results — 9-Sample Run (3,507 TAPs)
+## 3. Results — 10-Sample Run (3,597 TAPs)
 
-### Per-cell agreement
+### Per-cell agreement (OL Specific)
 
-| Comparison | Pearson r | Spearman r | Binary Agreement |
-|---|:---:|:---:|:---:|
-| **ML vs Bias Score** | **0.734** | **0.764** | **92.64%** |
-| **ML vs CellRank** | **0.742** | **0.709** | **76.02%** |
-| **CellRank vs Bias Score** | **0.667** | **0.603** | **73.68%** |
-
-*Note: All p-values are virtually 0 (p < 1e-300).*
-
-### Interpretation of Agreement
-* **ML vs Bias (92.64% agreement)**: The extremely high agreement is a massive validation. The ML model was strictly forbidden from using the 29 canonical markers during training, yet it successfully learned non-canonical patterns that align with the canonical markers 92.64% of the time.
-* **CellRank vs Others (~74-76% agreement)**: CellRank measures splicing kinetics (rate of change) rather than steady-state levels. A ~75% agreement is highly significant for cross-modality single-cell comparison and indicates strong directional alignment.
+| Method | Total TAPs called OL | Percentage of total TAPs |
+|---|:---:|:---:|
+| **CellRank** | 962 | 26.7% |
+| **ML** | 366 | 10.2% |
+| **Bias Score** | 298 | 8.3% |
 
 ### Per-condition counts
 * Probs are thresholded at `P(OL) > 0.5` (since OL and NB are the only absorbing states).
@@ -54,11 +48,11 @@ ML uses **steady-state gene expression**. CellRank uses **splicing kinetics**. T
 
 **OL-leaning TAPs (leaning OL / Total TAPs)**
 
-| Method | CD1_Cntl | CD1_Cntl_3wks | CD1_CupRap | CD1_CupRap_0wks_Rep2 | CD1_CupRap_Rep2 | Cntl | Cntl_Rep2 | CupRap_Rep1 | CupRap_Rep2 |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **CellRank** | 34.1% (194/568) | 30.2% (225/746) | 32.8% (105/320) | **66.2% (51/77)** | 28.0% (77/275) | 29.9% (162/541) | 35.2% (102/290) | 43.0% (130/302) | 31.2% (121/388) |
-| **ML** | 10.2% (58/568) | 10.5% (78/746) | 11.3% (36/320) | **37.7% (29/77)** | 9.8% (27/275) | 8.3% (45/541) | 8.6% (25/290) | 10.3% (31/302) | 7.0% (27/388) |
-| **Bias Score** | 7.9% (45/568) | 6.7% (50/746) | 6.2% (20/320) | **35.1% (27/77)** | 10.9% (30/275) | 6.1% (33/541) | 10.0% (29/290) | 13.6% (41/302) | 4.4% (17/388) |
+| Method | CD1_Cntl | CD1_Cntl_3wks | CD1_CupRap | CD1_CupRap_0wks_Rep1 | CD1_CupRap_0wks_Rep2 | CD1_CupRap_Rep2 | Cntl | Cntl_Rep2 | CupRap_Rep1 | CupRap_Rep2 |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **CellRank** | 27.8% (158/568) | 24.4% (182/746) | 26.6% (85/320) | 28.9% (26/90) | **58.4% (45/77)** | 25.8% (71/275) | 24.4% (132/541) | 29.0% (84/290) | 30.8% (93/302) | 22.2% (86/388) |
+| **ML** | 10.2% (58/568) | 10.5% (78/746) | 11.3% (36/320) | 11.1% (10/90) | **37.7% (29/77)** | 9.8% (27/275) | 8.3% (45/541) | 8.6% (25/290) | 10.3% (31/302) | 7.0% (27/388) |
+| **Bias** | 7.9% (45/568) | 6.7% (50/746) | 6.3% (20/320) | 6.7% (6/90) | **35.1% (27/77)** | 10.9% (30/275) | 6.1% (33/541) | 10.0% (29/290) | 13.6% (41/302) | 4.4% (17/388) |
 
 ### Key Observations:
 1. **The 0-week Outlier**: All three methods independently flag the acute injury sample `CD1_CupRap_0wks_Rep2` (no recovery) as a major outlier. The proportion of OL-leaning TAPs in this sample is roughly **3x to 5x higher** than in the control/recovery samples across all methods.

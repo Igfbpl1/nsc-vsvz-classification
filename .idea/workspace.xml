@@ -4,15 +4,50 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="fix">
-      <change afterPath="$PROJECT_DIR$/outputs/velocity/validation_check1_terminal_states.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/outputs/velocity/validation_check2_lineage_gradient.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/outputs/velocity/validation_check3_velocity_confidence.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/outputs/velocity/validation_check4_marker_correlation.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/outputs/velocity/validation_check5_fate_prob_sums.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/validate_cellrank.py" afterDir="false" />
+    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="validate velocity">
+      <change afterPath="$PROJECT_DIR$/outputs/cellrank_fate_probabilities.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/consistency_overall_composition.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CD1_CupRap_0wks_Rep1.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/csv-editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/csv-editor.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/compare_tap_fate_methods.py" beforeDir="false" afterPath="$PROJECT_DIR$/compare_tap_fate_methods.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/consistency_fig1h_microglia.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/consistency_fig1h_microglia.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/consistency_fig1k_proportions.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/consistency_fig1k_proportions.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/consistency_fig2h_npcs.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/consistency_fig2h_npcs.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/tap_fate_comparison.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/tap_fate_comparison.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/tap_fate_per_condition.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/tap_fate_per_condition.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CD1_Cntl.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CD1_Cntl.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CD1_Cntl_3wks.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CD1_Cntl_3wks.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CD1_CupRap.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CD1_CupRap.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CD1_CupRap_0wks_Rep2.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CD1_CupRap_0wks_Rep2.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CD1_CupRap_Rep2.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CD1_CupRap_Rep2.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_Cntl.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_Cntl.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_Cntl_Rep2.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_Cntl_Rep2.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CupRap_Rep1.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CupRap_Rep1.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CupRap_Rep2.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CupRap_Rep2.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_all.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_all.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_COP.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_COP.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_COP_Cntl.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_COP_Cntl.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_COP_CupRap.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_COP_CupRap.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_Neuroblast.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_Neuroblast.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_Neuroblast_Cntl.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_Neuroblast_Cntl.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_Neuroblast_CupRap.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_Neuroblast_CupRap.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_OL.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_OL.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_OL_Cntl.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_OL_Cntl.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_OL_CupRap.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_OL_CupRap.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_OPC.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_OPC.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_OPC_Cntl.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_OPC_Cntl.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_OPC_CupRap.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_OPC_CupRap.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_TAP.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_TAP.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_TAP_Cntl.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_TAP_Cntl.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_TAP_CupRap.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/velocity/velocity_drivers_TAP_CupRap.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/rna_velocity_trajectory.md" beforeDir="false" afterPath="$PROJECT_DIR$/rna_velocity_trajectory.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/run_consistency_checks.py" beforeDir="false" afterPath="$PROJECT_DIR$/run_consistency_checks.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tap_fate_comparison.md" beforeDir="false" afterPath="$PROJECT_DIR$/tap_fate_comparison.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/validate_cellrank.py" beforeDir="false" afterPath="$PROJECT_DIR$/validate_cellrank.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/velocity_build.py" beforeDir="false" afterPath="$PROJECT_DIR$/velocity_build.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -158,14 +193,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1779721552530</updated>
-    </task>
-    <task id="LOCAL-00017" summary="update">
-      <option name="closed" value="true" />
-      <created>1780243742857</created>
-      <option name="number" value="00017" />
-      <option name="presentableId" value="LOCAL-00017" />
-      <option name="project" value="LOCAL" />
-      <updated>1780243742857</updated>
     </task>
     <task id="LOCAL-00018" summary="mapped code to part 2: preprocessing">
       <option name="closed" value="true" />
@@ -551,7 +578,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781974307463</updated>
     </task>
-    <option name="localTasksCounter" value="66" />
+    <task id="LOCAL-00066" summary="validate velocity">
+      <option name="closed" value="true" />
+      <created>1781996597220</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1781996597221</updated>
+    </task>
+    <option name="localTasksCounter" value="67" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -582,7 +617,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add RNA Velocity &amp; Trajectory Analysis Plan readme" />
     <MESSAGE value="fix validate barcodes" />
     <MESSAGE value="more validations" />
     <MESSAGE value="add velocity script" />
@@ -607,6 +641,7 @@
     <MESSAGE value="cleanup" />
     <MESSAGE value="update" />
     <MESSAGE value="fix" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix" />
+    <MESSAGE value="validate velocity" />
+    <option name="LAST_COMMIT_MESSAGE" value="validate velocity" />
   </component>
 </project>

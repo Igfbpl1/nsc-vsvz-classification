@@ -10,6 +10,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/outputs/cellrank_fate_probabilities.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/outputs/failed_max_pct_mt_cells_metadata_top10.csv">
           <value>
             <Attribute>

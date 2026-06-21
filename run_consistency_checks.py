@@ -222,6 +222,26 @@ plt.savefig("outputs/consistency_fig2h_npcs.png", dpi=300)
 plt.close()
 
 # ─────────────────────────────────────────────────────────────────────────────
+# CHECK 4b: Overall Cell Type Composition (Stacked Bar)
+# ─────────────────────────────────────────────────────────────────────────────
+print("\n--- CHECK 4b: Overall Cell Composition ---")
+comp_counts = df_main.groupby(["condition", "cell_type"]).size().unstack(fill_value=0)
+comp_pct = comp_counts.div(comp_counts.sum(axis=1), axis=0) * 100
+
+plt.figure(figsize=(7, 6))
+comp_pct.plot(kind="bar", stacked=True, colormap="tab20", edgecolor="white", linewidth=0.5, ax=plt.gca())
+plt.title("Overall Cell Type Composition by Condition", fontsize=12, fontweight="bold")
+plt.xlabel("Condition", fontsize=11, fontweight="bold")
+plt.ylabel("Percentage of Total Cells", fontsize=11, fontweight="bold")
+plt.xticks(rotation=0, fontsize=10)
+plt.legend(title="Cell Type", bbox_to_anchor=(1.05, 1), loc="upper left", fontsize=9)
+sns.despine(left=True, bottom=False)
+plt.tight_layout()
+plt.savefig("outputs/consistency_overall_composition.png", dpi=300)
+plt.close()
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # CHECK 5: Marker Gene Presence Check in processed.h5ad
 # ─────────────────────────────────────────────────────────────────────────────
 print("\n--- CHECK 5: Marker Gene Presence ---")
@@ -236,98 +256,4 @@ for cell_type, genes in MARKERS.items():
     marker_rows.append(f"| **{cell_type}** | {', '.join([f'`{g}`' for g in genes])} | {missing_str} | {status_str} |")
 marker_table_str = "\n".join(marker_rows)
 
-# ─────────────────────────────────────────────────────────────────────────────
-# WRITE REPORT: README_consistency.md
-# ─────────────────────────────────────────────────────────────────────────────
-report_content = f"""# V-SVZ Classification Pipeline: Data Consistency & Reproduction Report
 
-This report summarizes the quantitative consistency checks between the single-cell RNA-seq datasets in the codebase and the findings reported in the Willis et al. (2025) *Cell Reports* paper.
-
-## 1. Cell Count Verification
-
-The paper states:
-* **Main Neural/Microglia analysis (8 samples)**: *"...we obtained 2,573 to 11,030 transcriptomes in each independent dataset (39,905 cells total)."* (Page 4)
-* **CD1 Cup-Rap No Recovery (2 samples)**: *"...We obtained 8,642 transcriptomes that included all expected V-SVZ and corpus callosum cell types (Figure 2M)."* (Page 8)
-
-### Comparison:
-* **Codebase Main Samples**: **{n_main_code:,}** cells (virtually identical to the paper's **39,905** cells).
-* **Codebase No Recovery Samples**: **{n_no_recov_code:,}** cells (representing a minor filter divergence from the paper's **8,642** cells, but topologically equivalent).
-
-### Detailed counts per sample (after QC in codebase):
-| Sample GSM | Label in Codebase | Count | Timepoint | Strain | Treatment | Matches Paper? |
-|---|---|---|---|---|---|---|
-{sample_table_str}
-
----
-
-## 2. Microglia Proportions (Figure 1H)
-
-The paper states:
-* *"...relative cellular proportions differed between conditions with the most evident a 2- to 3-fold increase in microglia during remyelination (Figure 1H)."* (Page 6)
-
-### Comparison:
-* **Control Microglia**: Mean of **{mean_microglia_code['Control']:.2f}%** of total cells.
-* **Cup-Rap Microglia**: Mean of **{mean_microglia_code['Cup-Rap']:.2f}%** of total cells.
-* **Fold Increase**: **{mean_microglia_code['Cup-Rap'] / mean_microglia_code['Control']:.2f}-fold** increase in microglia. This matches the paper's **2- to 3-fold** increase exactly.
-
-*Reproduction Plot saved to:* [outputs/consistency_fig1h_microglia.png](file:///Users/chandra/development/nsc-vsvz-classification/outputs/consistency_fig1h_microglia.png)
-
----
-
-## 3. Neural Lineage Proportions (Figure 1K)
-
-The paper states:
-* *"...a decrease in total NSCs during remyelination with no change in TAPs and neuroblasts (Figure 1K)."* (Page 6)
-
-### Proportions relative to Total Neural Cells:
-| Cell Type | Control Mean (%) | Cup-Rap Mean (%) | Codebase Trend | Matches Paper? |
-|---|---|---|---|---|
-| **NSCs** | {means_neural.loc['NSCs', 'Control']:.2f}% | {means_neural.loc['NSCs', 'Cup-Rap']:.2f}% | Decreased | Yes (NSCs decrease) |
-| **TAPs** | {means_neural.loc['TAPs', 'Control']:.2f}% | {means_neural.loc['TAPs', 'Cup-Rap']:.2f}% | Stable (overlapping) | Yes (no change) |
-| **OPCs** | {means_neural.loc['OPCs', 'Control']:.2f}% | {means_neural.loc['OPCs', 'Cup-Rap']:.2f}% | Stable (overlapping) | Yes (no change) |
-| **Imm. OLGs (COPs / Newly Formed OLs)** | {means_neural.loc['Imm. OLGs', 'Control']:.2f}% | {means_neural.loc['Imm. OLGs', 'Cup-Rap']:.2f}% | Increased | Yes (increased) |
-| **Mat. OLGs (OL)** | {means_neural.loc['Mat. OLGs', 'Control']:.2f}% | {means_neural.loc['Mat. OLGs', 'Cup-Rap']:.2f}% | Increased | Yes (increased) |
-| **Neuroblasts** | {means_neural.loc['Neuroblasts', 'Control']:.2f}% | {means_neural.loc['Neuroblasts', 'Cup-Rap']:.2f}% | Stable (overlapping) | Yes (no change) |
-
-*Reproduction Plot saved to:* [outputs/consistency_fig1k_proportions.png](file:///Users/chandra/development/nsc-vsvz-classification/outputs/consistency_fig1k_proportions.png)
-
----
-
-## 4. Precursor Subtypes relative to NPCs (Figure 2H)
-
-The paper states:
-* *"...dNSCs, aNSCs, and TAPs comprised 22%, 17%, and 63% of total NPCs, respectively. In remyelinating datasets, dNSCs and aNSCs were both relatively decreased and TAPs were increased."* (Page 6)
-
-### Proportions relative to Total NPCs (dNSCs + aNSCs + TAPs):
-| Cell Type | Control Mean (%) | Cup-Rap Mean (%) | Codebase Trend | Paper Value (Control) | Matches Paper? |
-|---|---|---|---|---|---|
-| **dNSCs** | {means_npc.loc['dNSCs', 'Control']:.2f}% | {means_npc.loc['dNSCs', 'Cup-Rap']:.2f}% | Decreased | ~22% | Yes (overlaps 20-30%) |
-| **aNSCs** | {means_npc.loc['aNSCs', 'Control']:.2f}% | {means_npc.loc['aNSCs', 'Cup-Rap']:.2f}% | Decreased | ~17% | Yes (overlaps 15-20%) |
-| **TAPs** | {means_npc.loc['TAPs', 'Control']:.2f}% | {means_npc.loc['TAPs', 'Cup-Rap']:.2f}% | Increased | ~63% | Yes (overlaps 50-60%) |
-
-*Reproduction Plot saved to:* [outputs/consistency_fig2h_npcs.png](file:///Users/chandra/development/nsc-vsvz-classification/outputs/consistency_fig2h_npcs.png)
-
----
-
-## 5. Marker Gene Panel Verification
-
-Marker genes are verified against page 24 of the paper and checked for presence in the processed scRNA-seq expression dataset (`outputs/processed.h5ad`):
-
-| Cell Type | Canonical Markers (Paper) | Missing in Dataset | Status |
-|---|---|---|---|
-{marker_table_str}
-
-> [!NOTE]
-> * **Carmn** is missing from the 19,139 detected genes in the dataset. This is expected as `Carmn` (Cardiac mesoderm enhancer-associated non-coding RNA) is frequently below the detection threshold or excluded in standard high-throughput scRNA-seq QC filters.
-> * The classification markers implemented in `markers.py` show **98.3% coverage** (58 out of 59 genes) against the dataset's detected genes.
-
----
-
-### Conclusion
-The cell classification pipeline matches the published paper's findings quantitatively. The counts, trends, proportions, and marker gene definitions are highly consistent.
-"""
-
-with open("README_consistency.md", "w") as f:
-    f.write(report_content)
-
-print("\nREADME_consistency.md written successfully in project root!")

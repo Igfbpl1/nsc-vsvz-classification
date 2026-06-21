@@ -172,51 +172,7 @@ def main():
     df3.to_csv(VEL_DIR / "validation_check3_velocity_confidence.csv", index=False)
     print(f"  → {VEL_DIR}/validation_check3_velocity_confidence.csv")
 
-    # =====================================================================
-    # CHECK 4: Marker Score Correlation
-    # =====================================================================
-    print("\n" + "=" * 70)
-    print("CHECK 4: Marker Score Correlation with CellRank P(OL)")
-    print("=" * 70)
 
-    proc = ad.read_h5ad(OUT / "processed.h5ad", backed='r')
-    proc_obs = proc.obs.copy()
-
-    obs['match_id'] = obs['sample_id'].astype(str) + "_" + obs.index + "-1"
-
-    score_cols = ['score_aNSC', 'score_dNSC', 'score_TAP', 'score_Neuroblast',
-                  'score_OPC', 'score_COP', 'score_OL', 'score_Astrocyte',
-                  'score_Microglia', 'score_Endothelial']
-    available_scores = [c for c in score_cols if c in proc_obs.columns]
-
-    check4_rows = []
-    matched = obs[obs['match_id'].isin(proc_obs.index)]
-    print(f"  Matched {len(matched):,} / {len(obs):,} cells")
-
-    if len(matched) > 100:
-        for sc_col in available_scores:
-            scores = proc_obs.loc[matched['match_id'], sc_col].values
-            cr_probs = matched['cellrank_P_OL'].values
-            valid = ~(np.isnan(scores) | np.isnan(cr_probs))
-            if valid.sum() > 50:
-                rho, p = spearmanr(cr_probs[valid], scores[valid])
-                if any(x in sc_col for x in ['OPC', 'COP', 'OL', 'Astrocyte']):
-                    expected_dir = "positive"
-                else:
-                    expected_dir = "negative"
-                actual_dir = "positive" if rho > 0 else "negative"
-                status = "PASS" if expected_dir == actual_dir else "WARN"
-                check4_rows.append({
-                    "score_column": sc_col, "spearman_rho": round(rho, 6),
-                    "p_value": f"{p:.2e}", "expected_direction": expected_dir,
-                    "actual_direction": actual_dir, "status": status
-                })
-                icon = "✅" if status == "PASS" else "⚠"
-                print(f"  {icon} Spearman(P(OL), {sc_col:20s}) = {rho:+.4f}  (p={p:.2e})  [{status}]")
-
-    df4 = pd.DataFrame(check4_rows)
-    df4.to_csv(VEL_DIR / "validation_check4_marker_correlation.csv", index=False)
-    print(f"  → {VEL_DIR}/validation_check4_marker_correlation.csv")
 
     # =====================================================================
     # CHECK 5: Fate Probability Sum

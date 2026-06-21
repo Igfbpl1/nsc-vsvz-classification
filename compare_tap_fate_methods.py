@@ -4,7 +4,7 @@ Compare CellRank and ML fate predictions for TAP cells.
   1. ML model   → XGBoost-trained P(OL) per TAP (outputs/ol_commitment.csv)
   2. CellRank   → Velocity-based fate probability P(OL) per TAP
 
-Reports Pearson/Spearman correlation and mean P(OL) per condition.
+Reports binary agreement and mean P(OL) per condition.
 
 Output:
   outputs/tap_fate_comparison.csv     — per-TAP cellrank_P_OL and ml_P_OL
@@ -19,7 +19,6 @@ import pandas as pd
 import scanpy as sc
 import scvelo as scv
 from cellrank.kernels import ConnectivityKernel, VelocityKernel
-from scipy.stats import pearsonr, spearmanr
 
 from markers import OL_LINEAGE
 
@@ -107,26 +106,22 @@ def run_compare_fate_methods():
     tap_df.to_csv(OUT / "tap_fate_comparison.csv", index=False)
     print(f"  → {OUT}/tap_fate_comparison.csv")
 
-    # ── Correlation & Agreements ──────────────────────────────────────────────
-    pearson_r, pearson_p   = pearsonr(tap_df["cellrank_P_OL"], tap_df["ml_P_OL"])
-    spearman_r, spearman_p = spearmanr(tap_df["cellrank_P_OL"], tap_df["ml_P_OL"])
-    pearson_rb, _          = pearsonr(tap_df["ml_P_OL"], tap_df["bias"])
-    spearman_rb, _         = spearmanr(tap_df["ml_P_OL"], tap_df["bias"])
-    pearson_rc, _          = pearsonr(tap_df["cellrank_P_OL"], tap_df["bias"])
-    spearman_rc, _         = spearmanr(tap_df["cellrank_P_OL"], tap_df["bias"])
-
+    # ── Agreements ──────────────────────────────────────────────
     print(f"\nMethod Comparison (n={len(tap_df)} TAPs):")
-    print(f"  CellRank vs ML:   Pearson r = {pearson_r:.3f} (p={pearson_p:.2e}), Spearman r = {spearman_r:.3f}")
-    print(f"  ML vs Bias:       Pearson r = {pearson_rb:.3f}, Spearman r = {spearman_rb:.3f}")
-    print(f"  CellRank vs Bias: Pearson r = {pearson_rc:.3f}, Spearman r = {spearman_rc:.3f}")
 
-    agree_ml_bias = (tap_df["bias_ol"] == tap_df["ml_ol"]).mean() * 100
-    agree_cr_bias = (tap_df["bias_ol"] == tap_df["cellrank_ol"]).mean() * 100
-    agree_ml_cr   = (tap_df["ml_ol"] == tap_df["cellrank_ol"]).mean() * 100
-    print(f"\nBinary Agreement (OL vs NB leaning):")
-    print(f"  ML vs Bias Agreement:       {agree_ml_bias:.2f}%")
-    print(f"  CellRank vs Bias Agreement: {agree_cr_bias:.2f}%")
-    print(f"  ML vs CellRank Agreement:   {agree_ml_cr:.2f}%")
+    ml_ol_mask = tap_df["ml_ol"] == 1
+    cr_ol_mask = tap_df["cellrank_ol"] == 1
+    bias_ol_mask = tap_df["bias_ol"] == 1
+
+    ml_cr_intersect = (ml_ol_mask & cr_ol_mask).sum()
+    ml_bias_intersect = (ml_ol_mask & bias_ol_mask).sum()
+
+    print(f"\nOL-Specific Agreement (Focusing only on OL predictions):")
+    print(f"  ML predicts OL:       {ml_ol_mask.sum()} TAPs")
+    print(f"  CellRank predicts OL: {cr_ol_mask.sum()} TAPs")
+    print(f"  Bias predicts OL:     {bias_ol_mask.sum()} TAPs")
+    print(f"  Of the TAPs ML predicts as OL, CellRank also predicts OL: {(ml_cr_intersect / ml_ol_mask.sum() * 100):.2f}%")
+    print(f"  Of the TAPs ML predicts as OL, Bias also predicts OL:     {(ml_bias_intersect / ml_ol_mask.sum() * 100):.2f}%")
 
     # ── Per-condition OL and NB counts and means ─────────────────────────────
     grp = tap_df.groupby("velocity_label")

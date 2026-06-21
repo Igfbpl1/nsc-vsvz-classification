@@ -30,6 +30,7 @@ SAMPLE_CONFIGS = [
     {"h5ad_sample_id": "GSM8253798", "velocity_label": "CupRap_Rep1",        "kb_dir": "sra_runs/kb_output_GSM8253798/counts_unfiltered"},
     {"h5ad_sample_id": "GSM8253799", "velocity_label": "CupRap_Rep2",        "kb_dir": "sra_runs/kb_output_GSM8253799/counts_unfiltered"},
     {"h5ad_sample_id": "GSM8647353", "velocity_label": "CD1_CupRap_0wks_Rep2", "kb_dir": "sra_runs/kb_output_GSM8647353/counts_unfiltered"},
+    {"h5ad_sample_id": "GSM8647352", "velocity_label": "CD1_CupRap_0wks_Rep1", "kb_dir": "sra_runs/kb_output_GSM8647352/counts_unfiltered"},
 ]
 
 MIN_SHARED_COUNTS = 20
