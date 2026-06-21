@@ -284,14 +284,14 @@ awk 'NR==2{print length($0); exit}' SRR_ID1_3.fastq
 # single-indexed (_2=R1 barcode, _3=R2 cDNA)
 nohup kb count \
   -i index.idx -g t2g.txt -x 10xv3 \
-  -o kb_output_<GSM> \
+  -o kb_output_GSM8647352 \
   -c1 cdna_t2c.txt -c2 intron_t2c.txt \
   --workflow lamanno \
-  SRR_ID1_2.fastq SRR_ID1_3.fastq \
-  SRR_ID2_2.fastq SRR_ID2_3.fastq \
-  > kb_count.log 2>&1 &
+  SRR31443698_3.fastq SRR31443698_4.fastq \
+  SRR31443699_3.fastq SRR31443699_4.fastq \
+  > kb_count_GSM8647352.log 2>&1 &
 
-tail -f kb_count.log
+tail -f kb_count_GSM8647352.log
 ```
 
 ### 3. Package and clean up

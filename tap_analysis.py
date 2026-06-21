@@ -65,6 +65,34 @@ def write_agreement_view(tap_frame: pd.DataFrame) -> None:
     view.to_csv(f"{OUT}/test2_agreement_view.csv")
 
 
+def write_ol_rate_comparison(tap_frame: pd.DataFrame) -> None:
+    """Per-condition OL-leaning *rate* for each method (marginal proportions).
+
+    Compares how many TAPs each method calls OL-leaning, as a rate, with the
+    percentage-point difference between them. Deliberately omits a single
+    "agreement %" because OL-leaning TAPs are rare (~8-10%), so 100 - diff
+    always reads near-perfect and oversells the match; the two rates plus their
+    pp difference are the honest comparison.
+    """
+    g = tap_frame.groupby("condition", observed=True)
+    v = pd.DataFrame({
+        "n": g.size(),
+        "bias_OL": g["bias_is_ol"].sum(),
+        "pred_OL": g["prediction_is_ol"].sum(),
+    }).reindex([c for c in CONDITION_ORDER if c in g.groups])
+
+    total = v.sum()
+    total.name = "Grand Total"
+    v = pd.concat([v, total.to_frame().T])
+
+    v["bias_OL_%"] = (v["bias_OL"] / v["n"] * 100).round(1)
+    v["pred_OL_%"] = (v["pred_OL"] / v["n"] * 100).round(1)
+    v["diff_pp"] = (v["pred_OL_%"] - v["bias_OL_%"]).abs().round(1)
+    v = v[["n", "bias_OL", "bias_OL_%", "pred_OL", "pred_OL_%", "diff_pp"]]
+    v.index.name = "condition"
+    v.to_csv(f"{OUT}/test2_ol_rate_comparison.csv")
+
+
 def run_analysis() -> None:
     print("loading data")
     adata = sc.read_h5ad(OUT / "processed.h5ad")
@@ -82,3 +110,4 @@ def run_analysis() -> None:
     )
     tap_frame.to_csv(f"{OUT}/out_of_sample_tap_comparison_test2.csv")
     write_agreement_view(tap_frame)
+    write_ol_rate_comparison(tap_frame)
