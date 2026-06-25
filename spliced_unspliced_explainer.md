@@ -88,15 +88,18 @@ kb ref \
   Mus_musculus.GRCm39.110.gtf
 ```
 
-| File | Built from | Captures |
-|------|-----------|---------|
-| `cdna.fa` | Exon sequences joined per transcript | Mature (spliced) mRNA |
-| `intron.fa` | Full gene body including introns | Nascent (unspliced) pre-mRNA |
-| `cdna_t2c.txt` | One entry per transcript | Maps spliced hits → gene |
-| `intron_t2c.txt` | One entry per intronic region (`-I.1` suffix) | Maps unspliced hits → gene |
-| `index.idx` | Both cdna + intron combined | Single pseudo-alignment target |
+| File | What it actually is | Role |
+|------|---------------------|------|
+| `cdna.fa` | A FASTA of **sequences**: each record is a header (`>ENSMUST… gene_id:… gene_name:… chr/start/end`) followed by the transcript's exons joined together (introns removed) | The **spliced** sequence database — reads matching here are counted spliced |
+| `intron.fa` | A FASTA of **sequences**: each record is a header (`-I.N` suffix) followed by an intron sequence of that transcript | The **unspliced** sequence database — reads matching here are counted unspliced |
+| `cdna_t2c.txt` | A plain **list of IDs only** — one spliced transcript ID per line (`ENSMUST…`), no sequence | "Capture list" marking which index entries are **spliced** |
+| `intron_t2c.txt` | A plain **list of IDs only** — one intron-capture ID per line (`ENSMUST…-I.N`), no sequence | "Capture list" marking which index entries are **unspliced** |
+| `t2g.txt` | One line per index entry → its gene (both `ENSMUST…` and `ENSMUST…-I.N` point to the same gene) | Maps a matched ID back to its **gene** |
+| `index.idx` | `cdna.fa` + `intron.fa` compiled into one searchable structure | The single pseudo-alignment target reads are matched against |
 
-The `-I.1` suffix is the signal: `ENSMUST00000180837.2` is the spliced entry for *9330185C12Rik*; `ENSMUST00000180837.2-I.1` is its intronic capture region. A read matching the latter votes unspliced.
+Two distinctions worth keeping straight: (1) the **`.fa` files hold the sequences** (with an ID + coordinates in each header), whereas the **`t2c` files hold only the ID lists** — they are the table of contents of each `.fa`, not sequence files; and (2) the **`t2c` files only classify a hit as spliced vs unspliced**, while **`t2g.txt` is what maps a hit to a gene** — these are separate jobs.
+
+The `-I.N` suffix is the signal that ties them together: `ENSMUST00000180837.2` is the spliced entry for *9330185C12Rik* (listed in `cdna_t2c.txt`), while `ENSMUST00000180837.2-I.1` is its intronic capture entry (listed in `intron_t2c.txt`). Both map to the same gene via `t2g.txt`, but a read matching the `-I.1` entry is counted unspliced.
 
 ### 3b. kb count — align, deduplicate, and produce count matrices
 
