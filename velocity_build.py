@@ -21,16 +21,16 @@ OUTPUT_DIR = str(ROOT / "outputs" / "velocity")
 OUT_H5AD   = str(ROOT / "outputs" / "velocity" / "velocity_combined.h5ad")
 
 SAMPLE_CONFIGS = [
-    {"h5ad_sample_id": "GSM8253792", "velocity_label": "CD1_Cntl",           "kb_dir": "sra_runs/kb_output_GSM8253792/counts_unfiltered"},
-    {"h5ad_sample_id": "GSM8253793", "velocity_label": "CD1_Cntl_3wks",      "kb_dir": "sra_runs/kb_output_GSM8253793/counts_unfiltered"},
-    {"h5ad_sample_id": "GSM8253794", "velocity_label": "CD1_CupRap",         "kb_dir": "sra_runs/kb_output_GSM8253794/counts_unfiltered"},
-    {"h5ad_sample_id": "GSM8253795", "velocity_label": "CD1_CupRap_Rep2",    "kb_dir": "sra_runs/kb_output_GSM8253795/counts_unfiltered"},
-    {"h5ad_sample_id": "GSM8253796", "velocity_label": "Cntl",               "kb_dir": "sra_runs/kb_output_GSM8253796/counts_unfiltered"},
-    {"h5ad_sample_id": "GSM8253797", "velocity_label": "Cntl_Rep2",          "kb_dir": "sra_runs/kb_output_GSM8253797/counts_unfiltered"},
-    {"h5ad_sample_id": "GSM8253798", "velocity_label": "CupRap_Rep1",        "kb_dir": "sra_runs/kb_output_GSM8253798/counts_unfiltered"},
-    {"h5ad_sample_id": "GSM8253799", "velocity_label": "CupRap_Rep2",        "kb_dir": "sra_runs/kb_output_GSM8253799/counts_unfiltered"},
-    {"h5ad_sample_id": "GSM8647353", "velocity_label": "CD1_CupRap_0wks_Rep2", "kb_dir": "sra_runs/kb_output_GSM8647353/counts_unfiltered"},
-    {"h5ad_sample_id": "GSM8647352", "velocity_label": "CD1_CupRap_0wks_Rep1", "kb_dir": "sra_runs/kb_output_GSM8647352/counts_unfiltered"},
+    {"h5ad_sample_id": "GSM8253792", "velocity_label": "CD1_Cntl_0wksRecov",           "kb_dir": "sra_runs/kb_output_GSM8253792/counts_unfiltered"},
+    {"h5ad_sample_id": "GSM8253793", "velocity_label": "CD1_Cntl_3wksRecov",      "kb_dir": "sra_runs/kb_output_GSM8253793/counts_unfiltered"},
+    {"h5ad_sample_id": "GSM8253794", "velocity_label": "CD1_CupRap_Rep1_3wksRecov",         "kb_dir": "sra_runs/kb_output_GSM8253794/counts_unfiltered"},
+    {"h5ad_sample_id": "GSM8253795", "velocity_label": "CD1_CupRap_rep2_3wksRecov",    "kb_dir": "sra_runs/kb_output_GSM8253795/counts_unfiltered"},
+    {"h5ad_sample_id": "GSM8253796", "velocity_label": "NesCre_Cntl_Rep1_3wksRecov",               "kb_dir": "sra_runs/kb_output_GSM8253796/counts_unfiltered"},
+    {"h5ad_sample_id": "GSM8253797", "velocity_label": "NesCre_Cntl_Rep2_3wksRecov",          "kb_dir": "sra_runs/kb_output_GSM8253797/counts_unfiltered"},
+    {"h5ad_sample_id": "GSM8253798", "velocity_label": "NesCre_CR_Rep1_3wksRecov",        "kb_dir": "sra_runs/kb_output_GSM8253798/counts_unfiltered"},
+    {"h5ad_sample_id": "GSM8253799", "velocity_label": "NesCre_CR_Rep2_3wksRecov",        "kb_dir": "sra_runs/kb_output_GSM8253799/counts_unfiltered"},
+    {"h5ad_sample_id": "GSM8647353", "velocity_label": "CD1_CupRap_Rep2_0wksRecov", "kb_dir": "sra_runs/kb_output_GSM8647353/counts_unfiltered"},
+    {"h5ad_sample_id": "GSM8647352", "velocity_label": "CD1_CupRap_Rep1_0wksRecov", "kb_dir": "sra_runs/kb_output_GSM8647352/counts_unfiltered"},
 ]
 
 MIN_SHARED_COUNTS = 20
