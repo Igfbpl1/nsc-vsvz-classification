@@ -1,12 +1,12 @@
 condition,n,bias_OL,bias_OL_%,pred_OL,pred_OL_%,diff_pp
-CD1_Cntl,568,45,7.9,58,10.2,2.3
-CD1_Cntl_3wks,748,50,6.7,79,10.6,3.9
-CD1_CupRap,320,20,6.2,36,11.2,5.0
-CD1_CupRap_0wks_Rep1,92,7,7.6,11,12.0,4.4
-CD1_CupRap_0wks_Rep2,77,27,35.1,29,37.7,2.6
-CD1_CupRap_Rep2,276,30,10.9,27,9.8,1.1
-Cntl,543,33,6.1,45,8.3,2.2
-Cntl_Rep2,294,30,10.2,26,8.8,1.4
-CupRap_Rep1,302,41,13.6,31,10.3,3.3
-CupRap_Rep2,391,17,4.3,27,6.9,2.6
+CD1_Cntl_0wksRecov,568,45,7.9,58,10.2,2.3
+CD1_Cntl_3wksRecov,748,50,6.7,79,10.6,3.9
+CD1_CupRap_Rep1_0wksRecov,92,7,7.6,11,12.0,4.4
+CD1_CupRap_Rep2_0wksRecov,77,27,35.1,29,37.7,2.6
+CD1_CupRap_Rep1_3wksRecov,320,20,6.2,36,11.2,5.0
+CD1_CupRap_rep2_3wksRecov,276,30,10.9,27,9.8,1.1
+NesCre_Cntl_Rep1_3wksRecov,543,33,6.1,45,8.3,2.2
+NesCre_Cntl_Rep2_3wksRecov,294,30,10.2,26,8.8,1.4
+NesCre_CR_Rep1_3wksRecov,302,41,13.6,31,10.3,3.3
+NesCre_CR_Rep2_3wksRecov,391,17,4.3,27,6.9,2.6
 Grand Total,3611,300,8.3,369,10.2,1.9

@@ -37,22 +37,23 @@ from sklearn.model_selection import train_test_split
 from markers import MARKERS, OL_LINEAGE, LINEAGE_GENES
 
 CONDITION = {
-    "GSM8253792": "CD1_Cntl",
-    "GSM8253793": "CD1_Cntl_3wks",
-    "GSM8253794": "CD1_CupRap",
-    "GSM8253795": "CD1_CupRap_Rep2",
-    "GSM8253796": "Cntl",
-    "GSM8253797": "Cntl_Rep2",
-    "GSM8253798": "CupRap_Rep1",
-    "GSM8253799": "CupRap_Rep2",
-    "GSM8647352": "CD1_CupRap_0wks_Rep1",
-    "GSM8647353": "CD1_CupRap_0wks_Rep2",
+    "GSM8253792": "CD1_Cntl_0wksRecov",
+    "GSM8253793": "CD1_Cntl_3wksRecov",
+    "GSM8253794": "CD1_CupRap_Rep1_3wksRecov",
+    "GSM8253795": "CD1_CupRap_rep2_3wksRecov",
+    "GSM8253796": "NesCre_Cntl_Rep1_3wksRecov",
+    "GSM8253797": "NesCre_Cntl_Rep2_3wksRecov",
+    "GSM8253798": "NesCre_CR_Rep1_3wksRecov",
+    "GSM8253799": "NesCre_CR_Rep2_3wksRecov",
+    "GSM8647352": "CD1_CupRap_Rep1_0wksRecov",
+    "GSM8647353": "CD1_CupRap_Rep2_0wksRecov",
 }
 
 CONDITION_ORDER = [
-    "CD1_Cntl", "CD1_Cntl_3wks", "CD1_CupRap", "CD1_CupRap_0wks_Rep1",
-    "CD1_CupRap_0wks_Rep2", "CD1_CupRap_Rep2", "Cntl", "Cntl_Rep2",
-    "CupRap_Rep1", "CupRap_Rep2",
+    "CD1_Cntl_0wksRecov", "CD1_Cntl_3wksRecov", "CD1_CupRap_Rep1_0wksRecov", 
+    "CD1_CupRap_Rep2_0wksRecov", "CD1_CupRap_Rep1_3wksRecov", "CD1_CupRap_rep2_3wksRecov", 
+    "NesCre_Cntl_Rep1_3wksRecov", "NesCre_Cntl_Rep2_3wksRecov", 
+    "NesCre_CR_Rep1_3wksRecov", "NesCre_CR_Rep2_3wksRecov",
 ]
 
 ROOT = Path(__file__).parent
@@ -126,7 +127,7 @@ def run_classifier() -> None:
     # Model Training / held-out split
     # ------------------------------------------------------------------
     y_all = labels_for(adata)
-    is_eligible = y_all.notna()
+    is_eligible = y_all.notna() # include only cell types except OL and NB
     held_out_mask = adata.obs["sample_id"].isin(HOLDOUT_SAMPLES).values
     train_mask = is_eligible.values & ~held_out_mask
     test_mask = is_eligible.values & held_out_mask

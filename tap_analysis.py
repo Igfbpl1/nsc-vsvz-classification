@@ -14,23 +14,24 @@ ALL_MARKER_GENES = {g for genes in MARKERS.values() for g in genes}
 
 # GSM accession -> condition label (matches velocity_build.py velocity_label naming)
 CONDITION = {
-    "GSM8253792": "CD1_Cntl",
-    "GSM8253793": "CD1_Cntl_3wks",
-    "GSM8253794": "CD1_CupRap",
-    "GSM8253795": "CD1_CupRap_Rep2",
-    "GSM8253796": "Cntl",
-    "GSM8253797": "Cntl_Rep2",
-    "GSM8253798": "CupRap_Rep1",
-    "GSM8253799": "CupRap_Rep2",
-    "GSM8647352": "CD1_CupRap_0wks_Rep1",
-    "GSM8647353": "CD1_CupRap_0wks_Rep2",
+    "GSM8253792": "CD1_Cntl_0wksRecov",
+    "GSM8253793": "CD1_Cntl_3wksRecov",
+    "GSM8253794": "CD1_CupRap_Rep1_3wksRecov",
+    "GSM8253795": "CD1_CupRap_rep2_3wksRecov",
+    "GSM8253796": "NesCre_Cntl_Rep1_3wksRecov",
+    "GSM8253797": "NesCre_Cntl_Rep2_3wksRecov",
+    "GSM8253798": "NesCre_CR_Rep1_3wksRecov",
+    "GSM8253799": "NesCre_CR_Rep2_3wksRecov",
+    "GSM8647352": "CD1_CupRap_Rep1_0wksRecov",
+    "GSM8647353": "CD1_CupRap_Rep2_0wksRecov",
 }
 
 # Order conditions appear in the per-condition agreement view.
 CONDITION_ORDER = [
-    "CD1_Cntl", "CD1_Cntl_3wks", "CD1_CupRap", "CD1_CupRap_0wks_Rep1",
-    "CD1_CupRap_0wks_Rep2", "CD1_CupRap_Rep2", "Cntl", "Cntl_Rep2",
-    "CupRap_Rep1", "CupRap_Rep2",
+    "CD1_Cntl_0wksRecov", "CD1_Cntl_3wksRecov", "CD1_CupRap_Rep1_0wksRecov", 
+    "CD1_CupRap_Rep2_0wksRecov", "CD1_CupRap_Rep1_3wksRecov", "CD1_CupRap_rep2_3wksRecov", 
+    "NesCre_Cntl_Rep1_3wksRecov", "NesCre_Cntl_Rep2_3wksRecov", 
+    "NesCre_CR_Rep1_3wksRecov", "NesCre_CR_Rep2_3wksRecov",
 ]
 
 
