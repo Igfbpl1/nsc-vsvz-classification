@@ -4,32 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="rename">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/compare_tap_fate_methods.py" beforeDir="false" afterPath="$PROJECT_DIR$/compare_tap_fate_methods.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/cellrank_fate_probabilities.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/cellrank_fate_probabilities.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/out_of_sample_comparison.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/out_of_sample_comparison.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/out_of_sample_tap_comparison_test2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/out_of_sample_tap_comparison_test2.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/tap_fate_comparison.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/tap_fate_comparison.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/tap_fate_per_condition.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/tap_fate_per_condition.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/test1_accuracy_by_condition.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/test1_accuracy_by_condition.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/test2_agreement_view.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/test2_agreement_view.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/test2_ol_rate_comparison.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/test2_ol_rate_comparison.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CD1_Cntl.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CD1_Cntl_3wks.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CD1_CupRap.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CD1_CupRap_0wks_Rep1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CD1_CupRap_0wks_Rep2.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CD1_CupRap_Rep2.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_Cntl.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_Cntl_Rep2.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CupRap_Rep1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_CupRap_Rep2.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/velocity/scvelo_stream_all.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tap_analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/tap_analysis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tap_fate_comparison.md" beforeDir="false" afterPath="$PROJECT_DIR$/tap_fate_comparison.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train_ol_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_ol_classifier.py" afterDir="false" />
-    </list>
+    <list default="true" id="9f704058-6b2a-4344-b822-5282b0e48690" name="Changes" comment="rename" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
