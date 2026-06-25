@@ -49,12 +49,10 @@ def run_compare_fate_methods():
     # GPCCA's Schur decomposition (~30 min dense on 36k cells without SLEPc).
     print("[CellRank] setting terminal states from cell_type labels ...")
     g = cr.estimators.GPCCA(combined_kernel)
-    # Match the ML positive class (OL_LINEAGE = {OPC, COP, OL}) so CellRank's
-    # P(OL_lineage) is apples-to-apples with the XGBoost classifier. OPC/COP
-    # aren't true absorbing states velocity-wise, but bundling them into the
-    # same terminal group preserves their forward flux to OL while letting us
-    # report one combined commitment probability.
-    ol_cells = adata.obs.index[adata.obs["cell_type"].isin(OL_LINEAGE)]
+    # Set terminal states explicitly to mature OL and Neuroblast cells based
+    # on their cell_type labels. This restricts the terminal state to mature
+    # OLs strictly.
+    ol_cells = adata.obs.index[adata.obs["cell_type"] == "OL"]
     nb_cells = adata.obs.index[adata.obs["cell_type"] == "Neuroblast"]
     g.set_terminal_states({"OL": ol_cells, "Neuroblast": nb_cells})
 

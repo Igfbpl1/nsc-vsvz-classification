@@ -38,9 +38,11 @@ ML uses **steady-state gene expression**. CellRank uses **splicing kinetics**. T
 
 | Method | Total TAPs called OL | Percentage of total TAPs |
 |---|:---:|:---:|
-| **CellRank** | 962 | 26.7% |
+| **CellRank** | 791 | 22.0% |
 | **ML** | 366 | 10.2% |
 | **Bias Score** | 298 | 8.3% |
+
+*Note: CellRank terminal states were explicitly restricted to only the `OL` cell type for this analysis, rather than the broader OL lineage.*
 
 ### Per-condition counts
 * Probs are thresholded at `P(OL) > 0.5` (since OL and NB are the only absorbing states).
@@ -50,9 +52,9 @@ ML uses **steady-state gene expression**. CellRank uses **splicing kinetics**. T
 
 | Method | CD1_Cntl | CD1_Cntl_3wks | CD1_CupRap | CD1_CupRap_0wks_Rep1 | CD1_CupRap_0wks_Rep2 | CD1_CupRap_Rep2 | Cntl | Cntl_Rep2 | CupRap_Rep1 | CupRap_Rep2 |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **CellRank** | 27.8% (158/568) | 24.4% (182/746) | 26.6% (85/320) | 28.9% (26/90) | **58.4% (45/77)** | 25.8% (71/275) | 24.4% (132/541) | 29.0% (84/290) | 30.8% (93/302) | 22.2% (86/388) |
-| **ML** | 10.2% (58/568) | 10.5% (78/746) | 11.3% (36/320) | 11.1% (10/90) | **37.7% (29/77)** | 9.8% (27/275) | 8.3% (45/541) | 8.6% (25/290) | 10.3% (31/302) | 7.0% (27/388) |
-| **Bias** | 7.9% (45/568) | 6.7% (50/746) | 6.3% (20/320) | 6.7% (6/90) | **35.1% (27/77)** | 10.9% (30/275) | 6.1% (33/541) | 10.0% (29/290) | 13.6% (41/302) | 4.4% (17/388) |
+| **CellRank** | 23.1% (131/568) | 19.7% (147/746) | 22.2% (71/320) | 23.3% (21/90) | **49.4% (38/77)** | 19.3% (53/275) | 20.0% (108/541) | 24.1% (70/290) | 25.2% (76/302) | 19.6% (76/388) |
+| **ML** | 10.2% (58/568) | 10.5% (78/746) | 11.2% (36/320) | 11.1% (10/90) | **37.7% (29/77)** | 9.8% (27/275) | 8.3% (45/541) | 8.6% (25/290) | 10.3% (31/302) | 7.0% (27/388) |
+| **Bias** | 7.9% (45/568) | 6.7% (50/746) | 6.2% (20/320) | 6.7% (6/90) | **35.1% (27/77)** | 10.9% (30/275) | 6.1% (33/541) | 10.0% (29/290) | 13.6% (41/302) | 4.4% (17/388) |
 
 ### Key Observations:
 1. **The 0-week Outlier**: All three methods independently flag the acute injury sample `CD1_CupRap_0wks_Rep2` (no recovery) as a major outlier. The proportion of OL-leaning TAPs in this sample is roughly **3x to 5x higher** than in the control/recovery samples across all methods.
