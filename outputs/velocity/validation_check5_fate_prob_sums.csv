@@ -1,2 +1,0 @@
-metric,mean,std,min,max,n_pass_tol_1e4,n_total,status
-fate_prob_sum,0.9999286,9.57e-05,0.99977042,1.0,30905,43831,30905/43831 pass
