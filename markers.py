@@ -85,7 +85,7 @@ MARKERS = {
 # lineage genes.
 LINEAGE_GENES = {
     "OL_lineage":        ["Olig1", "Olig2", "Sox10", "Cnp", "Lhfpl3", "Mobp"],
-    "Neuroblast_lineage": ["Tubb3", "Cd24a"],
+    "Neuroblast_lineage": ["Tubb3", "Cd24a"]
 }
 
 OL_LINEAGE = {"OPC", "COP", "OL"}

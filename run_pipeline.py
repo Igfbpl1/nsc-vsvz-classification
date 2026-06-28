@@ -17,12 +17,9 @@ import data_io
 from pathlib import Path
 import scanpy as sc
 import preprocess
-from compare_tap_fate_methods import run_compare_fate_methods
 from markers import MARKERS, OL_LINEAGE
 import train_ol_classifier
 import tap_analysis
-import velocity_build
-from rna_velocity_pipeline import run_rna_velocity_pipeline
 
 ROOT = Path(__file__).parent
 OUT = ROOT / "outputs"
@@ -114,21 +111,7 @@ def main() -> None:
     train_ol_classifier.run_classifier()
     print("running corroboration analysis")
     tap_analysis.run_analysis()
-    print("=== velocity build: velocity_combined.h5ad ===")
-    vel_h5ad = Path(velocity_build.OUT_H5AD)
-    if vel_h5ad.exists() and not args.rebuild:
-        print(f"  {vel_h5ad} exists; skipping (use --rebuild to force)")
-    else:
-        t0 = time.time()
-        velocity_build.build_velocity()
-        print(f"  done in {time.time() - t0:.0f}s")
-
-    print("running rna velocity pipeline")
-    run_rna_velocity_pipeline()
-    print("comparing fate methods")
-    run_compare_fate_methods()
     print(f"\n=== ALL DONE in {time.time() - overall:.0f}s ===")
-
 
 if __name__ == "__main__":
     main()
